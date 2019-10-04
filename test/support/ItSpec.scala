@@ -103,7 +103,7 @@ trait ItSpec
     .configure(configMap).build()
 
   def configMap = Map[String, Any](
-    "mongodb.uri " -> "mongodb://localhost:27017/payments-processor"
+    "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it"
   )
 
   def injector: Injector = fakeApplication().injector
