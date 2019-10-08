@@ -26,8 +26,10 @@ import uk.gov.hmrc.workitem.WorkItem
 
 class NotificationWorkItemMongoRepoSpec extends ItSpec {
 
+  //Repos that have used work-item-repo
+  //Complex - uses akka to have multi listeners
   //https://github.com/hmrc/customs-notification
-  //https://github.com/hmrc/bank-account-reputation-dispatcher
+  //Simple
   //https://github.com/hmrc/leak-detection
 
   private val clock: Clock = Clock.systemUTC()
@@ -39,8 +41,6 @@ class NotificationWorkItemMongoRepoSpec extends ItSpec {
     val remove = repo.removeAll().futureValue
   }
 
-  //val processingStatuses: Set[ProcessingStatus] = Set(ToDo, InProgress, Succeeded, Failed, PermanentlyFailed, Ignored, Duplicate, Deferred, Cancelled)
-
   "Count should be 0 with empty repo" in {
     collectionSize shouldBe 0
   }
@@ -50,11 +50,6 @@ class NotificationWorkItemMongoRepoSpec extends ItSpec {
     val remove = repo.drop.futureValue
     val ensure = repo.ensureIndexes.futureValue
     repo.collection.indexesManager.list().futureValue.size shouldBe 5
-  }
-
-  "a "in {
-    val workItem = repo.pushNew(item, jodaDateTime).futureValue
-    repo.markAs(workItem.id, uk.gov.hmrc.workitem.Failed).futureValue should be(true)
   }
 
   "be able to push a new request and reload a request" in {
@@ -95,9 +90,46 @@ class NotificationWorkItemMongoRepoSpec extends ItSpec {
                        uk.gov.hmrc.workitem.Deferred, uk.gov.hmrc.workitem.PermanentlyFailed, uk.gov.hmrc.workitem.Succeeded)
 
   statusList.foreach(status =>
-    s"Pull a request with a status of ${status.toString} should not find anything" in {
+    s"Pull a request with a status of ${status.toString} should not find anything if we have not waited" in {
       val workItem = repo.pushNew(item, jodaDateTime).futureValue
       repo.markAs(workItem.id, status).futureValue should be(true)
+      val outstanding: Option[WorkItem[NotificationWorkItem]] = repo.pullOutstanding.futureValue
+      outstanding match {
+        case Some(x) => {
+          "found" shouldBe "a value when we should not"
+        }
+        case None =>
+      }
+
+    }
+  )
+
+  val statusListAllowsRetry = Seq(uk.gov.hmrc.workitem.Failed)
+
+  statusListAllowsRetry.foreach(status =>
+    s"Pull a request with a status of ${status.toString} should find something as we have waited" in {
+      val workItem = repo.pushNew(item, jodaDateTime).futureValue
+      repo.markAs(workItem.id, status).futureValue should be(true)
+      Thread.sleep(2000)
+      val outstanding: Option[WorkItem[NotificationWorkItem]] = repo.pullOutstanding.futureValue
+      outstanding match {
+        case Some(x) => {
+          x.item.value shouldBe "a value"
+        }
+        case None => "failed" shouldBe "to find a value"
+      }
+
+    }
+  )
+
+  val statusListDoesNotAllowRetry = Seq(uk.gov.hmrc.workitem.Duplicate, uk.gov.hmrc.workitem.Cancelled, uk.gov.hmrc.workitem.Ignored,
+                                        uk.gov.hmrc.workitem.Deferred, uk.gov.hmrc.workitem.PermanentlyFailed, uk.gov.hmrc.workitem.Succeeded)
+
+  statusListDoesNotAllowRetry.foreach(status =>
+    s"Pull a request with a status of ${status.toString} should not find anything, we have waited" in {
+      val workItem = repo.pushNew(item, jodaDateTime).futureValue
+      repo.markAs(workItem.id, status).futureValue should be(true)
+      Thread.sleep(2000)
       val outstanding: Option[WorkItem[NotificationWorkItem]] = repo.pullOutstanding.futureValue
       outstanding match {
         case Some(x) => {
@@ -162,13 +194,12 @@ class NotificationWorkItemMongoRepoSpec extends ItSpec {
     outstanding2 match {
       case Some(x) => {
         x.item.value shouldBe "a value"
+        x.status shouldBe uk.gov.hmrc.workitem.InProgress
       }
       case None => "failed" shouldBe "to find a value"
     }
 
   }
-
-
 
   private def collectionSize: Int = {
     repo.count(Json.obj()).futureValue

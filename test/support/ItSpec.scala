@@ -89,7 +89,7 @@ trait ItSpec
 
   def configMap = Map[String, Any](
     "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it",
-    "queue.retryAfter" -> "3 seconds"
+    "queue.retryAfter" -> "1 seconds"
   )
 
   def injector: Injector = fakeApplication().injector
