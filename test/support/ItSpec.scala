@@ -32,11 +32,7 @@ package support
  * limitations under the License.
  */
 
-import java.time._
-import java.time.format.DateTimeFormatter
-
-import com.google.inject.{AbstractModule, Provides}
-import javax.inject.Singleton
+import com.google.inject.AbstractModule
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -47,7 +43,7 @@ import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.{AnyContentAsEmpty, Request, Result}
 import play.api.test.{CSRFTokenHelper, FakeRequest}
 import play.api.{Application, Configuration, Environment}
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -65,11 +61,6 @@ trait ItSpec
   with WireMockSupport
   with Matchers {
 
-  lazy val frozenZonedDateTime: ZonedDateTime = {
-    val formatter = DateTimeFormatter.ISO_DATE_TIME
-    LocalDateTime.parse("2018-11-02T16:28:55.185", formatter).atZone(ZoneId.of("Europe/London"))
-  }
-
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   lazy val servicesConfig = fakeApplication.injector.instanceOf[ServicesConfig]
@@ -79,12 +70,6 @@ trait ItSpec
 
     override def configure(): Unit = ()
 
-    @Provides
-    @Singleton
-    def clock: Clock = {
-      val fixedInstant = LocalDateTime.parse(frozenTimeString).toInstant(ZoneOffset.UTC)
-      Clock.fixed(fixedInstant, ZoneId.systemDefault)
-    }
   }
   val baseUrl: String = s"http://localhost:$WireMockSupport.port"
 
@@ -103,7 +88,8 @@ trait ItSpec
     .configure(configMap).build()
 
   def configMap = Map[String, Any](
-    "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it"
+    "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it",
+    "queue.retryAfter" -> "3 seconds"
   )
 
   def injector: Injector = fakeApplication().injector

@@ -5,8 +5,6 @@ import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import wartremover.{Wart, wartremoverErrors, wartremoverExcluded, wartremoverWarnings}
 
-val appName = "payments-processor"
-
 lazy val scalariformSettings = {
   // description of options found here -> https://github.com/scala-ide/scalariform
   ScalariformKeys.preferences := ScalariformKeys.preferences.value
@@ -83,13 +81,12 @@ lazy val scoverageSettings = {
     ScoverageKeys.coverageHighlighting := true
   )
 }
-
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .settings(
     scalaVersion := "2.11.12",
-    majorVersion                     := 0,
-    libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test
+    majorVersion := 0,
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test
   )
   .settings(scalariformSettings: _*)
   .settings(wartRemoverError)
@@ -108,7 +105,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 9211)
   .settings(
     routesImport ++= Seq(
-    //  "model._"
+      //  "model._"
     ))
   .settings(
     scalacOptions ++= Seq(
@@ -125,3 +122,4 @@ lazy val microservice = Project(appName, file("."))
       "-Ypartial-unification" //required by cats
     )
   )
+val appName = "payments-processor"
