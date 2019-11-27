@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package config
+package pp.controllers
 
-import javax.inject.Inject
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import support.{ItSpec, PaymentsProcessData, TestConnector}
+import play.api.http.Status
 
-case class AppConfig(
-    appName: String
-) {
+class ChargeRefControllerSpec extends ItSpec {
 
-  @Inject
-  def this(config: Configuration, servicesConfig: ServicesConfig) = this(
-    appName = servicesConfig.getString("appName")
-  )
+  val testConnector = injector.instanceOf[TestConnector]
+  "call sendCardPaymentsNotification expect ok" in {
+
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
+    response.status
+
+  }
 
 }

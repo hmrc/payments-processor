@@ -1,1 +1,2 @@
 # microservice specific routes
+POST        /sendCardPaymentsNotification                               pp.controllers.ChargeRefController.sendCardPaymentsNotification()

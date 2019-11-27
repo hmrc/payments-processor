@@ -17,18 +17,25 @@
 //Note if you run a clean it may removed the following import which is needed !
 // import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
-package scheduling
+package pp.model
 
 import java.time.LocalDateTime
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.workitem.WorkItem
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
-case class NotificationWorkItem(_id: BSONObjectID, updatedAt: LocalDateTime, value: String)
+case class ChargeRefNotificationWorkItem(
+    _id:             BSONObjectID,
+    updatedAt:       LocalDateTime,
+    taxType:         TaxType,
+    chargeRefNumber: String,
+    amountDue:       BigDecimal,
+    amountPaid:      BigDecimal)
 
-object NotificationWorkItem {
-  implicit val format: OFormat[NotificationWorkItem] = Json.format[NotificationWorkItem]
-  val workItemFormats = WorkItem.workItemMongoFormat[NotificationWorkItem]
+object ChargeRefNotificationWorkItem {
+  implicit val format: OFormat[ChargeRefNotificationWorkItem] = Json.format[ChargeRefNotificationWorkItem]
+  val workItemFormats = WorkItem.workItemMongoFormat[ChargeRefNotificationWorkItem]
 }
+

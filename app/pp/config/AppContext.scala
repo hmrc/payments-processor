@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package scheduling
+package pp.config
 
-import java.time.Clock
-import java.util.TimeZone
+import javax.inject.{Inject, Singleton}
+import play.api.Configuration
 
-import org.joda.time.{DateTime, DateTimeZone}
-
-object DateTimeHelpers {
-
-  implicit class ClockJodaExtensions(clock: Clock) {
-    def nowAsJoda: DateTime = {
-      new DateTime(
-        clock.instant().toEpochMilli,
-        DateTimeZone.forTimeZone(TimeZone.getTimeZone(clock.getZone)))
-    }
-  }
-
+@Singleton
+class AppContext @Inject() (configuration: Configuration) {
+  private val apiContextConfigKey = "api.context"
+  private val whitelistAppConfigKey = "api.access.white-list.applicationIds"
+  val apiContext: String = configuration.underlying.getString(apiContextConfigKey)
+  val whiteListedAppIds: Option[Seq[String]] = configuration.getOptional[Seq[String]](whitelistAppConfigKey)
 }
+

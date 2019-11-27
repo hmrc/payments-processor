@@ -1,0 +1,112 @@
+#%RAML 1.0
+---
+
+title: Payments Send Charge Reference
+version: 1.0
+protocols: [ HTTPS ]
+baseUri: https://api.service.hmrc.gov.uk/
+
+documentation:
+ - title: Overview
+   content: !include documentation/overview.md
+ - title: Versioning
+   content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/versioning.md
+ - title: Errors
+   content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/errors.md
+
+mediaType: [ application/json]
+
+uses:
+  sec: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/securitySchemes.raml
+  headers: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/headers.raml
+  annotations: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/annotations.raml
+  types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
+
+traits:
+ badRequest:
+  responses:
+   400:
+    body:
+     application/json:
+      type: types.errorResponse
+      examples:
+        badRequest:
+         description: Reuest was incorrect
+         value:
+            code : BAD_REQUEST
+ authorisationHeaderMissing:
+  responses:
+   401:
+     body:
+      application/json:
+          type: types.errorResponse
+          examples:
+             badRequest:
+               description: The Authorization header is missing
+               value:
+                code : AUTH_HEADER_MISSING
+
+ authorisationHeaderInvalid:
+  responses:
+   401:
+    body:
+     application/json:
+       type: types.errorResponse
+       examples:
+         badRequest:
+           description: The value provided for Authorization header is invalid
+           value:
+            code : AUTH_HEADER_INVALID
+
+ acceptHeaderInvalid:
+  responses:
+   406:
+    body:
+      application/json:
+        type: types.errorResponse
+        examples:
+          badRequest:
+            description: The accept header is missing or invalid
+            value:
+                code : ACCEPT_HEADER_INVALID
+
+/payments-processor/sendCardPaymentsNotification:
+  post:
+    description: This endpoint accepts the charge reference information, then queues it into WORK_ITEM_REPO before sending it to ETMP via DES
+
+
+       The body must contain following
+
+          1. Charge reference information (TODO).
+
+
+
+    displayName: Atttempts to send charge reference information to ETMP
+    is:
+      - headers.acceptHeader
+      - authorisationHeaderMissing
+      - authorisationHeaderInvalid
+      - acceptHeaderInvalid
+    securedBy: [ sec.x-application ]
+    body:
+      application/json:
+        description: The body contains charge reference information
+        example: |
+          {"todo": "complete this"}
+    responses:
+      200:
+        description:
+        body:
+          application/json:
+            example: |
+              {
+                "todo": "complete this"
+              }
+      400:
+        description: Invalid request
+        body:
+          application/json:
+            example: |
+              {
+                "statusCode": 400
+              }
