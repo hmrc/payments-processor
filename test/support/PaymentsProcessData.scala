@@ -20,7 +20,6 @@ import java.time.{Clock, LocalDateTime}
 
 import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationPciPalRequest, ChargeRefNotificationWorkItem, TaxTypes}
 import play.api.libs.json.{JsValue, Json}
-import reactivemongo.bson.BSONObjectID
 
 object PaymentsProcessData {
 
@@ -28,7 +27,7 @@ object PaymentsProcessData {
 
   val chargeReferenceNumber = "XQ002610015768"
 
-  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(BSONObjectID.generate, LocalDateTime.now(clock), TaxTypes.CDS, chargeReferenceNumber, 100.12, 100.12)
+  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.CDS, chargeReferenceNumber, 100.12, 100.12)
 
   val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(TaxTypes.CDS, chargeReferenceNumber, 100.12, 100.11)
 

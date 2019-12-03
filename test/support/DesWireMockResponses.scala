@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package support
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.ChargeRefNotificationPoler
+import com.github.tomakehurst.wiremock.client.WireMock._
 
-import play.api.inject.SimpleModule
-import play.api.inject._
+object DesWireMockResponses {
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPoler]).asEagerSingleton
+  def sendCardPaymentsNotification = {
+    stubFor(post(urlMatching("/cross-regime/repayment/VATC"))
+      .willReturn(aResponse()
+        .withStatus(200)))
+
   }
 
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
 }
-
-//class TasksModule extends SimpleModule(bind[ChargeRefNotificationPoler].toSelf.eagerly())

@@ -16,21 +16,16 @@
 
 package pp.controllers
 
-import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatestplus.play.WsScalaTestClient
-import play.api.Logger
 import play.api.http.Status
 import play.api.libs.json.Json
-import play.api.libs.ws.{WSClient, WSResponse}
-import play.api.test.{FutureAwaits, DefaultAwaitTimeout}
+import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import support.{ItSpec, TestData}
 import uk.gov.hmrc.http.HttpResponse
 
 class ApiDocumentationControllerSpec extends ItSpec with WsScalaTestClient with FutureAwaits with DefaultAwaitTimeout {
 
   private lazy val controller = injector.instanceOf[ApiDocumentationController]
-
-  protected implicit lazy val wsClient: WSClient = app.injector.instanceOf[WSClient]
 
   "DefinitionController.definition return OK status" in {
     val response: HttpResponse = connector.getDef.futureValue

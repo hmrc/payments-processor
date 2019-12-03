@@ -16,16 +16,26 @@
 
 package pp.controllers
 
-import support.{ItSpec, PaymentsProcessData, TestConnector}
 import play.api.http.Status
+import pp.scheduling.ChargeRefNotificationMongoRepo
+import support._
 
-class ChargeRefControllerSpec extends ItSpec {
+class ChargeRefControllerAyncSpec extends ItSpec {
 
   val testConnector = injector.instanceOf[TestConnector]
+
+  val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
+
+  override def beforeEach(): Unit = {
+    val remove = repo.removeAll().futureValue
+  }
+
+
   "call sendCardPaymentsNotification expect ok" in {
 
+    DesWireMockResponses.sendCardPaymentsNotification
     val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
-    response.status
+    response.status shouldBe Status.OK
 
   }
 

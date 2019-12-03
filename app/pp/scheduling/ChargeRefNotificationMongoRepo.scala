@@ -32,6 +32,8 @@ import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.workitem._
 
+import uk.gov.hmrc.play.scheduling.ExclusiveScheduledJob
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

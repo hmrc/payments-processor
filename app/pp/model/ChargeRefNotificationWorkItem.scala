@@ -27,8 +27,7 @@ import uk.gov.hmrc.workitem.WorkItem
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
 case class ChargeRefNotificationWorkItem(
-    _id:             BSONObjectID,
-    updatedAt:       LocalDateTime,
+    createdOn:       LocalDateTime,
     taxType:         TaxType,
     chargeRefNumber: String,
     amountDue:       BigDecimal,

@@ -9,7 +9,8 @@ object AppDependencies {
     "uk.gov.hmrc" %% "bootstrap-play-26" % "1.1.0",
     "uk.gov.hmrc" %% "work-item-repo" % "6.8.0-play-26",
     "com.beachape" %% "enumeratum" % "1.5.13",
-    "uk.gov.hmrc" %% "play-hmrc-api" % "3.6.0-play-26"
+    "uk.gov.hmrc" %% "play-hmrc-api" % "3.6.0-play-26",
+    "uk.gov.hmrc"           %% "play-scheduling"    % "6.0.0"
   )
 
   val test = Seq(

@@ -33,6 +33,8 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
   //https://github.com/hmrc/customs-notification
   //Simple
   //https://github.com/hmrc/leak-detection
+  //https://github.com/hmrc/mtd-vat-comms/blob/master/app/modules/SchedulerModule.scala
+  //https://github.com/hmrc/mtd-vat-comms/blob/65a95d6ebc0b7dc15025ba2f9703746356507586/app/services/CommsEventQueuePollingService.scala
 
   private val clock: Clock = Clock.systemUTC()
   val jodaDateTime: DateTime = DateTime.now()
