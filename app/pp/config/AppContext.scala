@@ -21,9 +21,9 @@ import play.api.Configuration
 
 @Singleton
 class AppContext @Inject() (configuration: Configuration) {
-  private val apiContextConfigKey = "api.context"
-  private val whitelistAppConfigKey = "api.access.white-list.applicationIds"
-  val apiContext: String = configuration.underlying.getString(apiContextConfigKey)
-  val whiteListedAppIds: Option[Seq[String]] = configuration.getOptional[Seq[String]](whitelistAppConfigKey)
+
+  val apiContext: String = configuration.underlying.getString("api.context")
+
+  val whiteListedAppIds: Option[Seq[String]] = configuration.getOptional[Seq[String]]("api.access.white-list.applicationIds")
 }
 

@@ -27,12 +27,16 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DesConnector @Inject() (servicesConfig: ServicesConfig, httpClient: HttpClient, configuration: Configuration)(implicit ec: ExecutionContext) {
+class DesConnector @Inject() (
+    servicesConfig: ServicesConfig,
+    httpClient:     HttpClient,
+    configuration:  Configuration)
+  (implicit ec: ExecutionContext) {
 
   private val serviceURL: String = servicesConfig.baseUrl("des")
-  private val authorizationToken: String = configuration.get[String]("microservice.services.des.authorizationToken")
-  private val serviceEnvironment: String = configuration.get[String]("microservice.services.des.environment")
-  private val chargeref: String = configuration.get[String]("microservice.services.des.chargeref-url")
+  private val authorizationToken: String = configuration.underlying.getString("microservice.services.des.authorizationToken")
+  private val serviceEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
+  private val chargeref: String = configuration.underlying.getString("microservice.services.des.chargeref-url")
 
   private val desHeaderCarrier: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(s"Bearer $authorizationToken")))
     .withExtraHeaders("Environment" -> serviceEnvironment, "OriginatorID" -> "MDTP")

@@ -16,23 +16,20 @@
 
 package pp.config
 
-import java.util.concurrent.TimeUnit
-
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-
-import scala.concurrent.duration.{Duration, FiniteDuration}
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.FiniteDuration
 
 @Singleton
-class AppConfig @Inject() (configuration: Configuration) {
+class QueueConfig @Inject() (configuration: Configuration) {
+
   val queueEnabled: Boolean = configuration.underlying.getBoolean("queue.enabled")
-  val pollerEnabled: Boolean = configuration.underlying.getBoolean("poller.enabled")
-  val pollerInterval: Int = configuration.underlying.getInt("poller.interval.milliseconds")
-  val pollerInstances: Int = configuration.underlying.getInt("poller.instances")
-  val pollerRetryAfterFailureInterval: Int = configuration.underlying.getInt("poller.retryAfterFailureInterval.seconds")
 
-  def pollerIntervalFinate: FiniteDuration = Duration(pollerInterval, TimeUnit.MILLISECONDS)
-  def pollerRetryAfterFailureIntervalFinate: FiniteDuration = Duration(pollerRetryAfterFailureInterval, TimeUnit.SECONDS)
+  val pollerInitialDelay: FiniteDuration = FiniteDuration(configuration.underlying.getDuration("poller.initialDelay").toNanos, TimeUnit.NANOSECONDS)
 
+  val pollerInterval: FiniteDuration = FiniteDuration(configuration.underlying.getDuration("poller.interval").toNanos, TimeUnit.NANOSECONDS)
+
+  val polleraEnabled: Boolean = configuration.underlying.getBoolean("poller.enabled")
 }
 

@@ -18,28 +18,28 @@ package pp.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
-import play.api.mvc.{Action, ControllerComponents, Result}
-import pp.config.AppConfig
+import play.api.mvc.{Action, ControllerComponents}
+import pp.config.QueueConfig
 import pp.model.ChargeRefNotificationPciPalRequest
 import pp.services.ChargeRefService
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
-import uk.gov.hmrc.workitem.{InProgress, ResultStatus, ToDo}
+import uk.gov.hmrc.workitem.ToDo
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class ChargeRefController @Inject() (
-    cc:               ControllerComponents,
-    chargeRefService: ChargeRefService,
-    appConfig:        AppConfig
-)
-  (implicit executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator {
+class ChargeRefController @Inject()(
+                                     cc: ControllerComponents,
+                                     chargeRefService: ChargeRefService,
+                                     appConfig: QueueConfig
+                                   )
+                                   (implicit executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator {
 
   def sendCardPaymentsNotification(): Action[ChargeRefNotificationPciPalRequest] = Action.async(parse.json[ChargeRefNotificationPciPalRequest]) { implicit request =>
     chargeRefService
       .sendCardPaymentsNotificationSync(request.body)
       .map(_ => Ok)
-      .recoverWith{
+      .recoverWith {
         case _ => {
           chargeRefService
             .sendCardPaymentsNotificationToWorkItemRepo(request.body)
@@ -47,7 +47,7 @@ class ChargeRefController @Inject() (
               res => res.status match {
                 case ToDo => Ok
                 case _ => {
-                  Logger.error("Could not add message to work item repo")
+                  Logger.warn("Could not add message to work item repo")
                   InternalServerError
                 }
               }

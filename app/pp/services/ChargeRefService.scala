@@ -16,19 +16,17 @@
 
 package pp.services
 
-import java.time.{Clock, LocalDateTime}
+import java.time.{Clock, LocalDateTime, ZoneId}
 
 import javax.inject.{Inject, Singleton}
-import pp.connectors.des.DesConnector
-import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationPciPalRequest, ChargeRefNotificationWorkItem, TaxTypes}
-import pp.scheduling.ChargeRefNotificationMongoRepo
-import uk.gov.hmrc.http.HttpResponse
-import java.time.ZoneId
-
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.iteratee.{Enumerator, Iteratee}
-import uk.gov.hmrc.workitem.WorkItem
+import pp.connectors.des.DesConnector
+import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationPciPalRequest, ChargeRefNotificationWorkItem}
+import pp.scheduling.ChargeRefNotificationMongoRepo
+import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.workitem.{Failed, WorkItem}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -79,31 +77,31 @@ class ChargeRefService @Inject() (
 
   }
 
-  def processOneWorkItem() = {
-    chargeRefNotificationMongoRepo.pullOutstanding flatMap {
-      case Some(outstandingItem) => {
-        sendWorkItemToDes(outstandingItem).map { _ => true }
-      }
-      case None => Future.successful(false)
-    }
+  def retrieveWorkItems: Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
 
-  }
-
-  //def scanOneItemAndMarkAsComplete (acc: Seq[ChargeRefNotificationWorkItem],workItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Seq[ChargeRefNotificationWorkItem]] =
-
-  def retrieveWorkItems = {
+    Logger.debug("inside retrieveWorkItems")
     val pullWorkItems: Enumerator[WorkItem[ChargeRefNotificationWorkItem]] =
       Enumerator.generateM(chargeRefNotificationMongoRepo.pullOutstanding)
 
-    val processWorkItems: Iteratee[WorkItem[ChargeRefNotificationWorkItem], Unit] = {
-      Iteratee.foreach {
-        workItem =>
-          sendWorkItemToDes(workItem)
-          ()
-      }
+    val processWorkItems = Iteratee.foldM(Seq.empty[WorkItem[ChargeRefNotificationWorkItem]]) {
+      sendNotificationMarkAsComplete
     }
 
     pullWorkItems.run(processWorkItems)
+  }
+
+  def sendNotificationMarkAsComplete(acc: Seq[WorkItem[ChargeRefNotificationWorkItem]], workItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
+
+    Logger.debug("inside sendNotificationMarkAsComplete")
+    sendWorkItemToDes(workItem)
+      .map(_ => chargeRefNotificationMongoRepo.complete(workItem.id))
+      .map(_ => acc :+ workItem)
+      .recover {
+        case _ =>
+          chargeRefNotificationMongoRepo.markAs(workItem.id, Failed)
+          acc
+      }
+
   }
 
 }

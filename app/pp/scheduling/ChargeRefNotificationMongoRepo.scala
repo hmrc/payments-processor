@@ -32,8 +32,6 @@ import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.workitem._
 
-import uk.gov.hmrc.play.scheduling.ExclusiveScheduledJob
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -44,16 +42,21 @@ class ChargeRefNotificationMongoRepo @Inject() (
     servicesConfig:         ServicesConfig)
   (implicit ec: ExecutionContext)
   extends WorkItemRepository[ChargeRefNotificationWorkItem, BSONObjectID](
-    collectionName = "notifications-work-item",
+    collectionName = "charge-ref-notifications",
     mongo          = reactiveMongoComponent.mongoConnector.db,
     itemFormat     = ChargeRefNotificationWorkItem.workItemFormats,
     configuration.underlying) {
 
+  override val inProgressRetryAfterProperty: String = "queue.retryAfter"
+
   lazy val retryIntervalMillis: Long = configuration
     .getMillis(inProgressRetryAfterProperty)
   override lazy val inProgressRetryAfter: Duration = Duration.millis(retryIntervalMillis)
-  override val inProgressRetryAfterProperty: String = "queue.retryAfter"
-  private val ttlInSeconds = servicesConfig.getInt("queue.ttlInSeconds")
+
+  private lazy val ttlInSeconds = {
+    val duration = servicesConfig.getDuration("queue.ttl")
+    duration.toSeconds
+  }
 
   override def indexes: Seq[Index] = super.indexes ++ Seq(
     Index(key     = Seq("receivedAt" -> IndexType.Ascending), name = Some("receivedAtTime"), options = BSONDocument("expireAfterSeconds" -> ttlInSeconds)))

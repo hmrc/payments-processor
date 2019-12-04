@@ -17,14 +17,11 @@
 import java.time.{Clock, ZoneOffset}
 
 import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.ChargeRefNotificationPoler
-
-import play.api.inject.SimpleModule
-import play.api.inject._
+import pp.scheduling.ChargeRefNotificationPollingService
 
 class Module() extends AbstractModule {
   override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPoler]).asEagerSingleton
+    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton
   }
 
   @Provides
@@ -32,5 +29,3 @@ class Module() extends AbstractModule {
   def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
 
 }
-
-//class TasksModule extends SimpleModule(bind[ChargeRefNotificationPoler].toSelf.eagerly())
