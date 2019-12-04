@@ -16,30 +16,38 @@
 
 package pp.controllers
 
-import play.api.Application
-import support._
 import play.api.http.Status
-import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
+import pp.scheduling.ChargeRefNotificationMongoRepo
+import support._
 
 class ChargeRefControllerSyncSpec extends ItSpec {
 
   val testConnector = injector.instanceOf[TestConnector]
 
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
-    .configure(configMap).build()
+  val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
 
-  override def configMap = Map[String, Any](
-    "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it",
-    "queue.retryAfter" -> "1 seconds",
-    "queue.enabled" -> false,
-    "microservice.services.des.port" -> WireMockSupport.port
-  )
+  override def beforeEach(): Unit = {
+    val remove = repo.removeAll().futureValue
+  }
 
   "call sendCardPaymentsNotification expect ok" in {
 
     DesWireMockResponses.sendCardPaymentsNotification
     val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
+    response.status shouldBe Status.OK
+
+  }
+
+  "call sendCardPaymentsNotification expect failure if des fails" in {
+    DesWireMockResponses.sendCardPaymentsNotificationFailure
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).failed.futureValue
+    response.getMessage should include ("des failed")
+
+  }
+
+  "call sendCardPaymentsNotification from root, expect ok" in {
+    DesWireMockResponses.sendCardPaymentsNotification
+    val response = testConnector.sendCardPaymentsNotificationRoot(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
     response.status shouldBe Status.OK
 
   }

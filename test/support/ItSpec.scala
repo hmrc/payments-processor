@@ -90,7 +90,12 @@ trait ItSpec
   def configMap = Map[String, Any](
     "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it",
     "queue.retryAfter" -> "1 seconds",
-    "microservice.services.des.port" -> WireMockSupport.port
+    "microservice.services.des.port" -> WireMockSupport.port,
+    "queue.enabled" -> false,
+    "poller.enabled" -> false,
+    "queue.retryAfter" -> "1 seconds",
+    "poller.initialDelay" -> "1 seconds",
+    "poller.interval" -> "1 seconds"
   )
 
   def injector: Injector = fakeApplication().injector

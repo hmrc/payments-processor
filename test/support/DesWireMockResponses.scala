@@ -17,11 +17,41 @@
 package support
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.stubbing.Scenario
 
 object DesWireMockResponses {
 
   def sendCardPaymentsNotification = {
-    stubFor(post(urlMatching("/cross-regime/repayment/VATC"))
+    stubFor(post(urlMatching("/cross-regime/repayment/VATC/new-api"))
+      .willReturn(aResponse()
+        .withStatus(200)))
+
+  }
+
+  def sendCardPaymentsNotificationFailure = {
+    stubFor(post(urlMatching("/cross-regime/repayment/VATC/new-api"))
+      .willReturn(aResponse()
+        .withStatus(500)
+        .withBody("des failed")))
+  }
+
+  def sendCardPaymentsNotificationFailurePersistent = {
+
+    stubFor(post(urlMatching("/cross-regime/repayment/VATC/new-api"))
+      .inScenario("JMS Test")
+      .whenScenarioStateIs(Scenario.STARTED)
+      .willReturn(aResponse()
+        .withStatus(500)
+        .withBody("des failed"))
+      .willSetStateTo("Success"))
+
+  }
+
+  def sendCardPaymentsNotificationSuccessPersistent = {
+
+    stubFor(post(urlMatching("/cross-regime/repayment/VATC/new-api"))
+      .inScenario("JMS Test")
+      .whenScenarioStateIs("Success")
       .willReturn(aResponse()
         .withStatus(200)))
 

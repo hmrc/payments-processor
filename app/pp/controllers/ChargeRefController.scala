@@ -24,34 +24,42 @@ import pp.model.ChargeRefNotificationPciPalRequest
 import pp.services.ChargeRefService
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.workitem.ToDo
+import uk.gov.hmrc.http.BadGatewayException
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ChargeRefController @Inject()(
-                                     cc: ControllerComponents,
-                                     chargeRefService: ChargeRefService,
-                                     appConfig: QueueConfig
-                                   )
-                                   (implicit executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator {
+class ChargeRefController @Inject() (
+    cc:               ControllerComponents,
+    chargeRefService: ChargeRefService,
+    queueConfig:      QueueConfig
+)
+  (implicit executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator {
 
   def sendCardPaymentsNotification(): Action[ChargeRefNotificationPciPalRequest] = Action.async(parse.json[ChargeRefNotificationPciPalRequest]) { implicit request =>
     chargeRefService
       .sendCardPaymentsNotificationSync(request.body)
       .map(_ => Ok)
       .recoverWith {
-        case _ => {
-          chargeRefService
-            .sendCardPaymentsNotificationToWorkItemRepo(request.body)
-            .map(
-              res => res.status match {
-                case ToDo => Ok
-                case _ => {
-                  Logger.warn("Could not add message to work item repo")
-                  InternalServerError
+        case e @ (_: RuntimeException | _: Exception) => {
+          Logger.debug("Caught RuntimeException")
+          if (queueConfig.queueEnabled) {
+            Logger.debug("Queue enabled")
+            chargeRefService
+              .sendCardPaymentsNotificationToWorkItemRepo(request.body)
+              .map(
+                res => res.status match {
+                  case ToDo => Ok
+                  case _ => {
+                    Logger.warn("Could not add message to work item repo")
+                    InternalServerError
+                  }
                 }
-              }
-            )
+              )
+          } else {
+            Logger.debug("Queue disabled")
+            Future.failed(e)
+          }
         }
       }
   }

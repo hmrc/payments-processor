@@ -32,6 +32,9 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def sendCardPaymentsNotification(cardPaymentsNotificationRequest: ChargeRefNotificationDesRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST(s"http://localhost:$port/payments-processor/sendCardPaymentsNotification", cardPaymentsNotificationRequest, headers)
 
+  def sendCardPaymentsNotificationRoot(cardPaymentsNotificationRequest: ChargeRefNotificationDesRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.POST(s"http://localhost:$port/sendCardPaymentsNotification", cardPaymentsNotificationRequest, headers)
+
   def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET(s"http://localhost:$port/api/conf/1.0/application.raml")
 
   def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET(s"http://localhost:$port/api/definition")

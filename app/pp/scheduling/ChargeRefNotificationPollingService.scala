@@ -54,7 +54,7 @@ class ChargeRefNotificationPollingService @Inject() (actorSystem:      ActorSyst
   }
 
   actorSystem.scheduler.schedule(initialDelay, interval) {
-    if (queueConfig.polleraEnabled) {
+    if (queueConfig.pollerEnabled) {
       executor()
     } else {
       Logger.debug("Polling is enabled is false")

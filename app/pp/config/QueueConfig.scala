@@ -30,6 +30,6 @@ class QueueConfig @Inject() (configuration: Configuration) {
 
   val pollerInterval: FiniteDuration = FiniteDuration(configuration.underlying.getDuration("poller.interval").toNanos, TimeUnit.NANOSECONDS)
 
-  val polleraEnabled: Boolean = configuration.underlying.getBoolean("poller.enabled")
+  val pollerEnabled: Boolean = configuration.underlying.getBoolean("poller.enabled")
 }
 

@@ -16,25 +16,16 @@
 
 package pp.scheduling
 
-import java.time.{Clock, LocalDateTime}
+import java.time.Clock
 
-import pp.model.{ChargeRefNotificationWorkItem, TaxTypes}
-import pp.model.TaxTypes.CDS
 import org.joda.time.DateTime
 import play.api.libs.json.Json
+import pp.model.{ChargeRefNotificationWorkItem, TaxTypes}
 import reactivemongo.bson.BSONObjectID
 import support.{ItSpec, PaymentsProcessData}
 import uk.gov.hmrc.workitem.WorkItem
 
 class ChargeRefNotificationMongoRepoSpec extends ItSpec {
-
-  //Repos that have used work-item-repo
-  //Complex - uses akka to have multi listeners
-  //https://github.com/hmrc/customs-notification
-  //Simple
-  //https://github.com/hmrc/leak-detection
-  //https://github.com/hmrc/mtd-vat-comms/blob/master/app/modules/SchedulerModule.scala
-  //https://github.com/hmrc/mtd-vat-comms/blob/65a95d6ebc0b7dc15025ba2f9703746356507586/app/services/CommsEventQueuePollingService.scala
 
   private val clock: Clock = Clock.systemUTC()
   val jodaDateTime: DateTime = DateTime.now()

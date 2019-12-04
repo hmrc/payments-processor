@@ -4,3 +4,5 @@
 ->         /                          definition.Routes
 
 GET        /admin/metrics             com.kenshoo.play.metrics.MetricsController.metrics
+
+POST       /sendCardPaymentsNotification   pp.controllers.ChargeRefController.sendCardPaymentsNotification()

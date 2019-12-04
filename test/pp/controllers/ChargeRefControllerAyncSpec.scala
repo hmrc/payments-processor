@@ -16,7 +16,10 @@
 
 package pp.controllers
 
+import play.api.Application
 import play.api.http.Status
+import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
+import play.api.libs.json.Json
 import pp.scheduling.ChargeRefNotificationMongoRepo
 import support._
 
@@ -30,12 +33,54 @@ class ChargeRefControllerAyncSpec extends ItSpec {
     val remove = repo.removeAll().futureValue
   }
 
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
+    .configure(configMap).build()
+
+  override def configMap = Map[String, Any](
+    "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it",
+    "queue.retryAfter" -> "1 seconds",
+    "microservice.services.des.port" -> WireMockSupport.port,
+    "queue.enabled" -> true,
+    "poller.enabled" -> true,
+    "queue.retryAfter" -> "1 seconds",
+    "poller.initialDelay" -> "1 seconds",
+    "poller.interval" -> "1 seconds"
+  )
 
   "call sendCardPaymentsNotification expect ok" in {
 
     DesWireMockResponses.sendCardPaymentsNotification
     val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
     response.status shouldBe Status.OK
+    Thread.sleep(1000)
+    collectionSize shouldBe 0
+
+  }
+
+  "call sendCardPaymentsNotification expect ok with a message on the queue" in {
+
+    DesWireMockResponses.sendCardPaymentsNotificationFailure
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
+    response.status shouldBe Status.OK
+    Thread.sleep(1000)
+    collectionSize shouldBe 1
+
+  }
+
+  "call sendCardPaymentsNotification expect ok with no messages on the queue" in {
+
+    DesWireMockResponses.sendCardPaymentsNotificationFailurePersistent
+    DesWireMockResponses.sendCardPaymentsNotificationSuccessPersistent
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
+    response.status shouldBe Status.OK
+    Thread.sleep(1000)
+    collectionSize shouldBe 0
+
+  }
+
+  private def collectionSize: Int = {
+    repo.count(Json.obj()).futureValue
 
   }
 
