@@ -51,7 +51,7 @@ class ChargeRefController @Inject() (
                 res => res.status match {
                   case ToDo => Ok
                   case _ => {
-                    Logger.warn("Could not add message to work item repo")
+                    Logger.error("Could not add message to work item repo")
                     InternalServerError
                   }
                 }
