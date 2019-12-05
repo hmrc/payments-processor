@@ -49,7 +49,7 @@ class ChargeRefNotificationPollingService @Inject() (actorSystem:      ActorSyst
       case Success(Result(res)) =>
         Logger.debug(res)
       case Failure(throwable) =>
-        Logger.warn(s"Exception completing work item", throwable)
+        Logger.error(s"Exception completing work item", throwable)
     })
   }
 

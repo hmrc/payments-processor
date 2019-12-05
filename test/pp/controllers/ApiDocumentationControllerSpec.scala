@@ -16,14 +16,12 @@
 
 package pp.controllers
 
-import org.scalatestplus.play.WsScalaTestClient
 import play.api.http.Status
 import play.api.libs.json.Json
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 import support.{ItSpec, TestData}
 import uk.gov.hmrc.http.HttpResponse
 
-class ApiDocumentationControllerSpec extends ItSpec with WsScalaTestClient with FutureAwaits with DefaultAwaitTimeout {
+class ApiDocumentationControllerSpec extends ItSpec {
 
   private lazy val controller = injector.instanceOf[ApiDocumentationController]
 

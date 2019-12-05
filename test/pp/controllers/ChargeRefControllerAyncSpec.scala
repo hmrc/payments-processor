@@ -16,9 +16,8 @@
 
 package pp.controllers
 
-import play.api.Application
+import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.http.Status
-import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.libs.json.Json
 import pp.scheduling.ChargeRefNotificationMongoRepo
 import support._
@@ -31,50 +30,44 @@ class ChargeRefControllerAyncSpec extends ItSpec {
 
   override def beforeEach(): Unit = {
     val remove = repo.removeAll().futureValue
+    WireMock.reset()
+
   }
 
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
-    .configure(configMap).build()
-
-  override def configMap = Map[String, Any](
-    "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it",
-    "queue.retryAfter" -> "1 seconds",
-    "microservice.services.des.port" -> WireMockSupport.port,
-    "queue.enabled" -> true,
-    "poller.enabled" -> true,
-    "queue.retryAfter" -> "1 seconds",
-    "poller.initialDelay" -> "1 seconds",
-    "poller.interval" -> "1 seconds"
-  )
+  override def configMap =
+    super
+      .configMap
+      .updated("queue.enabled", "true")
+      .updated("poller.enabled", "true")
 
   "call sendCardPaymentsNotification expect ok" in {
 
-    DesWireMockResponses.sendCardPaymentsNotification
+    DesResponses.sendCardPaymentsNotification(200, 100, "", 0)
     val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
     response.status shouldBe Status.OK
-    Thread.sleep(1000)
     collectionSize shouldBe 0
+    WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/repayment/VATC/new-api")))
 
   }
 
   "call sendCardPaymentsNotification expect ok with a message on the queue" in {
 
-    DesWireMockResponses.sendCardPaymentsNotificationFailure
+    DesResponses.sendCardPaymentsNotification(500, 100, "des failed", 0)
     val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
     response.status shouldBe Status.OK
-    Thread.sleep(1000)
     collectionSize shouldBe 1
 
   }
 
   "call sendCardPaymentsNotification expect ok with no messages on the queue" in {
 
-    DesWireMockResponses.sendCardPaymentsNotificationFailurePersistent
-    DesWireMockResponses.sendCardPaymentsNotificationSuccessPersistent
+    DesResponses.sendCardPaymentsNotification(500, 10, "des failed", 0)
+    DesResponses.sendCardPaymentsNotification(500, 10, "des failed", 1)
+    DesResponses.sendCardPaymentsNotification(200, 10, "ok", 2)
     val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
+    Thread.sleep(2000)
     response.status shouldBe Status.OK
-    Thread.sleep(1000)
+    WireMock.verify(3, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/repayment/VATC/new-api")))
     collectionSize shouldBe 0
 
   }

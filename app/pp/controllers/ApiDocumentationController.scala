@@ -18,11 +18,12 @@ package pp.controllers
 
 import controllers.Assets
 import javax.inject.{Inject, Singleton}
-import play.api.http.{ContentTypes, HttpErrorHandler, MimeTypes}
-import play.api.mvc.{Action, AnyContent, Codec, ControllerComponents}
+import play.api.http.HttpErrorHandler
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import pp.config.AppContext
+import pp.model.api.{Access, Api, ApiDefinition, Version}
 import uk.gov.hmrc.api.controllers.DocumentationController
-import views.txt
 
 import scala.concurrent.Future
 
@@ -35,14 +36,13 @@ class ApiDocumentationController @Inject() (
 ) extends DocumentationController(cc, assets, errorHandler) {
 
   override def definition(): Action[AnyContent] = Action.async {
-    Future.successful(
-      Ok(
-        txt.definition(
-          appContext.apiContext,
-          appContext.whiteListedAppIds.getOrElse(Seq.empty[String])
-        )
-      ).as(ContentTypes.withCharset(MimeTypes.JSON)(Codec.utf_8)))
 
+    val accessIn: Access = Access(whitelistedApplicationIds = appContext.whiteListedAppIds.getOrElse(Seq.empty[String]))
+    val version: Version = Version(access = accessIn)
+    val apiIn: Api = Api(context  = appContext.apiContext, versions = Seq(version))
+    val apiDefinition: ApiDefinition = ApiDefinition(api = apiIn)
+
+    Future.successful(Ok(Json.toJson(apiDefinition)))
   }
 
 }
