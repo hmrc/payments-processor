@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package pp.scheduling
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.ChargeRefNotificationPollingService
+import java.time.Clock
+import java.util.TimeZone
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton
+import org.joda.time.{DateTime, DateTimeZone}
+
+object DateTimeHelpers {
+
+  implicit class ClockJodaExtensions(clock: Clock) {
+    def nowAsJoda: DateTime = {
+      new DateTime(
+        clock.instant().toEpochMilli,
+        DateTimeZone.forTimeZone(TimeZone.getTimeZone(clock.getZone)))
+    }
   }
-
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
 
 }

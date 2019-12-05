@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package pp.model
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.ChargeRefNotificationPollingService
+import play.api.libs.json.{JsString, Json}
+import support.{RichMatchers, UnitSpec}
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton
+class TaxTypesSpec extends UnitSpec with RichMatchers {
+
+  "de/serialize TaxTypes" in {
+
+    val taxTypes = List(
+      "NLIJ" -> TaxTypes.NLIJ,
+      "CDS" -> TaxTypes.CDS,
+      "PARC" -> TaxTypes.PARC,
+      "P302" -> TaxTypes.P302)
+
+    taxTypes.foreach { tt =>
+      val jsValue = Json.toJson(tt._2)
+      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
+      jsValue.as[TaxType] shouldBe tt._2 withClue s"deserialize $tt"
+    }
   }
-
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
 }
+

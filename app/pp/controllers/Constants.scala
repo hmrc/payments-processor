@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package config
+package pp.controllers
 
-import support.ItSpec
+object Constants {
 
-class AppConfigSpec extends ItSpec {
-
-  val appConfig: AppConfig = injector.instanceOf[AppConfig]
-
-  "app name test " in {
-    appConfig.appName shouldBe "payments-processor"
-  }
+  val acceptHeaderMissing = "The accept header is missing or invalid"
 
 }

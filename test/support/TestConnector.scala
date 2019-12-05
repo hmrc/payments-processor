@@ -17,13 +17,25 @@
 package support
 
 import javax.inject.{Inject, Singleton}
+import pp.model.ChargeRefNotificationDesRequest
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext: ExecutionContext) {
 
   val port = 19001
+  val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
 
+  def sendCardPaymentsNotification(cardPaymentsNotificationRequest: ChargeRefNotificationDesRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.POST(s"http://localhost:$port/payments-processor/sendCardPaymentsNotification", cardPaymentsNotificationRequest, headers)
+
+  def sendCardPaymentsNotificationRoot(cardPaymentsNotificationRequest: ChargeRefNotificationDesRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.POST(s"http://localhost:$port/sendCardPaymentsNotification", cardPaymentsNotificationRequest, headers)
+
+  def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET(s"http://localhost:$port/api/conf/1.0/application.raml")
+
+  def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET(s"http://localhost:$port/api/definition")
 }

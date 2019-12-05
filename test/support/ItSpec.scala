@@ -89,22 +89,18 @@ trait ItSpec
 
   def configMap = Map[String, Any](
     "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it",
-    "queue.retryAfter" -> "1 seconds"
+    "queue.retryAfter" -> "1 seconds",
+    "microservice.services.des.port" -> WireMockSupport.port,
+    "queue.enabled" -> false,
+    "poller.enabled" -> false,
+    "queue.retryAfter" -> "1 seconds",
+    "poller.initialDelay" -> "1 seconds",
+    "poller.interval" -> "1 seconds"
   )
 
   def injector: Injector = fakeApplication().injector
 
-  def frozenTimeString: String = "2027-11-02T16:33:51.880"
-
-  def fakeRequest: Request[AnyContentAsEmpty.type] = CSRFTokenHelper.addCSRFToken(FakeRequest())
-
   def status(of: Result) = of.header.status
-
-  protected implicit val webDriver: WebDriver = new HtmlUnitDriver(false)
-
-  def goToViaPath(path: String) = webDriver.get(s"$webdriverUr$path")
-
-  implicit val request = FakeRequest()
 
 }
 

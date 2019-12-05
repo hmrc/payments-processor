@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package pp.config
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.ChargeRefNotificationPollingService
+import javax.inject.{Inject, Singleton}
+import play.api.Configuration
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton
-  }
+@Singleton
+class AppContext @Inject() (configuration: Configuration) {
 
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
+  val apiContext: String = configuration.underlying.getString("api.context")
 
+  val whiteListedAppIds: Option[Seq[String]] = configuration.getOptional[Seq[String]]("api.access.white-list.applicationIds")
 }
+

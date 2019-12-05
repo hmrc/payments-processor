@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package config
+package pp.model.api
 
-import javax.inject.Inject
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.json.{Json, OFormat}
 
-case class AppConfig(
-    appName: String
-) {
+case class APIAccess(`type`: String, whitelistedApplicationIds: Option[Seq[String]])
 
-  @Inject
-  def this(config: Configuration, servicesConfig: ServicesConfig) = this(
-    appName = servicesConfig.getString("appName")
-  )
-
+object APIAccess {
+  implicit val apiAccessFormats: OFormat[APIAccess] = Json.format[APIAccess]
 }

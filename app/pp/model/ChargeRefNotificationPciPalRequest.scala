@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package scheduling
+package pp.model
+import play.api.libs.json._
 
-import java.time.Clock
-import java.util.TimeZone
+//TODO We don't know what this looks like yet but will be key value pairs
+case class ChargeRefNotificationPciPalRequest(
+    taxType:         TaxType,
+    chargeRefNumber: String,
+    amountDue:       BigDecimal,
+    amountPaid:      BigDecimal)
 
-import org.joda.time.{DateTime, DateTimeZone}
-
-object DateTimeHelpers {
-
-  implicit class ClockJodaExtensions(clock: Clock) {
-    def nowAsJoda: DateTime = {
-      new DateTime(
-        clock.instant().toEpochMilli,
-        DateTimeZone.forTimeZone(TimeZone.getTimeZone(clock.getZone)))
-    }
-  }
-
+object ChargeRefNotificationPciPalRequest {
+  implicit val format: OFormat[ChargeRefNotificationPciPalRequest] = Json.format[ChargeRefNotificationPciPalRequest]
 }
+

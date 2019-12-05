@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package support
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.ChargeRefNotificationPollingService
+import com.github.tomakehurst.wiremock.stubbing.Scenario
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton
-  }
+trait WiremockStub {
+  def state(index: Int): String = if (index == 0) Scenario.STARTED else index.toString
+  def nextState(index: Int): String = (index + 1).toString
 
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
+  def endState(index: Int, size: Int): String = if (size == 1) Scenario.STARTED else (if (index + 1 >= size) index else index + 1).toString
 
 }
+
+object WiremockStub extends WiremockStub

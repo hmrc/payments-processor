@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package scheduling
+package pp.scheduling
 
 import java.time.Clock
 
 import javax.inject.{Inject, Singleton}
+import pp.model.ChargeRefNotificationWorkItem
 import org.joda.time.{DateTime, Duration}
 import play.api.Configuration
 import play.api.libs.json.{JsObject, Json}
@@ -26,7 +27,7 @@ import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import reactivemongo.play.json.ImplicitBSONHandlers._
-import scheduling.DateTimeHelpers._
+import pp.scheduling.DateTimeHelpers._
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.workitem._
@@ -34,23 +35,28 @@ import uk.gov.hmrc.workitem._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NotificationWorkItemMongoRepo @Inject() (
+class ChargeRefNotificationMongoRepo @Inject() (
     reactiveMongoComponent: ReactiveMongoComponent,
     configuration:          Configuration,
     clock:                  Clock,
     servicesConfig:         ServicesConfig)
   (implicit ec: ExecutionContext)
-  extends WorkItemRepository[NotificationWorkItem, BSONObjectID](
-    collectionName = "notifications-work-item",
+  extends WorkItemRepository[ChargeRefNotificationWorkItem, BSONObjectID](
+    collectionName = "charge-ref-notifications",
     mongo          = reactiveMongoComponent.mongoConnector.db,
-    itemFormat     = NotificationWorkItem.workItemFormats,
+    itemFormat     = ChargeRefNotificationWorkItem.workItemFormats,
     configuration.underlying) {
+
+  override val inProgressRetryAfterProperty: String = "queue.retryAfter"
 
   lazy val retryIntervalMillis: Long = configuration
     .getMillis(inProgressRetryAfterProperty)
   override lazy val inProgressRetryAfter: Duration = Duration.millis(retryIntervalMillis)
-  override val inProgressRetryAfterProperty: String = "queue.retryAfter"
-  private val ttlInSeconds = servicesConfig.getInt("queue.ttlInSeconds")
+
+  private lazy val ttlInSeconds = {
+    val duration = servicesConfig.getDuration("queue.ttl")
+    duration.toSeconds
+  }
 
   override def indexes: Seq[Index] = super.indexes ++ Seq(
     Index(key     = Seq("receivedAt" -> IndexType.Ascending), name = Some("receivedAtTime"), options = BSONDocument("expireAfterSeconds" -> ttlInSeconds)))
@@ -64,7 +70,7 @@ class NotificationWorkItemMongoRepo @Inject() (
     val failureCount = "failureCount"
   }
 
-  def pullOutstanding(implicit ec: ExecutionContext): Future[Option[WorkItem[NotificationWorkItem]]] =
+  def pullOutstanding(implicit ec: ExecutionContext): Future[Option[WorkItem[ChargeRefNotificationWorkItem]]] =
     super.pullOutstanding(now.minusMillis(retryIntervalMillis.toInt), now)
 
   def complete(id: BSONObjectID)(implicit ec: ExecutionContext): Future[Boolean] = {

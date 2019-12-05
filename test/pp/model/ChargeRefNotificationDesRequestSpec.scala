@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package pp.model
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.ChargeRefNotificationPollingService
+import play.api.libs.json.Json
+import support.{PaymentsProcessData, UnitSpec}
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton
+class ChargeRefNotificationDesRequestSpec extends UnitSpec {
+
+  "to json" in {
+    Json.toJson(PaymentsProcessData.chargeRefNotificationDesRequest) shouldBe PaymentsProcessData.chargeRefNotificationDesRequestJson
   }
 
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
+  "from json" in {
+    PaymentsProcessData.chargeRefNotificationDesRequestJson.as[ChargeRefNotificationDesRequest] shouldBe PaymentsProcessData.chargeRefNotificationDesRequest
+  }
 }

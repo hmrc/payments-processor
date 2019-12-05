@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package pp.jsonext
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.ChargeRefNotificationPollingService
+import enumeratum.{Enum, EnumEntry}
+import play.api.libs.json._
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton
-  }
+object EnumFormat {
 
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
+  def apply[T <: EnumEntry](e: Enum[T]): Format[T] = Format(
+    Reads {
+      case JsString(value) => e.withNameOption(value).map(JsSuccess(_))
+        .getOrElse(JsError(s"Enum Error: No Value for ${value}"))
+      case _ => JsError("Can only parse String")
+    },
+    Writes(v => JsString(v.entryName)))
 }
