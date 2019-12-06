@@ -26,7 +26,7 @@ object TestData {
                                   "api": {
                                     "name": "Charge Ref Notification",
                                     "description": "Provides a way to notify DES/ETMP of Charge Refs",
-                                    "context": "payments-processor",
+                                    "context": "organisations/vat/send-card-payments-notification",
                                     "categories": ["VAT"],
                                     "versions": [
                                       {
