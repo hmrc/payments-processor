@@ -18,7 +18,7 @@ package pp.controllers
 
 import play.api.http.Status
 import play.api.libs.json.Json
-import support.{ItSpec, TestData}
+import support.{ItSpec, PaymentsProcessData}
 import uk.gov.hmrc.http.HttpResponse
 
 class ApiDocumentationControllerSpec extends ItSpec {
@@ -29,7 +29,7 @@ class ApiDocumentationControllerSpec extends ItSpec {
     val response: HttpResponse = connector.getDef.futureValue
     response.status shouldBe Status.OK
     val json = Json.parse(response.body)
-    json shouldBe TestData.definition
+    json shouldBe PaymentsProcessData.definition
   }
 
   //This test works from SBT but not from intellij ... be warned!!

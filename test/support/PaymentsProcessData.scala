@@ -54,5 +54,26 @@ object PaymentsProcessData {
      """.stripMargin
 
   )
-
+  //language=JSON
+  val definition = Json.parse(s"""{
+                                  "scopes":[],
+                                  "api": {
+                                    "name": "Charge Ref Notification",
+                                    "description": "Provides a way to notify DES/ETMP of Charge Refs",
+                                    "context": "organisations/send-card-payments-notification",
+                                    "categories": ["OTHER"],
+                                    "versions": [
+                                      {
+                                        "version": "1.0",
+                                        "status": "STABLE",
+                                        "endpointsEnabled": true,
+                                        "access": {
+                                          "type": "PRIVATE",
+                                          "whitelistedApplicationIds": ["testId"],
+                                          "isTrial":false
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }""".stripMargin)
 }

@@ -24,11 +24,12 @@ case class ApiDefinition(
 )
 
 case class Api(
-    name:        String       = "Charge Ref Notification",
-    description: String       = "Provides a way to notify DES/ETMP of Charge Refs",
-    context:     String,
-    categories:  Seq[String]  = Seq("VAT"),
-    versions:    Seq[Version]
+    name:        String = "Charge Ref Notification",
+    description: String = "Provides a way to notify DES/ETMP of Charge Refs",
+    //Field 'context' must start with one of 'agents', 'customs', 'individuals', 'mobile', 'organisations', 'test'
+    context:    String,
+    categories: Seq[String]  = Seq("OTHER"),
+    versions:   Seq[Version]
 )
 
 case class Version(
