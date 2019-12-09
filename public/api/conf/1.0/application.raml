@@ -70,43 +70,44 @@ traits:
             value:
                 code : ACCEPT_HEADER_INVALID
 
-/organisations/sendCardPaymentsNotification:
-  post:
-    description: This endpoint accepts the charge reference information, then queues it into WORK_ITEM_REPO before sending it to ETMP via DES
+/organisations/vat/send-card-payments-notification:
+  /sendCardPaymentsNotification:
+    post:
+      description: This endpoint accepts the charge reference information, then queues it into WORK_ITEM_REPO before sending it to ETMP via DES
 
 
-       The body must contain following
+         The body must contain following
 
-          1. Charge reference information (TODO).
+            1. Charge reference information (TODO).
 
 
 
-    displayName: Atttempts to send charge reference information to ETMP
-    is:
-      - headers.acceptHeader
-      - authorisationHeaderMissing
-      - authorisationHeaderInvalid
-      - acceptHeaderInvalid
-    securedBy: [ sec.x-application ]
-    body:
-      application/json:
-        description: The body contains charge reference information
-        example: |
-          {"todo": "complete this"}
-    responses:
-      200:
-        description:
-        body:
-          application/json:
-            example: |
-              {
-                "todo": "complete this"
-              }
-      400:
-        description: Invalid request
-        body:
-          application/json:
-            example: |
-              {
-                "statusCode": 400
-              }
+      displayName: Atttempts to send charge reference information to ETMP
+      is:
+        - headers.acceptHeader
+        - authorisationHeaderMissing
+        - authorisationHeaderInvalid
+        - acceptHeaderInvalid
+      securedBy: [ sec.x-application ]
+      body:
+        application/json:
+          description: The body contains charge reference information
+          example: |
+            {"todo": "complete this"}
+      responses:
+        200:
+          description:
+          body:
+            application/json:
+              example: |
+                {
+                  "todo": "complete this"
+                }
+        400:
+          description: Invalid request
+          body:
+            application/json:
+              example: |
+                {
+                  "statusCode": 400
+                }
