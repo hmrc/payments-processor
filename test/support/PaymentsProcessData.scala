@@ -60,7 +60,7 @@ object PaymentsProcessData {
                                   "api": {
                                     "name": "Charge Ref Notification",
                                     "description": "Provides a way to notify DES/ETMP of Charge Refs",
-                                    "context": "payments",
+                                    "context": "payments/notifications",
                                     "categories": ["OTHER"],
                                     "versions": [
                                       {
