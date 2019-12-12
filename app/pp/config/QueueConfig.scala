@@ -31,5 +31,7 @@ class QueueConfig @Inject() (configuration: Configuration) {
   val pollerInterval: FiniteDuration = FiniteDuration(configuration.underlying.getDuration("poller.interval").toNanos, TimeUnit.NANOSECONDS)
 
   val pollerEnabled: Boolean = configuration.underlying.getBoolean("poller.enabled")
+
+  val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
 }
 

@@ -27,17 +27,16 @@ object PaymentsProcessData {
 
   val chargeReferenceNumber = "XQ002610015768"
 
-  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.CDS, chargeReferenceNumber, 100.12, 100.12)
+  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.CDS, chargeReferenceNumber, 100.12)
 
-  val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(TaxTypes.CDS, chargeReferenceNumber, 100.12, 100.11)
+  val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(TaxTypes.CDS, chargeReferenceNumber, 100.11)
 
-  val chargeRefNotificationPciPalRequest = ChargeRefNotificationPciPalRequest(TaxTypes.CDS, chargeReferenceNumber, 100.12, 100.11)
+  val chargeRefNotificationPciPalRequest = ChargeRefNotificationPciPalRequest(TaxTypes.CDS, chargeReferenceNumber, 100.11)
 
   val chargeRefNotificationDesRequestJson: JsValue = Json.parse(
     s"""{
        "taxType" : "CDS",
        "chargeRefNumber" : "XQ002610015768",
-       "amountDue" : 100.12,
        "amountPaid" : 100.11
        }
      """.stripMargin
@@ -48,7 +47,6 @@ object PaymentsProcessData {
     s"""{
        "taxType" : "CDS",
        "chargeRefNumber" : "XQ002610015768",
-       "amountDue" : 100.12,
        "amountPaid" : 100.11
        }
      """.stripMargin

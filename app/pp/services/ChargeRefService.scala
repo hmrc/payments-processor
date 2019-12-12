@@ -42,8 +42,6 @@ class ChargeRefService @Inject() (
 
     val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationPciPalRequest.taxType,
                                                        chargeRefNotificationPciPalRequest.chargeRefNumber,
-
-                                                       chargeRefNotificationPciPalRequest.amountDue,
                                                        chargeRefNotificationPciPalRequest.amountPaid)
 
     desConnector.sendCardPaymentsNotification(desChargeRef)
@@ -56,8 +54,6 @@ class ChargeRefService @Inject() (
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
     val workItem = ChargeRefNotificationWorkItem(time, chargeRefNotificationPciPalRequest.taxType,
                                                  chargeRefNotificationPciPalRequest.chargeRefNumber,
-
-                                                 chargeRefNotificationPciPalRequest.amountDue,
                                                  chargeRefNotificationPciPalRequest.amountPaid)
 
     chargeRefNotificationMongoRepo.pushNew(workItem, jodaLocalDateTime)
@@ -69,7 +65,6 @@ class ChargeRefService @Inject() (
     Logger.debug("inside sendWorkItemToDes")
     val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationWorkItem.item.taxType,
                                                        chargeRefNotificationWorkItem.item.chargeRefNumber,
-                                                       chargeRefNotificationWorkItem.item.amountDue,
                                                        chargeRefNotificationWorkItem.item.amountPaid)
     for {
       _ <- desConnector.sendCardPaymentsNotification(desChargeRef)
