@@ -30,7 +30,6 @@ case class ChargeRefNotificationWorkItem(
     createdOn:       LocalDateTime,
     taxType:         TaxType,
     chargeRefNumber: String,
-    amountDue:       BigDecimal,
     amountPaid:      BigDecimal)
 
 object ChargeRefNotificationWorkItem {

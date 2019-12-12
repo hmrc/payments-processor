@@ -24,7 +24,6 @@ import play.api.libs.json._
 case class ChargeRefNotificationDesRequest(
     taxType:         TaxType,
     chargeRefNumber: String,
-    amountDue:       BigDecimal,
     amountPaid:      BigDecimal)
 
 object ChargeRefNotificationDesRequest {

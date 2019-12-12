@@ -23,7 +23,7 @@ object DesResponses {
 
   def sendCardPaymentsNotification(status: Int, delayMillis: Int, responseBody: String, sequence: Int = 0): StubMapping = {
     stubFor(
-      post(urlEqualTo(s"/cross-regime/repayment/VATC/new-api"))
+      post(urlEqualTo(s"/cross-regime/payments/card/notification"))
         .inScenario("des")
         .whenScenarioStateIs(WiremockStub.state(sequence))
         .willReturn(aResponse()

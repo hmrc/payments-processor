@@ -46,7 +46,7 @@ class ChargeRefControllerAyncSpec extends ItSpec {
     val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
     response.status shouldBe Status.OK
     collectionSize shouldBe 0
-    WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/repayment/VATC/new-api")))
+    WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/payments/card/notification")))
 
   }
 
@@ -67,7 +67,7 @@ class ChargeRefControllerAyncSpec extends ItSpec {
     val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
     Thread.sleep(2000)
     response.status shouldBe Status.OK
-    WireMock.verify(3, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/repayment/VATC/new-api")))
+    WireMock.verify(3, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/payments/card/notification")))
     collectionSize shouldBe 0
 
   }
