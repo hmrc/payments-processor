@@ -20,11 +20,11 @@ import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.mvc.{Action, ControllerComponents}
 import pp.config.QueueConfig
-import pp.model.ChargeRefNotificationPciPalRequest
+import pp.model.ChargeRefNotificationRequest
 import pp.services.ChargeRefService
+import uk.gov.hmrc.http.{BadRequestException, NotFoundException, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.workitem.ToDo
-import uk.gov.hmrc.http.BadGatewayException
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,13 +36,14 @@ class ChargeRefController @Inject() (
 )
   (implicit executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator {
 
-  def sendCardPaymentsNotification(): Action[ChargeRefNotificationPciPalRequest] = Action.async(parse.json[ChargeRefNotificationPciPalRequest]) { implicit request =>
+  def sendCardPaymentsNotification(): Action[ChargeRefNotificationRequest] = Action.async(parse.json[ChargeRefNotificationRequest]) { implicit request =>
     chargeRefService
       .sendCardPaymentsNotificationSync(request.body)
       .map(_ => Ok)
       .recoverWith {
-        case e @ (_: RuntimeException | _: Exception) => {
-          Logger.debug("Caught RuntimeException")
+        case e @ (_: BadRequestException | _: NotFoundException)     => Future.failed(e)
+        case e: Upstream4xxResponse if e.upstreamResponseCode == 409 => Future.failed(e)
+        case e => {
           if (queueConfig.queueEnabled) {
             Logger.debug("Queue enabled")
             chargeRefService

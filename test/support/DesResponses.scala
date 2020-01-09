@@ -17,7 +17,7 @@
 package support
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.stubbing.{StubMapping}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 
 object DesResponses {
 

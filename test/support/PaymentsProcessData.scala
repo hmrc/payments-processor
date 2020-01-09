@@ -18,8 +18,9 @@ package support
 
 import java.time.{Clock, LocalDateTime}
 
-import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationPciPalRequest, ChargeRefNotificationWorkItem, TaxTypes}
+import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem, TaxTypes}
 import play.api.libs.json.{JsValue, Json}
+import pp.model.Origins.OPS
 
 object PaymentsProcessData {
 
@@ -27,11 +28,11 @@ object PaymentsProcessData {
 
   val chargeReferenceNumber = "XQ002610015768"
 
-  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.CDS, chargeReferenceNumber, 100.12)
+  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.CDS, chargeReferenceNumber, 100.12, OPS)
 
   val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(TaxTypes.CDS, chargeReferenceNumber, 100.11)
 
-  val chargeRefNotificationPciPalRequest = ChargeRefNotificationPciPalRequest(TaxTypes.CDS, chargeReferenceNumber, 100.11)
+  val chargeRefNotificationRequest = ChargeRefNotificationRequest(TaxTypes.CDS, chargeReferenceNumber, 100.11, OPS)
 
   val chargeRefNotificationDesRequestJson: JsValue = Json.parse(
     s"""{
@@ -43,11 +44,12 @@ object PaymentsProcessData {
 
   )
 
-  val chargeRefNotificationPciPalRequestJson: JsValue = Json.parse(
+  val chargeRefNotificationRequestJson: JsValue = Json.parse(
     s"""{
        "taxType" : "CDS",
        "chargeRefNumber" : "XQ002610015768",
-       "amountPaid" : 100.11
+       "amountPaid" : 100.11,
+       "origin" : "OPS"
        }
      """.stripMargin
 

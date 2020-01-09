@@ -23,7 +23,7 @@ import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.iteratee.{Enumerator, Iteratee}
 import pp.connectors.des.DesConnector
-import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationPciPalRequest, ChargeRefNotificationWorkItem}
+import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
 import pp.scheduling.ChargeRefNotificationMongoRepo
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.workitem.{Failed, WorkItem}
@@ -37,7 +37,7 @@ class ChargeRefService @Inject() (
     clock:                          Clock
 )(implicit executionContext: ExecutionContext) {
 
-  def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest): Future[HttpResponse] = {
+  def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[HttpResponse] = {
     Logger.debug("inside sendCardPaymentsNotificationSync")
 
     val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationPciPalRequest.taxType,
@@ -47,14 +47,14 @@ class ChargeRefService @Inject() (
     desConnector.sendCardPaymentsNotification(desChargeRef)
   }
 
-  def sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest): Future[WorkItem[ChargeRefNotificationWorkItem]] = {
+  def sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[WorkItem[ChargeRefNotificationWorkItem]] = {
     Logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
 
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
     val workItem = ChargeRefNotificationWorkItem(time, chargeRefNotificationPciPalRequest.taxType,
                                                  chargeRefNotificationPciPalRequest.chargeRefNumber,
-                                                 chargeRefNotificationPciPalRequest.amountPaid)
+                                                 chargeRefNotificationPciPalRequest.amountPaid, chargeRefNotificationPciPalRequest.origin)
 
     chargeRefNotificationMongoRepo.pushNew(workItem, jodaLocalDateTime)
 
@@ -91,10 +91,9 @@ class ChargeRefService @Inject() (
     sendWorkItemToDes(workItem)
       .map(_ => chargeRefNotificationMongoRepo.complete(workItem.id))
       .map(_ => acc :+ workItem)
-      .recover {
+      .recoverWith {
         case _ =>
-          chargeRefNotificationMongoRepo.markAs(workItem.id, Failed)
-          acc
+          chargeRefNotificationMongoRepo.markAs(workItem.id, Failed).map(_ => acc)
       }
 
   }

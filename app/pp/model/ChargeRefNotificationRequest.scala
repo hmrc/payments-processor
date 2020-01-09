@@ -18,12 +18,13 @@ package pp.model
 import play.api.libs.json._
 
 //TODO We don't know what this looks like yet but will be key value pairs
-case class ChargeRefNotificationPciPalRequest(
+case class ChargeRefNotificationRequest(
     taxType:         TaxType,
     chargeRefNumber: String,
-    amountPaid:      BigDecimal)
+    amountPaid:      BigDecimal,
+    origin:          Origin)
 
-object ChargeRefNotificationPciPalRequest {
-  implicit val format: OFormat[ChargeRefNotificationPciPalRequest] = Json.format[ChargeRefNotificationPciPalRequest]
+object ChargeRefNotificationRequest {
+  implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
 }
 
