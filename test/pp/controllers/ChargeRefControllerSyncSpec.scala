@@ -35,21 +35,21 @@ class ChargeRefControllerSyncSpec extends ItSpec {
   "call sendCardPaymentsNotification expect ok" in {
 
     DesResponses.sendCardPaymentsNotification(200, 0, "ok", 0)
-    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationRequest).futureValue
     response.status shouldBe Status.OK
     WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/payments/card/notification")))
   }
 
   "call sendCardPaymentsNotification expect failure if des fails" in {
     DesResponses.sendCardPaymentsNotification(500, 0, "des failed", 0)
-    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).failed.futureValue
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationRequest).failed.futureValue
     response.getMessage should include ("des failed")
 
   }
 
   "call sendCardPaymentsNotification from root, expect ok" in {
     DesResponses.sendCardPaymentsNotification(200, 0, "ok", 0)
-    val response = testConnector.sendCardPaymentsNotificationRoot(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
+    val response = testConnector.sendCardPaymentsNotificationRoot(PaymentsProcessData.chargeRefNotificationRequest).futureValue
     response.status shouldBe Status.OK
 
   }

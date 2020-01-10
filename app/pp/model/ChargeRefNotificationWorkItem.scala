@@ -30,7 +30,8 @@ case class ChargeRefNotificationWorkItem(
     createdOn:       LocalDateTime,
     taxType:         TaxType,
     chargeRefNumber: String,
-    amountPaid:      BigDecimal)
+    amountPaid:      BigDecimal,
+    origin:          Origin)
 
 object ChargeRefNotificationWorkItem {
   implicit val format: OFormat[ChargeRefNotificationWorkItem] = Json.format[ChargeRefNotificationWorkItem]

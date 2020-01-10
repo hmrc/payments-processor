@@ -94,7 +94,7 @@ trait ItSpec
     "queue.enabled" -> false,
     "poller.enabled" -> false,
     "queue.retryAfter" -> "1 seconds",
-    "poller.initialDelay" -> "1 seconds",
+    "poller.initialDelay" -> "0 seconds",
     "poller.interval" -> "1 seconds"
   )
 

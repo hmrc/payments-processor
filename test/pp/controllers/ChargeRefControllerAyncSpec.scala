@@ -42,29 +42,49 @@ class ChargeRefControllerAyncSpec extends ItSpec {
 
   "call sendCardPaymentsNotification expect ok" in {
 
-    DesResponses.sendCardPaymentsNotification(200, 100, "", 0)
-    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
+    DesResponses.sendCardPaymentsNotification(200, 0, "", 0)
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationRequest).futureValue
     response.status shouldBe Status.OK
     collectionSize shouldBe 0
     WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/payments/card/notification")))
 
   }
 
-  "call sendCardPaymentsNotification expect ok with a message on the queue" in {
+  "call sendCardPaymentsNotification expect ok with no messages on the queue with a 400 des response" in {
+    DesResponses.sendCardPaymentsNotification(400, 0, "", 0)
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationRequest).failed.futureValue
+    response.getMessage should include("400")
+    WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/payments/card/notification")))
 
-    DesResponses.sendCardPaymentsNotification(500, 100, "des failed", 0)
-    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
+  }
+
+  "call sendCardPaymentsNotification expect ok with no messages on the queue with a 404 des response" in {
+    DesResponses.sendCardPaymentsNotification(404, 0, "", 0)
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationRequest).failed.futureValue
+    response.getMessage should include("404")
+    WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/payments/card/notification")))
+  }
+
+  "call sendCardPaymentsNotification expect ok with no messages on the queue with a 409 des response" in {
+    DesResponses.sendCardPaymentsNotification(409, 0, "", 0)
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationRequest).failed.futureValue
+    response.getMessage should include("409")
+    WireMock.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/payments/card/notification")))
+  }
+
+  "call sendCardPaymentsNotification expect 500 meaning a message on the queue" in {
+    DesResponses.sendCardPaymentsNotification(500, 10, "des failed", 0)
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationRequest).futureValue
     response.status shouldBe Status.OK
     collectionSize shouldBe 1
 
   }
 
   "call sendCardPaymentsNotification expect ok with no messages on the queue" in {
-
     DesResponses.sendCardPaymentsNotification(500, 10, "des failed", 0)
     DesResponses.sendCardPaymentsNotification(500, 10, "des failed", 1)
     DesResponses.sendCardPaymentsNotification(200, 10, "ok", 2)
-    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationDesRequest).futureValue
+    val response = testConnector.sendCardPaymentsNotification(PaymentsProcessData.chargeRefNotificationRequest).futureValue
     Thread.sleep(2000)
     response.status shouldBe Status.OK
     WireMock.verify(3, WireMock.postRequestedFor(WireMock.urlEqualTo("/cross-regime/payments/card/notification")))
