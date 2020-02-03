@@ -19,7 +19,7 @@ import play.api.libs.json._
 
 //TODO We don't know what this looks like yet but will be key value pairs
 case class ChargeRefNotificationRequest(
-    taxType:         String,
+    taxType:         TaxType,
     chargeRefNumber: String,
     amountPaid:      BigDecimal,
     origin:          Origin)

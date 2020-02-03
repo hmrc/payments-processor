@@ -18,7 +18,7 @@ package support
 
 import java.time.{Clock, LocalDateTime}
 
-import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
+import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem, TaxTypes}
 import play.api.libs.json.{JsValue, Json}
 import pp.model.Origins.OPS
 
@@ -28,11 +28,11 @@ object PaymentsProcessData {
 
   val chargeReferenceNumber = "XQ002610015768"
 
-  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), "CDSX", chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.CDSX, chargeReferenceNumber, 100.12, OPS)
 
-  val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest("CDSX", chargeReferenceNumber, 100.11)
+  val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(TaxTypes.CDSX, chargeReferenceNumber, 100.11)
 
-  val chargeRefNotificationRequest = ChargeRefNotificationRequest("CDSX", chargeReferenceNumber, 100.11, OPS)
+  val chargeRefNotificationRequest = ChargeRefNotificationRequest(TaxTypes.CDSX, chargeReferenceNumber, 100.11, OPS)
 
   val chargeRefNotificationDesRequestJson: JsValue = Json.parse(
     s"""{
