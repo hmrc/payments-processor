@@ -22,7 +22,7 @@ import play.api.libs.json._
 
 //TODO We don't know what this looks like yet
 case class ChargeRefNotificationDesRequest(
-    taxType:         TaxType,
+    taxType:         String,
     chargeRefNumber: String,
     amountPaid:      BigDecimal)
 
