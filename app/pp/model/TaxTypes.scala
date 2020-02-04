@@ -31,19 +31,122 @@ object TaxType {
   implicit val taxTypeBinder: PathBindable[TaxType] = valueClassBinder(_.toString)
 
 }
-
 object TaxTypes extends Enum[TaxType] {
+
+  def forCode(code: String): Option[TaxType] = values.find(_.toString == code)
+
+  //As per DES API ....
 
   case object NLIJ extends TaxType {
   }
 
-  case object CDS extends TaxType {
+  case object CDSX extends TaxType {
   }
 
   case object PARC extends TaxType {
   }
 
   case object P302 extends TaxType {
+  }
+
+  //As per standard OPS TaxTypes ....
+
+  case object `self-assessment` extends TaxType {
+  }
+
+  case object vat extends TaxType {
+  }
+
+  case object epaye extends TaxType {
+  }
+
+  /**
+   * Machine Game Duty
+   */
+  case object `mg-duty` extends TaxType {
+  }
+
+  /**
+   * Merchandise in Baggage
+   */
+
+  case object mib extends TaxType {
+  }
+
+  /**
+   * Other tax types
+   */
+
+  case object other extends TaxType {
+  }
+
+  /**
+   * Stamp Duty Land Tax (Sdlt)
+   */
+  case object `stamp-duty` extends TaxType {
+  }
+
+  case object class2NationalInsurance extends TaxType {
+  }
+
+  //  /**
+  //   * Customs or Custom Declarations Service
+  //   */
+  //  case object cds extends TaxType {
+  //  }
+
+  /**
+   * Passengers
+   */
+  case object pngr extends TaxType {
+  }
+
+  case object `corporation-tax` extends TaxType {
+  }
+
+  final case object p800 extends TaxType {
+  }
+
+  /**
+   * Northern Ireland
+   */
+
+  case object ni extends TaxType {
+  }
+
+  case object parcels extends TaxType {
+  }
+
+  /**
+   * Insurance Premium Tax
+   */
+
+  case object insurancePremium extends TaxType {
+  }
+
+  /**
+   * class3NationalInsurance
+   */
+
+  case object class3NationalInsurance extends TaxType {
+  }
+
+  case object `bioFuelsAndRoadGas` extends TaxType {
+  }
+
+  case object `airPassengerDuty` extends TaxType {
+  }
+
+  case object `beerDuty` extends TaxType {
+  }
+
+  case object `landfillTax` extends TaxType {
+  }
+
+  case object `aggregatesLevy` extends TaxType {
+  }
+
+  case object `climateChangeLevy` extends TaxType {
   }
 
   override def values = findValues

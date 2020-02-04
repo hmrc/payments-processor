@@ -25,9 +25,31 @@ class TaxTypesSpec extends UnitSpec with RichMatchers {
 
     val taxTypes = List(
       "NLIJ" -> TaxTypes.NLIJ,
-      "CDS" -> TaxTypes.CDS,
+      "CDSX" -> TaxTypes.CDSX,
       "PARC" -> TaxTypes.PARC,
-      "P302" -> TaxTypes.P302)
+      "P302" -> TaxTypes.P302,
+      "self-assessment" -> TaxTypes.`self-assessment`,
+      "vat" -> TaxTypes.vat,
+      "epaye" -> TaxTypes.epaye,
+      "mg-duty" -> TaxTypes.`mg-duty`,
+      "mib" -> TaxTypes.mib,
+      "other" -> TaxTypes.other,
+      "stamp-duty" -> TaxTypes.`stamp-duty`,
+      "class2NationalInsurance" -> TaxTypes.class2NationalInsurance,
+      "class3NationalInsurance" -> TaxTypes.class3NationalInsurance,
+      "pngr" -> TaxTypes.pngr,
+      "corporation-tax" -> TaxTypes.`corporation-tax`,
+      "p800" -> TaxTypes.p800,
+      "ni" -> TaxTypes.ni,
+      "parcels" -> TaxTypes.parcels,
+      "insurancePremium" -> TaxTypes.insurancePremium,
+      "bioFuelsAndRoadGas" -> TaxTypes.`bioFuelsAndRoadGas`,
+      "airPassengerDuty" -> TaxTypes.`airPassengerDuty`,
+      "beerDuty" -> TaxTypes.`beerDuty`,
+      "landfillTax" -> TaxTypes.`landfillTax`,
+      "aggregatesLevy" -> TaxTypes.aggregatesLevy,
+      "climateChangeLevy" -> TaxTypes.`climateChangeLevy`
+    )
 
     taxTypes.foreach { tt =>
       val jsValue = Json.toJson(tt._2)
@@ -35,5 +57,6 @@ class TaxTypesSpec extends UnitSpec with RichMatchers {
       jsValue.as[TaxType] shouldBe tt._2 withClue s"deserialize $tt"
     }
   }
+
 }
 
