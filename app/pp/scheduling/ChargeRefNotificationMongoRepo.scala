@@ -49,8 +49,8 @@ class ChargeRefNotificationMongoRepo @Inject() (
 
   override val inProgressRetryAfterProperty: String = "queue.retryAfter"
 
-  lazy val retryIntervalMillis: Long = configuration
-    .getMillis(inProgressRetryAfterProperty)
+  lazy val retryIntervalMillis: Long = configuration.getMillis(inProgressRetryAfterProperty)
+
   override lazy val inProgressRetryAfter: Duration = Duration.millis(retryIntervalMillis)
 
   private lazy val ttlInSeconds = {
@@ -80,7 +80,7 @@ class ChargeRefNotificationMongoRepo @Inject() (
   }
 
   def failed(id: BSONObjectID)(implicit ec: ExecutionContext): Future[Boolean] = {
-    markAs(id, uk.gov.hmrc.workitem.Failed, Some(now.plusMillis(retryIntervalMillis.toInt)))
+    markAs(id, Failed, Some(now.plusMillis(retryIntervalMillis.toInt)))
   }
 
   override def now: DateTime = clock.nowAsJoda

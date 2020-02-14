@@ -33,15 +33,12 @@ package support
  */
 
 import com.google.inject.AbstractModule
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{BeforeAndAfterEach, FreeSpecLike, Matchers}
+import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
-import play.api.mvc.{AnyContentAsEmpty, Request, Result}
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+import play.api.mvc.Result
 import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -54,7 +51,7 @@ import scala.concurrent.ExecutionContext
  */
 
 trait ItSpec
-  extends FreeSpecLike
+  extends WordSpec
   with RichMatchers
   with BeforeAndAfterEach
   with GuiceOneServerPerTest
@@ -63,9 +60,9 @@ trait ItSpec
 
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-  lazy val servicesConfig = fakeApplication.injector.instanceOf[ServicesConfig]
-  lazy val config = fakeApplication.injector.instanceOf[Configuration]
-  lazy val env = fakeApplication.injector.instanceOf[Environment]
+  lazy val servicesConfig = fakeApplication().injector.instanceOf[ServicesConfig]
+  lazy val config = fakeApplication().injector.instanceOf[Configuration]
+  lazy val env = fakeApplication().injector.instanceOf[Environment]
   lazy val overridingsModule: AbstractModule = new AbstractModule {
 
     override def configure(): Unit = ()

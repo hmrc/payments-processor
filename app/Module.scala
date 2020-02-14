@@ -21,7 +21,7 @@ import pp.scheduling.ChargeRefNotificationPollingService
 
 class Module() extends AbstractModule {
   override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton
+    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton()
   }
 
   @Provides

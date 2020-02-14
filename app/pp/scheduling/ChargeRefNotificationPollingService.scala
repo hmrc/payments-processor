@@ -42,7 +42,7 @@ class ChargeRefNotificationPollingService @Inject() (actorSystem:      ActorSyst
   lazy val initialDelay: FiniteDuration = queueConfig.pollerInitialDelay
   lazy val interval: FiniteDuration = queueConfig.pollerInterval
 
-  Logger.debug(s"Starting ChargeRefNotificationPollingService, Initial delay: ${initialDelay}, Polling interval: ${interval}")
+  Logger.debug(s"Starting ChargeRefNotificationPollingService, Initial delay: $initialDelay, Polling interval: $interval")
 
   def executor()(implicit ec: ExecutionContext): Unit = {
     execute.onComplete({

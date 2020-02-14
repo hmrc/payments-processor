@@ -51,6 +51,8 @@ class TaxTypesSpec extends UnitSpec with RichMatchers {
       "climateChangeLevy" -> TaxTypes.`climateChangeLevy`
     )
 
+    TaxTypes.values.toSet shouldBe taxTypes.map(tt => tt._2).toSet
+
     taxTypes.foreach { tt =>
       val jsValue = Json.toJson(tt._2)
       jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"

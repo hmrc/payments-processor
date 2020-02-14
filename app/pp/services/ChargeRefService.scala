@@ -85,7 +85,7 @@ class ChargeRefService @Inject() (
     pullWorkItems.run(processWorkItems)
   }
 
-  def sendNotificationMarkAsComplete(acc: Seq[WorkItem[ChargeRefNotificationWorkItem]], workItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
+  private def sendNotificationMarkAsComplete(acc: Seq[WorkItem[ChargeRefNotificationWorkItem]], workItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
 
     Logger.debug("inside sendNotificationMarkAsComplete")
     sendWorkItemToDes(workItem)

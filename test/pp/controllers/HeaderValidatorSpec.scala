@@ -52,7 +52,7 @@ class HeaderValidatorSpec extends ItSpec with HeaderValidator {
     acceptHeaderValidationRules(Some("application/vnd.hmrc.notvalid+json")) shouldBe false
   }
 
-  val standardResponse = { (r: Request[AnyContentAsEmpty.type]) => Future.successful(Ok) }
+  val standardResponse = { _: Request[AnyContentAsEmpty.type] => Future.successful(Ok) }
 
   "validateAccept return an OK result when the accept header is present" in {
 

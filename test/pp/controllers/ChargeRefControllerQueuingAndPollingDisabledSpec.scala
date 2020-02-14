@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package pp.model.api
+package pp.controllers
 
-import play.api.libs.json.{Json, OFormat}
-
-case class APIAccess(`type`: String, whitelistedApplicationIds: Option[Seq[String]])
-
-object APIAccess {
-  implicit val apiAccessFormats: OFormat[APIAccess] = Json.format[APIAccess]
+class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec {
+  "the ChargeRefController card payments endpoints" when {
+    "queuing is disabled" should {
+      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
+      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
+      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
+    }
+  }
 }

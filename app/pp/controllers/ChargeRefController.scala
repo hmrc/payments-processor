@@ -58,7 +58,7 @@ class ChargeRefController @Inject() (
                 }
               )
           } else {
-            Logger.debug("Queue disabled")
+            Logger.warn("Queue disabled")
             Future.failed(e)
           }
         }
