@@ -21,7 +21,7 @@ import java.time.{Clock, LocalDateTime, ZoneId}
 import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.libs.iteratee.{Enumerator, Iteratee}
+import pp.config.QueueConfig
 import pp.connectors.des.DesConnector
 import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
 import pp.scheduling.ChargeRefNotificationMongoRepo
@@ -34,7 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChargeRefService @Inject() (
     desConnector:                   DesConnector,
     chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
-    clock:                          Clock
+    clock:                          Clock,
+    queueConfig:                    QueueConfig
 )(implicit executionContext: ExecutionContext) {
 
   def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[HttpResponse] = {
@@ -74,19 +75,27 @@ class ChargeRefService @Inject() (
 
   def retrieveWorkItems: Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
 
-    Logger.debug("inside retrieveWorkItems")
-    val pullWorkItems: Enumerator[WorkItem[ChargeRefNotificationWorkItem]] =
-      Enumerator.generateM(chargeRefNotificationMongoRepo.pullOutstanding)
+      @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
+      def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[ChargeRefNotificationWorkItem]]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
 
-    val processWorkItems = Iteratee.foldM(Seq.empty[WorkItem[ChargeRefNotificationWorkItem]]) {
-      sendNotificationMarkAsComplete
-    }
+          def retrieveWorkItem(count: Int): Future[Option[WorkItem[ChargeRefNotificationWorkItem]]] = {
+            if (count == queueConfig.pollLimit) Future successful None
+            else chargeRefNotificationMongoRepo.pullOutstanding
+          }
 
-    pullWorkItems.run(processWorkItems)
+        retrieveWorkItem(count).flatMap {
+          case None => Future successful sentWorkItems
+          case Some(workItem) =>
+            sendNotificationMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
+              sendNotificationIfFound(count + 1, workItems)
+            }
+        }
+      }
+
+    sendNotificationIfFound(0, Seq.empty)
   }
 
   private def sendNotificationMarkAsComplete(acc: Seq[WorkItem[ChargeRefNotificationWorkItem]], workItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
-
     Logger.debug("inside sendNotificationMarkAsComplete")
     sendWorkItemToDes(workItem)
       .map(_ => chargeRefNotificationMongoRepo.complete(workItem.id))
@@ -95,7 +104,5 @@ class ChargeRefService @Inject() (
         case _ =>
           chargeRefNotificationMongoRepo.markAs(workItem.id, Failed).map(_ => acc)
       }
-
   }
-
 }

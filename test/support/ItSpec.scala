@@ -86,7 +86,6 @@ trait ItSpec
 
   def configMap = Map[String, Any](
     "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it",
-    "queue.retryAfter" -> "1 seconds",
     "microservice.services.des.port" -> WireMockSupport.port,
     "queue.enabled" -> false,
     "poller.enabled" -> false,
@@ -97,7 +96,7 @@ trait ItSpec
 
   def injector: Injector = fakeApplication().injector
 
-  def status(of: Result) = of.header.status
+  def status(of: Result): Int = of.header.status
 
 }
 

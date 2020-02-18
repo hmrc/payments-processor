@@ -38,10 +38,10 @@ class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
 
           Des.cardPaymentsNotificationFailsWithAnInternalServerError()
 
+          numberOfQueuedNotifications shouldBe 0
+
           val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue
           response.status shouldBe Status.OK
-
-          Thread.sleep(20000)
 
           numberOfQueuedNotifications shouldBe 1
 

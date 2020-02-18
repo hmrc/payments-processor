@@ -42,8 +42,9 @@ class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
         chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest).futureValue
         numberOfQueuedNotifications shouldBe 1
 
-        Thread.sleep(20000)
-        numberOfQueuedNotifications shouldBe 0
+        eventually {
+          numberOfQueuedNotifications shouldBe 0
+        }
 
         verify(3, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
       }

@@ -95,14 +95,16 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
   s"Pull a request with a status of Failed should find something as we have waited" in {
     val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, jodaDateTime).futureValue
     repo.markAs(workItem.id, Failed).futureValue should be(true)
-    Thread.sleep(2000)
-    val outstanding: Option[WorkItem[ChargeRefNotificationWorkItem]] = repo.pullOutstanding.futureValue
-    outstanding match {
-      case Some(x) => {
-        x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
-        x.item.taxType shouldBe TaxTypes.CDSX
+
+    eventually{
+      val outstanding: Option[WorkItem[ChargeRefNotificationWorkItem]] = repo.pullOutstanding.futureValue
+      outstanding match {
+        case Some(x) => {
+          x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
+          x.item.taxType shouldBe TaxTypes.CDSX
+        }
+        case None => "failed" shouldBe "to find a value"
       }
-      case None => "failed" shouldBe "to find a value"
     }
   }
 
@@ -110,13 +112,14 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
     s"Pull a request with a status of ${status.toString} should not find anything, we have waited" in {
       val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, jodaDateTime).futureValue
       repo.markAs(workItem.id, status).futureValue should be(true)
-      Thread.sleep(2000)
-      val outstanding: Option[WorkItem[ChargeRefNotificationWorkItem]] = repo.pullOutstanding.futureValue
-      outstanding match {
-        case Some(_) => "found" shouldBe "a value when we should not"
-        case None    =>
-      }
 
+      eventually{
+        val outstanding: Option[WorkItem[ChargeRefNotificationWorkItem]] = repo.pullOutstanding.futureValue
+        outstanding match {
+          case Some(_) => "found" shouldBe "a value when we should not"
+          case None    =>
+        }
+      }
     }
   )
 
@@ -161,18 +164,18 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
       case Some(_) => "found" shouldBe "a value when we should not"
       case None    =>
     }
-    //Sleep for 10 seconds which should be longer than the retryafter of 3 seconds
-    Thread.sleep(10000)
-    val outstanding2: Option[WorkItem[ChargeRefNotificationWorkItem]] = repo.pullOutstanding.futureValue
-    outstanding2 match {
-      case Some(x) => {
-        x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
-        x.item.taxType shouldBe TaxTypes.CDSX
-        x.status shouldBe uk.gov.hmrc.workitem.InProgress
-      }
-      case None => "failed" shouldBe "to find a value"
-    }
 
+    eventually {
+      val outstanding2: Option[WorkItem[ChargeRefNotificationWorkItem]] = repo.pullOutstanding.futureValue
+      outstanding2 match {
+        case Some(x) => {
+          x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
+          x.item.taxType shouldBe TaxTypes.CDSX
+          x.status shouldBe uk.gov.hmrc.workitem.InProgress
+        }
+        case None => "failed" shouldBe "to find a value"
+      }
+    }
   }
 
   private def collectionSize: Int = {

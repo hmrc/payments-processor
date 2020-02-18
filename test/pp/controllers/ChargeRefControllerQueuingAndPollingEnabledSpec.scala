@@ -41,12 +41,15 @@ class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControlle
           Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 1)
           Des.cardPaymentsNotificationSucceeds(delayInMilliSeconds, 2)
 
+          numberOfQueuedNotifications shouldBe 0
+
           val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue
           response.status shouldBe Status.OK
           numberOfQueuedNotifications shouldBe 1
 
-          Thread.sleep(2000)
-          numberOfQueuedNotifications shouldBe 0
+          eventually {
+            numberOfQueuedNotifications shouldBe 0
+          }
 
           verify(3, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
         }

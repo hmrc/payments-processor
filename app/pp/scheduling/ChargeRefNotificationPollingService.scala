@@ -57,7 +57,7 @@ class ChargeRefNotificationPollingService @Inject() (actorSystem:      ActorSyst
     if (queueConfig.pollerEnabled) {
       executor()
     } else {
-      Logger.debug("Polling is enabled is false")
+      Logger.warn("Poller enabled is false")
     }
   }
 }
