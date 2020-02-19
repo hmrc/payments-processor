@@ -5,6 +5,8 @@ import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import wartremover.{Wart, wartremoverErrors, wartremoverExcluded, wartremoverWarnings}
+import sbt.Tests.{Group, SubProcess}
+
 
 lazy val scalariformSettings = {
   // description of options found here -> https://github.com/scala-ide/scalariform
@@ -87,7 +89,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     scalaVersion := "2.11.12",
     majorVersion := 0,
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test ++ AppDependencies.itTest
   )
   .settings(scalariformSettings: _*)
   .settings(wartRemoverError)
@@ -99,9 +101,21 @@ lazy val microservice = Project(appName, file("."))
       (baseDirectory.value / "test").get ++
       Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
   .settings(scoverageSettings: _*)
+  .settings(
+    unmanagedSourceDirectories in Test := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common")
+  )
   .settings(publishingSettings: _*)
   .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
+  .settings(
+    Keys.fork in IntegrationTest := true,
+    Defaults.itSettings,
+    resolvers += Resolver.jcenterRepo,
+//    unmanagedResourceDirectories in IntegrationTest += baseDirectory.value / "public",
+    unmanagedSourceDirectories in IntegrationTest += baseDirectory(_ / "it").value,
+    unmanagedSourceDirectories in IntegrationTest += baseDirectory(_ / "test-common").value,
+    parallelExecution in IntegrationTest := false,
+    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value)
+  )  
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(PlayKeys.playDefaultPort := 9211)
   .settings(
@@ -124,3 +138,7 @@ lazy val microservice = Project(appName, file("."))
     )
   )
 val appName = "payments-processor"
+def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
+  tests map {
+    test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name))))
+  }

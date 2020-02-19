@@ -17,15 +17,16 @@
 package pp.model
 
 import play.api.libs.json.Json
-import support.{PaymentsProcessData, UnitSpec}
+import support.PaymentsProcessData.{chargeRefNotificationDesRequest, chargeRefNotificationDesRequestJson}
+import support.UnitSpec
 
 class ChargeRefNotificationDesRequestSpec extends UnitSpec {
 
   "to json" in {
-    Json.toJson(PaymentsProcessData.chargeRefNotificationDesRequest) shouldBe PaymentsProcessData.chargeRefNotificationDesRequestJson
+    Json.toJson(chargeRefNotificationDesRequest) shouldBe chargeRefNotificationDesRequestJson
   }
 
   "from json" in {
-    PaymentsProcessData.chargeRefNotificationDesRequestJson.as[ChargeRefNotificationDesRequest] shouldBe PaymentsProcessData.chargeRefNotificationDesRequest
+    chargeRefNotificationDesRequestJson.as[ChargeRefNotificationDesRequest] shouldBe chargeRefNotificationDesRequest
   }
 }

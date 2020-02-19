@@ -16,8 +16,8 @@
 
 package support
 
-import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
+import org.scalatest._
 
 trait RichMatchers
   extends Matchers
