@@ -1,11 +1,9 @@
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
-import sbt.Keys.fork
+import sbt.Tests.{Group, SubProcess}
 import scalariform.formatter.preferences._
-import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import wartremover.{Wart, wartremoverErrors, wartremoverExcluded, wartremoverWarnings}
-import sbt.Tests.{Group, SubProcess}
 
 
 lazy val scalariformSettings = {
@@ -92,6 +90,9 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test ++ AppDependencies.itTest
   )
   .settings(scalariformSettings: _*)
+  .settings(
+    unmanagedResourceDirectories in Compile += baseDirectory.value / "resources"
+  )
   .settings(wartRemoverError)
   .settings(wartRemoverWarning)
   .settings(wartremoverErrors in(Test, compile) --= Seq(Wart.Any, Wart.Equals, Wart.Null, Wart.NonUnitStatements, Wart.PublicInference))
@@ -110,7 +111,6 @@ lazy val microservice = Project(appName, file("."))
     Keys.fork in IntegrationTest := true,
     Defaults.itSettings,
     resolvers += Resolver.jcenterRepo,
-//    unmanagedResourceDirectories in IntegrationTest += baseDirectory.value / "public",
     unmanagedSourceDirectories in IntegrationTest += baseDirectory(_ / "it").value,
     unmanagedSourceDirectories in IntegrationTest += baseDirectory(_ / "test-common").value,
     parallelExecution in IntegrationTest := false,

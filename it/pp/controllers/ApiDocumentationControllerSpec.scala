@@ -32,7 +32,6 @@ class ApiDocumentationControllerSpec extends ItSpec {
     json shouldBe PaymentsProcessData.definition
   }
 
-  //This test works from SBT but not from intellij ... be warned!!
   "DocumentationController return OK status" in {
     val response: HttpResponse = connector.getApiDoc.futureValue
     response.status shouldBe Status.OK
