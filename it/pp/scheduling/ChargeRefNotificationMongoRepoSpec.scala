@@ -25,8 +25,8 @@ import uk.gov.hmrc.workitem._
 
 class ChargeRefNotificationMongoRepoSpec extends ItSpec {
 
-  val jodaDateTime: DateTime = DateTime.now()
-  val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
+  private val jodaDateTime: DateTime = DateTime.now()
+  private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
 
   override def beforeEach(): Unit = {
     val _ = repo.removeAll().futureValue

@@ -22,13 +22,11 @@ import org.scalatest.Assertion
 import play.api.libs.json.Json
 import pp.scheduling.ChargeRefNotificationMongoRepo
 import support.PaymentsProcessData.chargeRefNotificationRequest
-import support.{Des, ItSpec, TestConnector}
+import support.{Des, ItSpec}
 import uk.gov.hmrc.http.HttpResponse
 
 trait ChargeRefControllerSpec extends ItSpec {
-  protected val testConnector: TestConnector = injector.instanceOf[TestConnector]
-
-  private val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
+  private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
 
   override def beforeEach(): Unit = {
     repo.removeAll().futureValue

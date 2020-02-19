@@ -24,7 +24,7 @@ import support.PaymentsProcessData.chargeRefNotificationRequest
 class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
   override def configMap: Map[String, Any] = super.configMap.updated("poller.enabled", "true")
 
-  private val chargeRefService = injector.instanceOf[ChargeRefService]
+  private lazy val chargeRefService = injector.instanceOf[ChargeRefService]
 
   "the ChargeRefController" when {
     "polling is enabled and queuing is disabled" should {

@@ -35,12 +35,12 @@ object Des {
     stubFor(
       post(urlEqualTo(endpoint))
         .inScenario("des")
-        .whenScenarioStateIs(WiremockStub.state(sequence))
+        .whenScenarioStateIs(WireMockStub.state(sequence))
         .willReturn(aResponse()
           .withStatus(status)
           .withBody(responseBody)
           .withFixedDelay(delayMillis))
-        .willSetStateTo(WiremockStub.nextState(sequence))
+        .willSetStateTo(WireMockStub.nextState(sequence))
 
     )
   }

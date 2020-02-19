@@ -35,7 +35,7 @@ package support
 import com.google.inject.AbstractModule
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneServerPerTest
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
@@ -53,25 +53,25 @@ trait ItSpec
   extends WordSpec
   with RichMatchers
   with BeforeAndAfterEach
-  with GuiceOneServerPerTest
+  with GuiceOneServerPerSuite
   with WireMockSupport
   with Matchers {
 
   implicit lazy val ec: ExecutionContext = global
 
-  private val module = new AbstractModule {
+  private lazy val module = new AbstractModule {
     override def configure(): Unit = ()
   }
 
-  val baseUrl: String = s"http://localhost:$WireMockSupport.port"
+  lazy val baseUrl: String = s"http://localhost:${WireMockSupport.port}"
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(
     timeout  = scaled(Span(3, Seconds)),
     interval = scaled(Span(300, Millis)))
 
   implicit val emptyHC: HeaderCarrier = HeaderCarrier()
-  val webdriverUrl = s"http://localhost:$port"
-  val connector: TestConnector = injector.instanceOf[TestConnector]
+  lazy val webdriverUrl = s"http://localhost:$port"
+  lazy val testConnector: TestConnector = injector.instanceOf[TestConnector]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
