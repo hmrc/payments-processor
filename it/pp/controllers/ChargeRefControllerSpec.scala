@@ -23,7 +23,7 @@ import play.api.libs.json.Json
 import pp.scheduling.ChargeRefNotificationMongoRepo
 import support.PaymentsProcessData.chargeRefNotificationRequest
 import support.{Des, ItSpec}
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{BadRequestException, ConflictException, HttpResponse, Upstream5xxResponse}
 
 trait ChargeRefControllerSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
@@ -63,7 +63,7 @@ trait ChargeRefControllerSpec extends ItSpec {
         Des.cardPaymentsNotificationRespondsWith(400, "")
 
         val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).failed.futureValue
-        response.getMessage should include("400")
+        response.isInstanceOf[BadRequestException] shouldBe true
 
         numberOfQueuedNotifications shouldBe 0
       }
@@ -72,7 +72,7 @@ trait ChargeRefControllerSpec extends ItSpec {
         Des.cardPaymentsNotificationRespondsWith(404, "")
 
         val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).failed.futureValue
-        response.getMessage should include("404")
+        response.asInstanceOf[Upstream5xxResponse].reportAs shouldBe 502
 
         numberOfQueuedNotifications shouldBe 0
       }
@@ -81,7 +81,7 @@ trait ChargeRefControllerSpec extends ItSpec {
         Des.cardPaymentsNotificationRespondsWith(409, "")
 
         val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).failed.futureValue
-        response.getMessage should include("409")
+        response.asInstanceOf[Upstream5xxResponse].reportAs shouldBe 502
 
         numberOfQueuedNotifications shouldBe 0
       }
