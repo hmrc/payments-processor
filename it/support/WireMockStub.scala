@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package pp.model.api
+package support
 
-import play.api.libs.json.{Json, OFormat}
+import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
 
-case class APIAccess(`type`: String, whitelistedApplicationIds: Option[Seq[String]])
+trait WireMockStub {
+  def state(index: Int): String = if (index == 0) STARTED else index.toString
+  def nextState(index: Int): String = (index + 1).toString
 
-object APIAccess {
-  implicit val apiAccessFormats: OFormat[APIAccess] = Json.format[APIAccess]
+  def endState(index: Int, size: Int): String = if (size == 1) STARTED else (if (index + 1 >= size) index else index + 1).toString
 }
+
+object WireMockStub extends WireMockStub

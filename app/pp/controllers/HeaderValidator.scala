@@ -27,19 +27,19 @@ import scala.util.matching.Regex.Match
 
 trait HeaderValidator extends Results with Status {
 
-  def validateVersion(version: String): Boolean = version == "1.0"
+  private def validateVersion(version: String): Boolean = version == "1.0"
 
-  def validateContentType(contentType: String): Boolean = contentType == "json"
+  private def validateContentType(contentType: String): Boolean = contentType == "json"
 
-  def matchHeader(header: String): Option[Match] = new Regex("""^application/vnd[.]{1}hmrc[.]{1}(.*?)[+]{1}(.*)$""", "version", "contenttype") findFirstMatchIn header
+  private def matchHeader(header: String): Option[Match] = new Regex("""^application/vnd[.]{1}hmrc[.]{1}(.*?)[+]{1}(.*)$""", "version", "contenttype") findFirstMatchIn header
 
-  def acceptHeaderValidationRules(header: Option[String]): Boolean = header flatMap (a => matchHeader(a) map (res => validateContentType(res.group("contenttype")) && validateVersion(res.group("version")))) getOrElse (false)
+  def acceptHeaderValidationRules(header: Option[String]): Boolean = header flatMap (a => matchHeader(a) map (res => validateContentType(res.group("contenttype")) && validateVersion(res.group("version")))) getOrElse false
 
   def validateAccept(rules: Option[String] => Boolean, parse: PlayBodyParsers)(implicit ec: ExecutionContext): ActionBuilder[Request, AnyContent] = new ActionBuilder[Request, AnyContent] {
     override def parser: BodyParser[AnyContent] = parse.defaultBodyParser
     override protected def executionContext: ExecutionContext = ec
 
-    def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[Result]) = {
+    def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
       if (rules(request.headers.get("Accept")))
         block(request)
       else {

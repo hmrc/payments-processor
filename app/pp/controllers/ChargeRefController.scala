@@ -22,7 +22,7 @@ import play.api.mvc.{Action, ControllerComponents}
 import pp.config.QueueConfig
 import pp.model.ChargeRefNotificationRequest
 import pp.services.ChargeRefService
-import uk.gov.hmrc.http.{BadRequestException, NotFoundException, Upstream4xxResponse}
+import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, NotFoundException, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.workitem.ToDo
 
@@ -41,9 +41,10 @@ class ChargeRefController @Inject() (
       .sendCardPaymentsNotificationSync(request.body)
       .map(_ => Ok)
       .recoverWith {
-        case e @ (_: BadRequestException | _: NotFoundException)     => Future.failed(e)
+        case e: BadRequestException                                  => Future.failed(e)
+        case e: NotFoundException                                    => Future.failed(new BadGatewayException(e.message))
         case e: Upstream4xxResponse if e.upstreamResponseCode == 409 => Future.failed(e)
-        case e => {
+        case e =>
           if (queueConfig.queueEnabled) {
             Logger.debug("Queue enabled")
             chargeRefService
@@ -51,17 +52,15 @@ class ChargeRefController @Inject() (
               .map(
                 res => res.status match {
                   case ToDo => Ok
-                  case _ => {
+                  case _ =>
                     Logger.error("Could not add message to work item repo")
                     InternalServerError
-                  }
                 }
               )
           } else {
-            Logger.debug("Queue disabled")
+            Logger.warn("Queue disabled")
             Future.failed(e)
           }
-        }
       }
   }
 

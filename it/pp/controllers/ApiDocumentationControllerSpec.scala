@@ -22,21 +22,16 @@ import support.{ItSpec, PaymentsProcessData}
 import uk.gov.hmrc.http.HttpResponse
 
 class ApiDocumentationControllerSpec extends ItSpec {
-
-  private lazy val controller = injector.instanceOf[ApiDocumentationController]
-
   "DefinitionController.definition return OK status" in {
-    val response: HttpResponse = connector.getDef.futureValue
+    val response: HttpResponse = testConnector.getDef.futureValue
     response.status shouldBe Status.OK
     val json = Json.parse(response.body)
     json shouldBe PaymentsProcessData.definition
   }
 
-  //This test works from SBT but not from intellij ... be warned!!
   "DocumentationController return OK status" in {
-    val response: HttpResponse = connector.getApiDoc.futureValue
+    val response: HttpResponse = testConnector.getApiDoc.futureValue
     response.status shouldBe Status.OK
 
   }
-
 }

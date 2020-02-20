@@ -45,7 +45,6 @@ traits:
                description: The Authorization header is missing
                value:
                 code : AUTH_HEADER_MISSING
-
  authorisationHeaderInvalid:
   responses:
    401:
@@ -57,7 +56,6 @@ traits:
            description: The value provided for Authorization header is invalid
            value:
             code : AUTH_HEADER_INVALID
-
  acceptHeaderInvalid:
   responses:
    406:
@@ -69,20 +67,34 @@ traits:
             description: The accept header is missing or invalid
             value:
                 code : ACCEPT_HEADER_INVALID
+ internalServerError:
+  responses:
+   500:
+    body:
+      application/json:
+        type: types.errorResponse
+        examples:
+          badRequest:
+            description: An unexpected condition was encountered
+            value:
+                code : INTERNAL_SERVER_ERROR
+ badGateway:
+  responses:
+   502:
+    body:
+      application/json:
+        type: types.errorResponse
+        examples:
+          badRequest:
+            description: An invalid response was receievd from an upstream server
+            value:
+                code : BAD_GATEWAY
 
 /payments/notifications:
   /send-card-payments:
     post:
-      description: This endpoint accepts the charge reference information, then queues it into WORK_ITEM_REPO before sending it to ETMP via DES
-
-
-         The body must contain following
-
-            1. Charge reference information (TODO).
-
-
-
-      displayName: Atttempts to send charge reference information to ETMP
+      displayName: Send card payment
+      description: This endpoint accepts the charge reference information and sends it to ETMP via DES.
       is:
         - headers.acceptHeader
         - authorisationHeaderMissing
@@ -92,22 +104,12 @@ traits:
       body:
         application/json:
           description: The body contains charge reference information
-          example: |
-            {"todo": "complete this"}
+          example: !include examples/send-card-payments-sample-request.json
       responses:
         200:
-          description:
           body:
             application/json:
               example: |
                 {
-                  "todo": "complete this"
-                }
-        400:
-          description: Invalid request
-          body:
-            application/json:
-              example: |
-                {
-                  "statusCode": 400
+                  "todo": "complete this when we have sample DES responses"
                 }

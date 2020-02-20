@@ -33,63 +33,52 @@ package support
  */
 
 import com.google.inject.AbstractModule
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{BeforeAndAfterEach, FreeSpecLike, Matchers}
-import org.scalatestplus.play.guice.GuiceOneServerPerTest
+import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.Application
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
-import play.api.mvc.{AnyContentAsEmpty, Request, Result}
-import play.api.test.{CSRFTokenHelper, FakeRequest}
-import play.api.{Application, Configuration, Environment}
+import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * This is common spec for every test case which brings all of useful routines we want to use in our scenarios.
  */
 
 trait ItSpec
-  extends FreeSpecLike
+  extends WordSpec
   with RichMatchers
   with BeforeAndAfterEach
-  with GuiceOneServerPerTest
+  with GuiceOneServerPerSuite
   with WireMockSupport
   with Matchers {
 
-  implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit lazy val ec: ExecutionContext = global
 
-  lazy val servicesConfig = fakeApplication.injector.instanceOf[ServicesConfig]
-  lazy val config = fakeApplication.injector.instanceOf[Configuration]
-  lazy val env = fakeApplication.injector.instanceOf[Environment]
-  lazy val overridingsModule: AbstractModule = new AbstractModule {
-
+  private lazy val module = new AbstractModule {
     override def configure(): Unit = ()
-
   }
-  val baseUrl: String = s"http://localhost:$WireMockSupport.port"
 
-  override implicit val patienceConfig = PatienceConfig(
+  lazy val baseUrl: String = s"http://localhost:${WireMockSupport.port}"
+
+  override implicit val patienceConfig: PatienceConfig = PatienceConfig(
     timeout  = scaled(Span(3, Seconds)),
     interval = scaled(Span(300, Millis)))
 
-  implicit val emptyHC = HeaderCarrier()
-  val webdriverUr: String = s"http://localhost:$port"
-  val connector = injector.instanceOf[TestConnector]
-
-  def httpClient = fakeApplication().injector.instanceOf[HttpClient]
+  implicit val emptyHC: HeaderCarrier = HeaderCarrier()
+  lazy val webdriverUrl = s"http://localhost:$port"
+  lazy val testConnector: TestConnector = injector.instanceOf[TestConnector]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
+    .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
     .configure(configMap).build()
 
-  def configMap = Map[String, Any](
+  def configMap: Map[String, Any] = Map[String, Any](
     "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it",
-    "queue.retryAfter" -> "1 seconds",
     "microservice.services.des.port" -> WireMockSupport.port,
     "queue.enabled" -> false,
     "poller.enabled" -> false,
@@ -100,7 +89,7 @@ trait ItSpec
 
   def injector: Injector = fakeApplication().injector
 
-  def status(of: Result) = of.header.status
+  def status(of: Result): Int = of.header.status
 
 }
 

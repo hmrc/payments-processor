@@ -45,7 +45,7 @@ class DesConnector @Inject() (
     Logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
     implicit val hc: HeaderCarrier = desHeaderCarrier
     val sendChargeRefUrl: String = s"$serviceURL$chargeref"
-    Logger.debug(s"""Calling des api 1541 with url ${sendChargeRefUrl}""")
+    Logger.debug(s"""Calling des api 1541 with url $sendChargeRefUrl""")
     httpClient.POST[ChargeRefNotificationDesRequest, HttpResponse](sendChargeRefUrl, chargeRefNotificationDesRequest)
   }
 

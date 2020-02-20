@@ -16,11 +16,13 @@
 
 package pp.model
 
-import pp.controllers.ValueClassBinder._
-import pp.jsonext.EnumFormat
 import enumeratum._
 import play.api.libs.json.Format
-import play.api.mvc.{PathBindable, QueryStringBindable}
+import play.api.mvc.QueryStringBindable
+import pp.controllers.ValueClassBinder._
+import pp.jsonext.EnumFormat
+
+import scala.collection.immutable
 
 sealed abstract class TaxType extends EnumEntry {
 }
@@ -28,9 +30,8 @@ sealed abstract class TaxType extends EnumEntry {
 object TaxType {
   implicit val format: Format[TaxType] = EnumFormat(TaxTypes)
   implicit val pathBinder: QueryStringBindable[TaxType] = bindableA(_.toString)
-  implicit val taxTypeBinder: PathBindable[TaxType] = valueClassBinder(_.toString)
-
 }
+
 object TaxTypes extends Enum[TaxType] {
 
   def forCode(code: String): Option[TaxType] = values.find(_.toString == code)
@@ -149,5 +150,5 @@ object TaxTypes extends Enum[TaxType] {
   case object `climateChangeLevy` extends TaxType {
   }
 
-  override def values = findValues
+  override def values: immutable.IndexedSeq[TaxType] = findValues
 }

@@ -18,19 +18,29 @@ package support
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.http.Status
 
-object DesResponses {
+object Des {
+  val endpoint = "/cross-regime/payments/card/notification"
+  val errorMessage = "des failed"
+  val successMessage = "ok"
 
-  def sendCardPaymentsNotification(status: Int, delayMillis: Int, responseBody: String, sequence: Int = 0): StubMapping = {
+  def cardPaymentsNotificationSucceeds(delayMillis: Int = 0, sequence: Int = 0): StubMapping =
+    cardPaymentsNotificationRespondsWith(Status.OK, successMessage, delayMillis, sequence)
+
+  def cardPaymentsNotificationFailsWithAnInternalServerError(delayMillis: Int = 0, sequence: Int = 0): StubMapping =
+    cardPaymentsNotificationRespondsWith(Status.INTERNAL_SERVER_ERROR, errorMessage, delayMillis, sequence)
+
+  def cardPaymentsNotificationRespondsWith(status: Int, responseBody: String, delayMillis: Int = 0, sequence: Int = 0): StubMapping = {
     stubFor(
-      post(urlEqualTo(s"/cross-regime/payments/card/notification"))
+      post(urlEqualTo(endpoint))
         .inScenario("des")
-        .whenScenarioStateIs(WiremockStub.state(sequence))
+        .whenScenarioStateIs(WireMockStub.state(sequence))
         .willReturn(aResponse()
           .withStatus(status)
           .withBody(responseBody)
           .withFixedDelay(delayMillis))
-        .willSetStateTo(WiremockStub.nextState(sequence))
+        .willSetStateTo(WireMockStub.nextState(sequence))
 
     )
   }

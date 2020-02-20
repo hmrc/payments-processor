@@ -14,18 +14,27 @@
  * limitations under the License.
  */
 
-//Note if you run a clean it may removed the following import which is needed !
-// import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
-
 package pp.model
-import play.api.libs.json._
 
-case class ChargeRefNotificationDesRequest(
-    taxType:         TaxType,
-    chargeRefNumber: String,
-    amountPaid:      BigDecimal)
+import play.api.libs.json.JsString
+import play.api.libs.json.Json.toJson
+import pp.model.Origins.{OPS, PCI_PAL}
+import support.{RichMatchers, UnitSpec}
 
-object ChargeRefNotificationDesRequest {
-  implicit val format: OFormat[ChargeRefNotificationDesRequest] = Json.format[ChargeRefNotificationDesRequest]
+class OriginSpec extends UnitSpec with RichMatchers {
+  "Origins should de/serialize" in {
+    val origins = List(
+      "OPS" -> OPS,
+      "PCI_PAL" -> PCI_PAL
+    )
+
+    Origins.values.toSet shouldBe origins.map(o => o._2).toSet
+
+    origins.foreach { origin =>
+      val jsValue = toJson(origin._2)
+      jsValue shouldBe JsString(origin._1) withClue s"serialize $origin"
+      jsValue.as[Origin] shouldBe origin._2 withClue s"deserialize $origin"
+    }
+  }
 }
 

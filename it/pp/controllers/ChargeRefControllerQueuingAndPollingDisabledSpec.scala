@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package support
+package pp.controllers
 
-import com.github.tomakehurst.wiremock.stubbing.Scenario
-
-trait WiremockStub {
-  def state(index: Int): String = if (index == 0) Scenario.STARTED else index.toString
-  def nextState(index: Int): String = (index + 1).toString
-
-  def endState(index: Int, size: Int): String = if (size == 1) Scenario.STARTED else (if (index + 1 >= size) index else index + 1).toString
-
+class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec {
+  "the ChargeRefController card payments endpoints" when {
+    "queuing is disabled" should {
+      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
+      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
+      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
+    }
+  }
 }
-
-object WiremockStub extends WiremockStub

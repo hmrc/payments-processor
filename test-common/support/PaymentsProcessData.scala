@@ -18,9 +18,9 @@ package support
 
 import java.time.{Clock, LocalDateTime}
 
-import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem, TaxTypes}
 import play.api.libs.json.{JsValue, Json}
 import pp.model.Origins.OPS
+import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem, TaxTypes}
 
 object PaymentsProcessData {
 

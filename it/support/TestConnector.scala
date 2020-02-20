@@ -17,7 +17,7 @@
 package support
 
 import javax.inject.{Inject, Singleton}
-import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest}
+import pp.model.ChargeRefNotificationRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -32,7 +32,7 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def sendCardPaymentsNotification(cardPaymentsNotificationRequest: ChargeRefNotificationRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST(s"http://localhost:$port/payments-processor/send-card-payments-notification", cardPaymentsNotificationRequest, headers)
 
-  def sendCardPaymentsNotificationRoot(cardPaymentsNotificationRequest: ChargeRefNotificationRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def sendCardPayments(cardPaymentsNotificationRequest: ChargeRefNotificationRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST(s"http://localhost:$port/send-card-payments", cardPaymentsNotificationRequest, headers)
 
   def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET(s"http://localhost:$port/api/conf/1.0/application.raml")
