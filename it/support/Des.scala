@@ -26,7 +26,11 @@ object Des {
   val successMessage = "ok"
 
   def cardPaymentsNotificationSucceeds(delayMillis: Int = 0, sequence: Int = 0): StubMapping =
-    cardPaymentsNotificationRespondsWith(Status.OK, successMessage, delayMillis, sequence)
+    cardPaymentsNotificationRespondsWith(status = Status.OK, responseBody = successMessage, delayMillis = delayMillis, sequence = sequence)
+
+  // the Des specification defines both 200 and 204 as valid return codes
+  def cardPaymentsNotificationSucceedsWithNoContent(delayMillis: Int = 0, sequence: Int = 0): StubMapping =
+    cardPaymentsNotificationRespondsWith(Status.NO_CONTENT, successMessage, delayMillis, sequence)
 
   def cardPaymentsNotificationFailsWithAnInternalServerError(delayMillis: Int = 0, sequence: Int = 0): StubMapping =
     cardPaymentsNotificationRespondsWith(Status.INTERNAL_SERVER_ERROR, errorMessage, delayMillis, sequence)
