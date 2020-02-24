@@ -23,7 +23,7 @@ import play.api.libs.json.Json
 import pp.scheduling.ChargeRefNotificationMongoRepo
 import support.PaymentsProcessData.chargeRefNotificationRequest
 import support.{Des, ItSpec}
-import uk.gov.hmrc.http.{BadRequestException, ConflictException, HttpResponse, Upstream5xxResponse}
+import uk.gov.hmrc.http.{BadRequestException, HttpResponse, Upstream5xxResponse}
 
 trait ChargeRefControllerSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
@@ -43,15 +43,25 @@ trait ChargeRefControllerSpec extends ItSpec {
       }
 
     "return Ok for a POST to the internal endpoint /send-card-payments-notification" when {
-      "the Des call succeeds" in {
+      "the Des call succeeds with OK" in {
         Des.cardPaymentsNotificationSucceeds()
         verifySuccess(testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue)
+      }
+
+      "the Des call succeeds with NO_CONTENT" in {
+        Des.cardPaymentsNotificationSucceedsWithNoContent()
+        verifySuccess(testConnector.sendCardPayments(chargeRefNotificationRequest).futureValue)
       }
     }
 
     "return Ok for a POST to the public api /send-card-payments" when {
-      "the Des call succeeds" in {
+      "the Des call succeeds with OK" in {
         Des.cardPaymentsNotificationSucceeds()
+        verifySuccess(testConnector.sendCardPayments(chargeRefNotificationRequest).futureValue)
+      }
+
+      "the Des call succeeds with NO_CONTENT" in {
+        Des.cardPaymentsNotificationSucceedsWithNoContent()
         verifySuccess(testConnector.sendCardPayments(chargeRefNotificationRequest).futureValue)
       }
     }
