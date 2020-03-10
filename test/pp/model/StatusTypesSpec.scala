@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-package pp.controllers
+package pp.model
 
-class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec {
-  "the ChargeRefController card payments endpoints" when {
-    "queuing is disabled" should {
-      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
-      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
-      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
-      behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
+import play.api.libs.json.{JsString, Json}
+import support.UnitSpec
+
+class StatusTypesSpec extends UnitSpec {
+
+  "de/serialize TaxTypes" in {
+
+    val statusTypes = List(
+      "complete" -> StatusTypes.complete,
+      "failed" -> StatusTypes.failed
+    )
+
+    statusTypes.foreach { tt =>
+      val jsValue = Json.toJson(tt._2)
+      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
+      jsValue.as[StatusType] shouldBe tt._2 withClue s"deserialize $tt"
     }
   }
-
-
 }
+

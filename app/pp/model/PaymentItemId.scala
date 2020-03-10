@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package pp.controllers
+package pp.model
 
-class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec {
-  "the ChargeRefController card payments endpoints" when {
-    "queuing is disabled" should {
-      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
-      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
-      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
-      behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
-    }
-  }
+import pp.controllers.ValueClassBinder.valueClassBinder
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import play.api.mvc.PathBindable
+import reactivemongo.bson.BSONObjectID
 
+final case class PaymentItemId(
+    value: String
+)
 
+object PaymentItemId {
+  implicit val format: Format[PaymentItemId] = implicitly[Format[String]].inmap(PaymentItemId(_), _.value)
+  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
+  def fresh: PaymentItemId = PaymentItemId(BSONObjectID.generate.stringify)
 }
+

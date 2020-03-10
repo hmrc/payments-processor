@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package pp.controllers
+package pp.model.pcipal
 
-class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec {
-  "the ChargeRefController card payments endpoints" when {
-    "queuing is disabled" should {
-      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
-      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
-      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
-      behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
-    }
-  }
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import play.api.mvc.{PathBindable, QueryStringBindable}
+import pp.controllers.ValueClassBinder.{bindableA, valueClassBinder}
 
+final case class PcipalSessionId(
+    value: String
+)
 
+object PcipalSessionId {
+  implicit val format: Format[PcipalSessionId] = implicitly[Format[String]].inmap(PcipalSessionId(_), _.value)
+  implicit val binder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
+  implicit val pathBinder: QueryStringBindable[PcipalSessionId] = bindableA(_.toString)
 }

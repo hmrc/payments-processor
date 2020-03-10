@@ -17,12 +17,13 @@
 package pp.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify, patchRequestedFor}
 import org.scalatest.Assertion
 import play.api.libs.json.Json
+import pp.model.StatusTypes
 import pp.scheduling.ChargeRefNotificationMongoRepo
-import support.PaymentsProcessData.chargeRefNotificationRequest
-import support.{Des, ItSpec}
+import support.PaymentsProcessData.{chargeRefNotificationPciPalRequest, chargeRefNotificationRequest}
+import support.{Des, ItSpec, TpsPaymentsBackend}
 import uk.gov.hmrc.http.{BadRequestException, HttpResponse, Upstream5xxResponse}
 
 trait ChargeRefControllerSpec extends ItSpec {
@@ -36,11 +37,16 @@ trait ChargeRefControllerSpec extends ItSpec {
   protected def numberOfQueuedNotifications: Integer = repo.count(Json.obj()).futureValue
 
   def aSynchronousEndpointWhenTheDesNotificationSucceeds(): Unit = {
-      def verifySuccess(response: HttpResponse): Assertion = {
+      def verifySuccess(response: HttpResponse,
+                        checkDes: Boolean = true,
+                        checkTpsBackend: Boolean = false
+                       ): Assertion = {
         response.status shouldBe 200
-        verify(1, postRequestedFor(urlEqualTo(Des.endpoint)))
+        if (checkDes) verify(1, postRequestedFor(urlEqualTo(Des.endpoint)))
+        if (checkTpsBackend) verify(1, patchRequestedFor(urlEqualTo(TpsPaymentsBackend.endpoint)))
         numberOfQueuedNotifications shouldBe 0
       }
+
 
     "return Ok for a POST to the internal endpoint /send-card-payments-notification" when {
       "the Des call succeeds with OK" in {
@@ -50,19 +56,27 @@ trait ChargeRefControllerSpec extends ItSpec {
 
       "the Des call succeeds with NO_CONTENT" in {
         Des.cardPaymentsNotificationSucceedsWithNoContent()
-        verifySuccess(testConnector.sendCardPayments(chargeRefNotificationRequest).futureValue)
+        verifySuccess(testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue)
       }
     }
 
     "return Ok for a POST to the public api /send-card-payments" when {
-      "the Des call succeeds with OK" in {
+      "the Des call succeeds with OK, status=complete" in {
         Des.cardPaymentsNotificationSucceeds()
-        verifySuccess(testConnector.sendCardPayments(chargeRefNotificationRequest).futureValue)
+        TpsPaymentsBackend.tpsBackendOk
+        verifySuccess(testConnector.sendCardPayments(chargeRefNotificationPciPalRequest).futureValue, checkTpsBackend= true)
       }
 
-      "the Des call succeeds with NO_CONTENT" in {
+      "the Des call succeeds with NO_CONTENT,status=complete" in {
         Des.cardPaymentsNotificationSucceedsWithNoContent()
-        verifySuccess(testConnector.sendCardPayments(chargeRefNotificationRequest).futureValue)
+        TpsPaymentsBackend.tpsBackendOk
+        verifySuccess(testConnector.sendCardPayments(chargeRefNotificationPciPalRequest).futureValue, checkTpsBackend = true)
+      }
+
+      "the Des call succeeds with OK, status=failed" in {
+        Des.cardPaymentsNotificationSucceeds()
+        TpsPaymentsBackend.tpsBackendOk
+        verifySuccess(testConnector.sendCardPayments(chargeRefNotificationPciPalRequest.copy(Status = StatusTypes.failed)).futureValue, false, true)
       }
     }
   }
@@ -112,4 +126,24 @@ trait ChargeRefControllerSpec extends ItSpec {
       }
     }
   }
+
+
+  def aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError(): Unit = {
+    "fail without persisting to the queue" when {
+      "the tps-backend call fails with an error" in {
+        Des.cardPaymentsNotificationSucceedsWithNoContent()
+        TpsPaymentsBackend.tpsBackendFailed
+
+        val failure = testConnector.sendCardPayments(chargeRefNotificationPciPalRequest).failed.futureValue
+
+        failure.getMessage should include(TpsPaymentsBackend.errorMessage)
+        numberOfQueuedNotifications shouldBe 0
+
+        verify(0, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
+        verify(1, patchRequestedFor(urlEqualTo(TpsPaymentsBackend.endpoint)))
+      }
+    }
+  }
+
+
 }

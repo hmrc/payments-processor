@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-package pp.controllers
+package support
 
-class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec {
-  "the ChargeRefController card payments endpoints" when {
-    "queuing is disabled" should {
-      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
-      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
-      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
-      behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
-    }
+import com.github.tomakehurst.wiremock.client.WireMock._
+
+object TpsPaymentsBackend {
+
+  val endpoint = s"/tps-payments-backend/update-with-pcipal-data"
+  val errorMessage = "tps failed"
+  val successMessage = "ok"
+
+  def tpsBackendOk = updateTps(200,successMessage)
+
+  def tpsBackendFailed = updateTps(500, errorMessage)
+
+  def updateTps(status: Int, responseBody: String) = {
+
+    stubFor(
+      patch(urlEqualTo(endpoint))
+        .willReturn(aResponse()
+          .withStatus(status)
+          .withBody(responseBody)))
   }
-
 
 }

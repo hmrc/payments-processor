@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package pp.controllers
+package pp.model
 
-class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec {
-  "the ChargeRefController card payments endpoints" when {
-    "queuing is disabled" should {
-      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
-      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
-      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
-      behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
-    }
+import play.api.libs.json.Json
+import pp.model.pcipal.ChargeRefNotificationPciPalRequest
+import support.PaymentsProcessData.{chargeRefNotificationPciPalRequest, chargeRefNotificationPciPalRequestJson}
+import support.UnitSpec
+
+class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
+
+  "to json" in {
+    Json.toJson(chargeRefNotificationPciPalRequest) shouldBe chargeRefNotificationPciPalRequestJson
   }
 
-
+  "from json" in {
+    chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPciPalRequest] shouldBe chargeRefNotificationPciPalRequest
+  }
 }

@@ -20,13 +20,20 @@ import java.time.{Clock, LocalDateTime}
 
 import play.api.libs.json.{JsValue, Json}
 import pp.model.Origins.OPS
-import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem, TaxTypes}
+import pp.model.pcipal.{ChargeRefNotificationPciPalRequest, PcipalSessionId}
+import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem, PaymentItemId, StatusTypes, TaxTypes}
 
 object PaymentsProcessData {
 
   private val clock: Clock = Clock.systemUTC()
 
   val chargeReferenceNumber = "XQ002610015768"
+
+  val paymentId = PaymentItemId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+  val pciPalSessionId = PcipalSessionId("48c978bb")
+  val reference = "JE231111B"
+  val pid = "123"
+  val transReference = "51e267d84f91"
 
   val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.CDSX, chargeReferenceNumber, 100.12, OPS)
 
@@ -76,4 +83,32 @@ object PaymentsProcessData {
                                     ]
                                   }
                                 }""".stripMargin)
+
+  val chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest = ChargeRefNotificationPciPalRequest(
+    TaxTypes.CDSX,
+    reference,
+    100.11,
+    1.23,
+    "VISA",
+    StatusTypes.complete,
+    pciPalSessionId,
+    chargeReferenceNumber,
+    paymentId
+  )
+
+  //language=JSON
+  val chargeRefNotificationPciPalRequestJson = Json.parse(
+    s"""{
+            "HoD": "CDSX",
+            "TaxReference": "${reference}",
+            "Amount": 100.11,
+            "Commission": 1.23,
+            "CardType": "VISA",
+            "Status": "${StatusTypes.complete.toString}",
+            "PCIPalSessionId": "${pciPalSessionId.value}",
+            "TransactionReference": "${chargeReferenceNumber}",
+            "paymentItemId": "${paymentId.value}"
+      }""".stripMargin)
+
 }
+
