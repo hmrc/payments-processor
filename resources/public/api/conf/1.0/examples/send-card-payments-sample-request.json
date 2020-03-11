@@ -1,6 +1,12 @@
 {
-  "taxType" : "CDSX",
-  "chargeRefNumber" : "XQ009876543210",
-  "amountPaid" : 100.11,
-  "origin" : "OPS"
+  "HoD": "CDSX",
+  "TaxReference": "JE231111B",
+  "Amount": 1.92,
+  "Commission": 1.23,
+  "CardType": "VISA",
+  "Status": "complete",
+  "PCIPalSessionId": "session-48c978bb-64b6-4a00-a1f1-51e267d84f91",
+  "TransactionReference": "48c978bb",
+  "paymentItemId": "48c978cc"
 }
+

@@ -32,6 +32,7 @@ class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControlle
     "queuing and polling are both enabled" should {
       behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
       behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
+      behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
 
       "return Ok and then asynchronously process the notification" when {
         "the Des call fails with an internal server error" in {

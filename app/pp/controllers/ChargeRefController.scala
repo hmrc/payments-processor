@@ -20,7 +20,9 @@ import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.mvc.{Action, ControllerComponents}
 import pp.config.QueueConfig
-import pp.model.ChargeRefNotificationRequest
+import pp.connectors.tps.TpsPaymentsBackendConnector
+import pp.model.{ChargeRefNotificationRequest, StatusTypes}
+import pp.model.pcipal.ChargeRefNotificationPciPalRequest
 import pp.services.ChargeRefService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, NotFoundException, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
@@ -30,15 +32,37 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ChargeRefController @Inject() (
-    cc:               ControllerComponents,
-    chargeRefService: ChargeRefService,
-    queueConfig:      QueueConfig
+    cc:                          ControllerComponents,
+    chargeRefService:            ChargeRefService,
+    queueConfig:                 QueueConfig,
+    tpsPaymentsBackendConnector: TpsPaymentsBackendConnector
 )
   (implicit executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator {
 
+  def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPciPalRequest] = Action.async(parse.json[ChargeRefNotificationPciPalRequest]) { implicit request =>
+    if (request.body.Status == StatusTypes.complete) {
+      Logger.debug("sendCardPaymentsNotificationPciPal ... sending to DES")
+      for {
+        _ <- tpsPaymentsBackendConnector.updateWithPcipalData(request.body)
+        _ <- processChargeRefNotificationRequest(ChargeRefNotificationPciPalRequest.toChargeRefNotificationRequest(request.body))
+      } yield (Ok)
+    } else {
+      Logger.debug(s"sendCardPaymentsNotificationPciPal ... not sending to DES, as status was${request.body.Status.toString}")
+      for {
+        _ <- tpsPaymentsBackendConnector.updateWithPcipalData(request.body)
+      } yield (Ok)
+    }
+  }
+
   def sendCardPaymentsNotification(): Action[ChargeRefNotificationRequest] = Action.async(parse.json[ChargeRefNotificationRequest]) { implicit request =>
+    Logger.debug("sendCardPaymentsNotification")
+    processChargeRefNotificationRequest(request.body)
+  }
+
+  private def processChargeRefNotificationRequest(chargeRefNotificationRequest: ChargeRefNotificationRequest) = {
+    Logger.debug("processChargeRefNotificationRequest")
     chargeRefService
-      .sendCardPaymentsNotificationSync(request.body)
+      .sendCardPaymentsNotificationSync(chargeRefNotificationRequest)
       .map(_ => Ok)
       .recoverWith {
         case e: BadRequestException                                  => Future.failed(e)
@@ -48,7 +72,7 @@ class ChargeRefController @Inject() (
           if (queueConfig.queueEnabled) {
             Logger.debug("Queue enabled")
             chargeRefService
-              .sendCardPaymentsNotificationToWorkItemRepo(request.body)
+              .sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest)
               .map(
                 res => res.status match {
                   case ToDo => Ok
