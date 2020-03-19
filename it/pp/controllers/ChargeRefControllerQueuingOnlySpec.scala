@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqu
 import play.api.http.Status
 import pp.model.ChargeRefNotificationRequest
 import pp.model.Origins.OPS
-import pp.model.TaxTypes.CDSX
+import pp.model.TaxTypes.CDS
 import support._
 
 class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
@@ -35,7 +35,7 @@ class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
       "return OK and persist to the queue but not process asynchronously" when {
         "the Des call fails with an internal server error" in {
           val chargeReferenceNumber = "XQ000123456789"
-          val chargeRefNotificationRequest = ChargeRefNotificationRequest(CDSX, chargeReferenceNumber, 101.01, OPS)
+          val chargeRefNotificationRequest = ChargeRefNotificationRequest(CDS, chargeReferenceNumber, 101.01, OPS)
 
           Des.cardPaymentsNotificationFailsWithAnInternalServerError()
 

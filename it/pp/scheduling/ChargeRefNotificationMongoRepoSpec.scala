@@ -50,7 +50,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
       case Some(x) => {
         x.status shouldBe uk.gov.hmrc.workitem.ToDo
         x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
-        x.item.taxType shouldBe TaxTypes.CDSX
+        x.item.taxType shouldBe TaxTypes.CDS
       }
       case None => "failed" shouldBe "to find a value"
     }
@@ -63,7 +63,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
       case Some(x) => {
         x.status shouldBe uk.gov.hmrc.workitem.InProgress
         x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
-        x.item.taxType shouldBe TaxTypes.CDSX
+        x.item.taxType shouldBe TaxTypes.CDS
       }
       case None => "failed" shouldBe "to find a value"
     }
@@ -101,7 +101,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
       outstanding match {
         case Some(x) => {
           x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
-          x.item.taxType shouldBe TaxTypes.CDSX
+          x.item.taxType shouldBe TaxTypes.CDS
         }
         case None => "failed" shouldBe "to find a value"
       }
@@ -170,7 +170,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
       outstanding2 match {
         case Some(x) => {
           x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
-          x.item.taxType shouldBe TaxTypes.CDSX
+          x.item.taxType shouldBe TaxTypes.CDS
           x.status shouldBe uk.gov.hmrc.workitem.InProgress
         }
         case None => "failed" shouldBe "to find a value"

@@ -35,15 +35,15 @@ object PaymentsProcessData {
   val pid = "123"
   val transReference = "51e267d84f91"
 
-  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.CDSX, chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.CDS, chargeReferenceNumber, 100.12, OPS)
 
-  val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(TaxTypes.CDSX, chargeReferenceNumber, 100.11)
+  val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(TaxTypes.CDS, chargeReferenceNumber, 100.11)
 
-  val chargeRefNotificationRequest = ChargeRefNotificationRequest(TaxTypes.CDSX, chargeReferenceNumber, 100.11, OPS)
+  val chargeRefNotificationRequest = ChargeRefNotificationRequest(TaxTypes.CDS, chargeReferenceNumber, 100.11, OPS)
 
   val chargeRefNotificationDesRequestJson: JsValue = Json.parse(
     s"""{
-       "taxType" : "CDSX",
+       "taxType" : "CDS",
        "chargeRefNumber" : "XQ002610015768",
        "amountPaid" : 100.11
        }
@@ -53,7 +53,7 @@ object PaymentsProcessData {
 
   val chargeRefNotificationRequestJson: JsValue = Json.parse(
     s"""{
-       "taxType" : "CDSX",
+       "taxType" : "CDS",
        "chargeRefNumber" : "XQ002610015768",
        "amountPaid" : 100.11,
        "origin" : "OPS"
@@ -85,7 +85,7 @@ object PaymentsProcessData {
                                 }""".stripMargin)
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest = ChargeRefNotificationPciPalRequest(
-    TaxTypes.CDSX,
+    TaxTypes.CDS,
     reference,
     100.11,
     1.23,
@@ -99,7 +99,7 @@ object PaymentsProcessData {
   //language=JSON
   val chargeRefNotificationPciPalRequestJson = Json.parse(
     s"""{
-            "HoD": "CDSX",
+            "HoD": "CDS",
             "TaxReference": "${reference}",
             "Amount": 100.11,
             "Commission": 1.23,
