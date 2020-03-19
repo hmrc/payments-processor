@@ -19,7 +19,7 @@ package pp.connectors.tps
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Request
 import play.api.{Configuration, Logger}
-import pp.model.pcipal.ChargeRefNotificationPciPalRequest
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -35,9 +35,9 @@ class TpsPaymentsBackendConnector @Inject() (
 
   private val serviceURL: String = servicesConfig.baseUrl("tps-payments-backend")
 
-  def updateWithPcipalData(chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest)(implicit request: Request[_], hc: HeaderCarrier): Future[HttpResponse] = {
+  def updateWithPcipalData(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)(implicit request: Request[_], hc: HeaderCarrier): Future[HttpResponse] = {
     val update: String = s"$serviceURL/tps-payments-backend/update-with-pcipal-data"
     Logger.debug(s"""calling tps-payments-updateWithPcipalSessionId find with url ${update}""")
-    httpClient.PATCH[ChargeRefNotificationPciPalRequest, HttpResponse](update, chargeRefNotificationPciPalRequest)
+    httpClient.PATCH[ChargeRefNotificationPcipalRequest, HttpResponse](update, chargeRefNotificationPciPalRequest)
   }
 }

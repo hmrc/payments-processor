@@ -20,7 +20,7 @@ import java.time.{Clock, LocalDateTime}
 
 import play.api.libs.json.{JsValue, Json}
 import pp.model.Origins.OPS
-import pp.model.pcipal.{ChargeRefNotificationPciPalRequest, PcipalSessionId}
+import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem, PaymentItemId, StatusTypes, TaxTypes}
 
 object PaymentsProcessData {
@@ -84,7 +84,7 @@ object PaymentsProcessData {
                                   }
                                 }""".stripMargin)
 
-  val chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest = ChargeRefNotificationPciPalRequest(
+  val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     TaxTypes.CDSX,
     reference,
     100.11,
