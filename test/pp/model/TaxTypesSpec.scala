@@ -26,6 +26,7 @@ class TaxTypesSpec extends UnitSpec with RichMatchers {
     val taxTypes = List(
       "NLIJ" -> TaxTypes.NLIJ,
       "CDSX" -> TaxTypes.CDSX,
+      "CDS" -> TaxTypes.CDS,
       "PARC" -> TaxTypes.PARC,
       "P302" -> TaxTypes.P302,
       "self-assessment" -> TaxTypes.`self-assessment`,

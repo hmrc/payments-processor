@@ -44,6 +44,9 @@ object TaxTypes extends Enum[TaxType] {
   case object CDSX extends TaxType {
   }
 
+  case object CDS extends TaxType {
+  }
+
   case object PARC extends TaxType {
   }
 
