@@ -35,7 +35,7 @@ case class Api(
 case class Version(
     version:          String  = "1.0",
     status:           String  = "STABLE",
-    endpointsEnabled: Boolean = true,
+    endpointsEnabled: Boolean,
     access:           Access
 )
 
