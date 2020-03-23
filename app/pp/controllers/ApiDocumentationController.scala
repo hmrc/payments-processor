@@ -18,6 +18,7 @@ package pp.controllers
 
 import controllers.Assets
 import javax.inject.{Inject, Singleton}
+import play.api.Configuration
 import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -29,16 +30,17 @@ import scala.concurrent.Future
 
 @Singleton
 class ApiDocumentationController @Inject() (
-    errorHandler: HttpErrorHandler,
-    cc:           ControllerComponents,
-    assets:       Assets,
-    appContext:   AppContext
+    errorHandler:  HttpErrorHandler,
+    cc:            ControllerComponents,
+    assets:        Assets,
+    appContext:    AppContext,
+    configuration: Configuration
 ) extends DocumentationController(cc, assets, errorHandler) {
 
   override def definition(): Action[AnyContent] = Action.async {
 
     val accessIn: Access = Access(whitelistedApplicationIds = appContext.whiteListedAppIds.getOrElse(Seq.empty[String]))
-    val version: Version = Version(access = accessIn)
+    val version: Version = Version(access           = accessIn, endpointsEnabled = configuration.underlying.getBoolean("api.enabled"))
     val apiIn: Api = Api(context  = appContext.apiContext, versions = Seq(version))
     val apiDefinition: ApiDefinition = ApiDefinition(api = apiIn)
 
