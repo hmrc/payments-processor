@@ -17,7 +17,7 @@
 package pp.model
 
 import play.api.libs.json.Json
-import pp.model.pcipal.ChargeRefNotificationPciPalRequest
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import support.PaymentsProcessData.{chargeRefNotificationPciPalRequest, chargeRefNotificationPciPalRequestJson}
 import support.UnitSpec
 
@@ -28,6 +28,6 @@ class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
   }
 
   "from json" in {
-    chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPciPalRequest] shouldBe chargeRefNotificationPciPalRequest
+    chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe chargeRefNotificationPciPalRequest
   }
 }

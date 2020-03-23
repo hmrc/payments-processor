@@ -22,7 +22,7 @@ import play.api.mvc.{Action, ControllerComponents}
 import pp.config.QueueConfig
 import pp.connectors.tps.TpsPaymentsBackendConnector
 import pp.model.{ChargeRefNotificationRequest, StatusTypes}
-import pp.model.pcipal.ChargeRefNotificationPciPalRequest
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.services.ChargeRefService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, NotFoundException, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
@@ -39,12 +39,12 @@ class ChargeRefController @Inject() (
 )
   (implicit executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator {
 
-  def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPciPalRequest] = Action.async(parse.json[ChargeRefNotificationPciPalRequest]) { implicit request =>
+  def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
     if (request.body.Status == StatusTypes.complete) {
       Logger.debug("sendCardPaymentsNotificationPciPal ... sending to DES")
       for {
         _ <- tpsPaymentsBackendConnector.updateWithPcipalData(request.body)
-        _ <- processChargeRefNotificationRequest(ChargeRefNotificationPciPalRequest.toChargeRefNotificationRequest(request.body))
+        _ <- processChargeRefNotificationRequest(ChargeRefNotificationPcipalRequest.toChargeRefNotificationRequest(request.body))
       } yield (Ok)
     } else {
       Logger.debug(s"sendCardPaymentsNotificationPciPal ... not sending to DES, as status was${request.body.Status.toString}")
