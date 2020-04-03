@@ -21,7 +21,7 @@ import java.time.{Clock, LocalDateTime}
 import play.api.libs.json.{JsValue, Json}
 import pp.model.Origins.OPS
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
-import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem, PaymentItemId, StatusTypes, TaxTypes}
+import pp.model._
 
 object PaymentsProcessData {
 
@@ -35,15 +35,15 @@ object PaymentsProcessData {
   val pid = "123"
   val transReference = "51e267d84f91"
 
-  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.CDSX, chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.p800, chargeReferenceNumber, 100.12, OPS)
 
-  val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(TaxTypes.CDSX, chargeReferenceNumber, 100.11)
+  val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(TaxTypes.p800, chargeReferenceNumber, 100.11)
 
-  val chargeRefNotificationRequest = ChargeRefNotificationRequest(TaxTypes.CDSX, chargeReferenceNumber, 100.11, OPS)
+  val chargeRefNotificationRequest = ChargeRefNotificationRequest(TaxTypes.p800, chargeReferenceNumber, 100.11, OPS)
 
   val chargeRefNotificationDesRequestJson: JsValue = Json.parse(
     s"""{
-       "taxType" : "CDSX",
+       "taxType" : "p800",
        "chargeRefNumber" : "XQ002610015768",
        "amountPaid" : 100.11
        }
@@ -53,7 +53,7 @@ object PaymentsProcessData {
 
   val chargeRefNotificationRequestJson: JsValue = Json.parse(
     s"""{
-       "taxType" : "CDSX",
+       "taxType" : "p800",
        "chargeRefNumber" : "XQ002610015768",
        "amountPaid" : 100.11,
        "origin" : "OPS"
@@ -85,7 +85,7 @@ object PaymentsProcessData {
                                 }""".stripMargin)
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
-    TaxTypes.CDSX,
+    HeadOfDutyIndicators.B,
     reference,
     100.11,
     1.23,
@@ -93,13 +93,14 @@ object PaymentsProcessData {
     StatusTypes.complete,
     pciPalSessionId,
     chargeReferenceNumber,
-    paymentId
+    paymentId,
+    Some("chargeRef")
   )
 
   //language=JSON
   val chargeRefNotificationPciPalRequestJson = Json.parse(
     s"""{
-            "HoD": "CDSX",
+            "HoD": "B",
             "TaxReference": "${reference}",
             "Amount": 100.11,
             "Commission": 1.23,
@@ -107,8 +108,8 @@ object PaymentsProcessData {
             "Status": "${StatusTypes.complete.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "${chargeReferenceNumber}",
-            "paymentItemId": "${paymentId.value}"
+            "paymentItemId": "${paymentId.value}",
+            "ChargeReference": "chargeRef"
       }""".stripMargin)
 
 }
-

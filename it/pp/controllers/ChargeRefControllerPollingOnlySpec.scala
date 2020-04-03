@@ -18,7 +18,7 @@ package pp.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import pp.services.ChargeRefService
-import support.Des
+import support.{Des, TestSettings}
 import support.PaymentsProcessData.chargeRefNotificationRequest
 
 class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
@@ -26,28 +26,30 @@ class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
 
   private lazy val chargeRefService = injector.instanceOf[ChargeRefService]
 
-  "the ChargeRefController" when {
-    "polling is enabled and queuing is disabled" should {
-      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
-      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
-      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
-      behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
+  if (TestSettings.ChargeRefControllerPollingOnlySpecEnabled) {
+    "the ChargeRefController" when {
+      "polling is enabled and queuing is disabled" should {
+        behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
+        behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
+        behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
+        behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
 
-      "asynchronously process pre-existing queued notifications" in {
-        val delayInMilliSeconds = 10
+        "asynchronously process pre-existing queued notifications" in {
+          val delayInMilliSeconds = 10
 
-        Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 0)
-        Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 1)
-        Des.cardPaymentsNotificationSucceeds(delayInMilliSeconds, 2)
+          Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 0)
+          Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 1)
+          Des.cardPaymentsNotificationSucceeds(delayInMilliSeconds, 2)
 
-        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest).futureValue
-        numberOfQueuedNotifications shouldBe 1
+          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest).futureValue
+          numberOfQueuedNotifications shouldBe 1
 
-        eventually {
-          numberOfQueuedNotifications shouldBe 0
+          eventually {
+            numberOfQueuedNotifications shouldBe 0
+          }
+
+          verify(3, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
         }
-
-        verify(3, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
       }
     }
   }
