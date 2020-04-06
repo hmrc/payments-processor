@@ -1,5 +1,5 @@
 {
-  "HoD": "CDSX",
+  "HoD": "B",
   "TaxReference": "JE231111B",
   "Amount": 1.92,
   "Commission": 1.23,
@@ -7,6 +7,6 @@
   "Status": "complete",
   "PCIPalSessionId": "session-48c978bb-64b6-4a00-a1f1-51e267d84f91",
   "TransactionReference": "48c978bb",
-  "paymentItemId": "48c978cc"
+  "paymentItemId": "48c978cc",
+  "ChargeReference": ""
 }
-
