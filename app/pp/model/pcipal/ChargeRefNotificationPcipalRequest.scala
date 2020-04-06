@@ -29,7 +29,7 @@ final case class ChargeRefNotificationPcipalRequest(
     PCIPalSessionId:      PcipalSessionId,
     TransactionReference: String,
     paymentItemId:        PaymentItemId,
-    ChargeReference:      Option[String]      = None
+    ChargeReference:      String              = ""
 )
 
 object ChargeRefNotificationPcipalRequest {
@@ -37,8 +37,8 @@ object ChargeRefNotificationPcipalRequest {
 
   def toChargeRefNotificationRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): ChargeRefNotificationRequest = {
     ChargeRefNotificationRequest(
-      HeadOfDutyIndicators.toTaxcode(chargeRefNotificationPciPalRequest.HoD),
-      chargeRefNotificationPciPalRequest.ChargeReference.getOrElse(throw new RuntimeException("Missing ChargeReference")),
+      HeadOfDutyIndicators.toTaxType(chargeRefNotificationPciPalRequest.HoD),
+      chargeRefNotificationPciPalRequest.ChargeReference,
       chargeRefNotificationPciPalRequest.Amount, Origins.PCI_PAL)
   }
 }

@@ -5,7 +5,7 @@ import support.PaymentsProcessData.{chargeRefNotificationPciPalRequest, chargeRe
 import support.{Des, TestSettings, TpsPaymentsBackend}
 import uk.gov.hmrc.http.HttpResponse
 
-class ChargeRefControllerTaxtypeCheckSpec extends ChargeRefControllerSpec {
+class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
 
 
   override def configMap: Map[String, Any] =

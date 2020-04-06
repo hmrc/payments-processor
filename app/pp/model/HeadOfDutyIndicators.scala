@@ -43,7 +43,7 @@ object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
 
   def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
 
-  def toTaxcode(headOfDutyIndicator: HeadOfDutyIndicator): TaxType = {
+  def toTaxType(headOfDutyIndicator: HeadOfDutyIndicator): TaxType = {
     headOfDutyIndicator match {
       case B => TaxTypes.p800
       case _ => throw new RuntimeException(s"headOfDutyIndicator ${headOfDutyIndicator.toString} is not supported")

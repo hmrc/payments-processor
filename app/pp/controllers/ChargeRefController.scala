@@ -45,7 +45,7 @@ class ChargeRefController @Inject() (
   def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
 
     Logger.debug("sendCardPaymentsNotificationPciPal")
-    val sendChargeRef = sendAllToDes || HeadOfDutyIndicators.toTaxcode(request.body.HoD).sendToDes
+    val sendChargeRef = sendAllToDes || HeadOfDutyIndicators.toTaxType(request.body.HoD).sendToDes
     if (request.body.Status == StatusTypes.complete && sendChargeRef) {
       Logger.debug("sendCardPaymentsNotificationPciPal ... sending to DES")
       for {

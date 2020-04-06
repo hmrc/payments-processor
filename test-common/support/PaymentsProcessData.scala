@@ -94,7 +94,7 @@ object PaymentsProcessData {
     pciPalSessionId,
     chargeReferenceNumber,
     paymentId,
-    Some("chargeRef")
+    "chargeRef"
   )
 
   //language=JSON
