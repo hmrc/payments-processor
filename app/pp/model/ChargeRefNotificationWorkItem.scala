@@ -22,9 +22,7 @@ package pp.model
 import java.time.LocalDateTime
 
 import play.api.libs.json._
-import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.workitem.WorkItem
-import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
 case class ChargeRefNotificationWorkItem(
     createdOn:       LocalDateTime,
@@ -35,6 +33,6 @@ case class ChargeRefNotificationWorkItem(
 
 object ChargeRefNotificationWorkItem {
   implicit val format: OFormat[ChargeRefNotificationWorkItem] = Json.format[ChargeRefNotificationWorkItem]
-  val workItemFormats = WorkItem.workItemMongoFormat[ChargeRefNotificationWorkItem]
+  val workItemFormats: Format[WorkItem[ChargeRefNotificationWorkItem]] = WorkItem.workItemMongoFormat[ChargeRefNotificationWorkItem]
 }
 

@@ -42,41 +42,41 @@ class ChargeRefController @Inject() (
 
   def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
 
-    val ignoreSendChargeRef = checkSendChargeRefForTaxType(HeadOfDutyIndicators.toTaxcode(request.body.HoD))
+    val sendChargeRef = shouldProcess(HeadOfDutyIndicators.toTaxcode(request.body.HoD))
 
-    if (request.body.Status == StatusTypes.complete && (ignoreSendChargeRef == false)) {
+    if (request.body.Status == StatusTypes.complete && sendChargeRef) {
       Logger.debug("sendCardPaymentsNotificationPciPal ... sending to DES")
       for {
         _ <- tpsPaymentsBackendConnector.updateWithPcipalData(request.body)
         _ <- processChargeRefNotificationRequest(ChargeRefNotificationPcipalRequest.toChargeRefNotificationRequest(request.body))
-      } yield (Ok)
+      } yield Ok
     } else {
-      Logger.debug(s"sendCardPaymentsNotificationPciPal ... not sending to DES, as status was ${request.body.Status.toString}, ignoreSendChargeRef was ${ignoreSendChargeRef}")
+      Logger.debug(s"sendCardPaymentsNotificationPciPal ... not sending to DES, as status was ${request.body.Status.toString}, ignoreSendChargeRef was $sendChargeRef")
       for {
         _ <- tpsPaymentsBackendConnector.updateWithPcipalData(request.body)
-      } yield (Ok)
+      } yield Ok
     }
   }
 
   def sendCardPaymentsNotification(): Action[ChargeRefNotificationRequest] = Action.async(parse.json[ChargeRefNotificationRequest]) { implicit request =>
     Logger.debug("sendCardPaymentsNotification")
-    val ignoreSendChargeRef = checkSendChargeRefForTaxType(request.body.taxType)
-    if (ignoreSendChargeRef == false) {
+    val shouldSendChargeRef: Boolean = shouldProcess(request.body.taxType)
+    if (shouldSendChargeRef) {
       processChargeRefNotificationRequest(request.body)
     } else {
-      Logger.debug(s"Not sending des notification for ${request.body.taxType}, ignoreSendChargeRef was ${ignoreSendChargeRef}")
+      Logger.debug(s"Not sending des notification for ${request.body.taxType}, ignoreSendChargeRef was $shouldSendChargeRef")
       Future.successful(Ok)
     }
 
   }
 
-  private def checkSendChargeRefForTaxType(taxType: TaxType) = {
+  private def shouldProcess(taxType: TaxType) = {
     import scala.collection.JavaConverters._
 
     val ignoreList = configuration.underlying.getStringList("taxTypes.chargeref.ignore")
-      .asScala.toList.map(m => TaxTypes.forCode(m).getOrElse(throw new RuntimeException(s"No TaxType for ${m}")))
+      .asScala.toList.map(m => TaxTypes.forCode(m).getOrElse(throw new RuntimeException(s"No TaxType for $m")))
 
-    ignoreList.contains(taxType)
+    !ignoreList.contains(taxType)
 
   }
   private def processChargeRefNotificationRequest(chargeRefNotificationRequest: ChargeRefNotificationRequest) = {
