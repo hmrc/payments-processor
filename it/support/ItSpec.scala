@@ -86,7 +86,7 @@ trait ItSpec
     "poller.initialDelay" -> "0 seconds",
     "poller.interval" -> "1 seconds",
     "microservice.services.tps-payments-backend.port" -> WireMockSupport.port,
-    "taxTypes.chargeref.ignore" -> Seq("P302")
+    "sendAllToDes" -> true
   )
 
   def injector: Injector = fakeApplication().injector

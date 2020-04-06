@@ -13,7 +13,7 @@ class ChargeRefControllerTaxtypeCheckSpec extends ChargeRefControllerSpec {
       .configMap
       .updated("queue.enabled", "true")
       .updated("poller.enabled", "true")
-      .updated("taxTypes.chargeref.ignore", Seq("p800"))
+      .updated("sendAllToDes", "false")
 
 
   private def verifySuccess(response: HttpResponse,

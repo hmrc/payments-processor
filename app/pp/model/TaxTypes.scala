@@ -25,6 +25,7 @@ import pp.jsonext.EnumFormat
 import scala.collection.immutable
 
 sealed abstract class TaxType extends EnumEntry {
+  val sendToDes: Boolean
 }
 
 object TaxType {
@@ -39,32 +40,40 @@ object TaxTypes extends Enum[TaxType] {
   //As per DES API ....
 
   case object NLIJ extends TaxType {
+    val sendToDes = false
   }
 
   case object CDSX extends TaxType {
+    val sendToDes = false
   }
 
   case object PARC extends TaxType {
+    val sendToDes = false
   }
 
   case object P302 extends TaxType {
+    val sendToDes = false
   }
 
   //As per standard OPS TaxTypes ....
 
   case object `self-assessment` extends TaxType {
+    val sendToDes = false
   }
 
   case object vat extends TaxType {
+    val sendToDes = false
   }
 
   case object epaye extends TaxType {
+    val sendToDes = false
   }
 
   /**
    * Machine Game Duty
    */
   case object `mg-duty` extends TaxType {
+    val sendToDes = false
   }
 
   /**
@@ -72,6 +81,7 @@ object TaxTypes extends Enum[TaxType] {
    */
 
   case object mib extends TaxType {
+    val sendToDes = false
   }
 
   /**
@@ -79,15 +89,18 @@ object TaxTypes extends Enum[TaxType] {
    */
 
   case object other extends TaxType {
+    val sendToDes = false
   }
 
   /**
    * Stamp Duty Land Tax (Sdlt)
    */
   case object `stamp-duty` extends TaxType {
+    val sendToDes = false
   }
 
   case object class2NationalInsurance extends TaxType {
+    val sendToDes = false
   }
 
   //  /**
@@ -100,12 +113,15 @@ object TaxTypes extends Enum[TaxType] {
    * Passengers
    */
   case object pngr extends TaxType {
+    val sendToDes = false
   }
 
   case object `corporation-tax` extends TaxType {
+    val sendToDes = false
   }
 
   final case object p800 extends TaxType {
+    val sendToDes = false
   }
 
   /**
@@ -113,9 +129,11 @@ object TaxTypes extends Enum[TaxType] {
    */
 
   case object ni extends TaxType {
+    val sendToDes = false
   }
 
   case object parcels extends TaxType {
+    val sendToDes = false
   }
 
   /**
@@ -123,6 +141,7 @@ object TaxTypes extends Enum[TaxType] {
    */
 
   case object insurancePremium extends TaxType {
+    val sendToDes = false
   }
 
   /**
@@ -130,24 +149,31 @@ object TaxTypes extends Enum[TaxType] {
    */
 
   case object class3NationalInsurance extends TaxType {
+    val sendToDes = false
   }
 
   case object `bioFuelsAndRoadGas` extends TaxType {
+    val sendToDes = false
   }
 
   case object `airPassengerDuty` extends TaxType {
+    val sendToDes = false
   }
 
   case object `beerDuty` extends TaxType {
+    val sendToDes = false
   }
 
   case object `landfillTax` extends TaxType {
+    val sendToDes = false
   }
 
   case object `aggregatesLevy` extends TaxType {
+    val sendToDes = false
   }
 
   case object `climateChangeLevy` extends TaxType {
+    val sendToDes = false
   }
 
   override def values: immutable.IndexedSeq[TaxType] = findValues
