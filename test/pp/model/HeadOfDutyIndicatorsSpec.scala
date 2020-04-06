@@ -16,21 +16,23 @@
 
 package pp.model
 
-import play.api.libs.json.{JsString, Json}
-import support.UnitSpec
+import play.api.libs.json.JsString
+import play.api.libs.json.Json.toJson
+import pp.model.HeadOfDutyIndicators.B
+import support.{RichMatchers, UnitSpec}
 
-class HeadOfDutyIndicatorsSpec extends UnitSpec {
-
-  "de/serialize headOfDutyIndicators" in {
-
+class HeadOfDutyIndicatorsSpec extends UnitSpec with RichMatchers {
+  "HeadOfDutyIndicators should de/serialize" in {
     val headOfDutyIndicators = List(
-      "B" -> HeadOfDutyIndicators.B
+      "B" -> B
     )
 
-    headOfDutyIndicators.foreach { tt =>
-      val jsValue = Json.toJson(tt._2)
-      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
-      jsValue.as[HeadOfDutyIndicator] shouldBe tt._2 withClue s"deserialize $tt"
+    HeadOfDutyIndicators.values.toSet shouldBe headOfDutyIndicators.map(o => o._2).toSet
+
+    headOfDutyIndicators.foreach { headOfDutyIndicator =>
+      val jsValue = toJson(headOfDutyIndicator._2)
+      jsValue shouldBe JsString(headOfDutyIndicator._1) withClue s"serialize $headOfDutyIndicator"
+      jsValue.as[HeadOfDutyIndicator] shouldBe headOfDutyIndicator._2 withClue s"deserialize $headOfDutyIndicator"
     }
   }
 }
