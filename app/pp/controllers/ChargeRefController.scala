@@ -17,12 +17,12 @@
 package pp.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.mvc.{Action, ControllerComponents}
+import play.api.{Configuration, Logger}
 import pp.config.QueueConfig
 import pp.connectors.tps.TpsPaymentsBackendConnector
-import pp.model.{ChargeRefNotificationRequest, StatusTypes}
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
+import pp.model.{ChargeRefNotificationRequest, StatusTypes}
 import pp.services.ChargeRefService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, NotFoundException, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
@@ -35,28 +35,42 @@ class ChargeRefController @Inject() (
     cc:                          ControllerComponents,
     chargeRefService:            ChargeRefService,
     queueConfig:                 QueueConfig,
-    tpsPaymentsBackendConnector: TpsPaymentsBackendConnector
+    tpsPaymentsBackendConnector: TpsPaymentsBackendConnector,
+    configuration:               Configuration
 )
   (implicit executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator {
 
+  val sendAllToDes: Boolean = configuration.underlying.getBoolean("sendAllToDes")
+
   def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
-    if (request.body.Status == StatusTypes.complete) {
+
+    Logger.debug("sendCardPaymentsNotificationPciPal")
+    val sendChargeRef = sendAllToDes || request.body.HoD.taxType.sendToDes
+    if (request.body.Status == StatusTypes.complete && sendChargeRef) {
       Logger.debug("sendCardPaymentsNotificationPciPal ... sending to DES")
       for {
         _ <- tpsPaymentsBackendConnector.updateWithPcipalData(request.body)
         _ <- processChargeRefNotificationRequest(ChargeRefNotificationPcipalRequest.toChargeRefNotificationRequest(request.body))
-      } yield (Ok)
+      } yield Ok
     } else {
-      Logger.debug(s"sendCardPaymentsNotificationPciPal ... not sending to DES, as status was${request.body.Status.toString}")
+      Logger.debug(s"sendCardPaymentsNotificationPciPal ... not sending to DES, as status was ${request.body.Status.toString}, ignoreSendChargeRef was $sendChargeRef")
       for {
         _ <- tpsPaymentsBackendConnector.updateWithPcipalData(request.body)
-      } yield (Ok)
+      } yield Ok
     }
   }
 
   def sendCardPaymentsNotification(): Action[ChargeRefNotificationRequest] = Action.async(parse.json[ChargeRefNotificationRequest]) { implicit request =>
     Logger.debug("sendCardPaymentsNotification")
-    processChargeRefNotificationRequest(request.body)
+
+    val sendChargeRef = sendAllToDes || request.body.taxType.sendToDes
+    if (sendChargeRef) {
+      processChargeRefNotificationRequest(request.body)
+    } else {
+      Logger.debug(s"Not sending des notification for ${request.body.taxType}, ignoreSendChargeRef was $sendChargeRef")
+      Future.successful(Ok)
+    }
+
   }
 
   private def processChargeRefNotificationRequest(chargeRefNotificationRequest: ChargeRefNotificationRequest) = {

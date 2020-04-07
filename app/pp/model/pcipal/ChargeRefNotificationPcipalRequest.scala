@@ -16,11 +16,11 @@
 
 package pp.model.pcipal
 
-import play.api.libs.json._
-import pp.model.{ChargeRefNotificationRequest, Origins, PaymentItemId, StatusType, TaxType}
+import play.api.libs.json.{Json, OFormat}
+import pp.model._
 
 final case class ChargeRefNotificationPcipalRequest(
-    HoD:                  TaxType,
+    HoD:                  HeadOfDutyIndicator,
     TaxReference:         String,
     Amount:               BigDecimal,
     Commission:           BigDecimal,
@@ -28,13 +28,17 @@ final case class ChargeRefNotificationPcipalRequest(
     Status:               StatusType,
     PCIPalSessionId:      PcipalSessionId,
     TransactionReference: String,
-    paymentItemId:        PaymentItemId
+    paymentItemId:        PaymentItemId,
+    ChargeReference:      String              = ""
 )
 
 object ChargeRefNotificationPcipalRequest {
   implicit val format: OFormat[ChargeRefNotificationPcipalRequest] = Json.format[ChargeRefNotificationPcipalRequest]
 
   def toChargeRefNotificationRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): ChargeRefNotificationRequest = {
-    ChargeRefNotificationRequest(chargeRefNotificationPciPalRequest.HoD, chargeRefNotificationPciPalRequest.TaxReference, chargeRefNotificationPciPalRequest.Amount, Origins.PCI_PAL)
+    ChargeRefNotificationRequest(
+      chargeRefNotificationPciPalRequest.HoD.taxType,
+      chargeRefNotificationPciPalRequest.ChargeReference,
+      chargeRefNotificationPciPalRequest.Amount, Origins.PCI_PAL)
   }
 }

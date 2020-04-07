@@ -16,15 +16,18 @@
 
 package pp.controllers
 
+import support.TestSettings
+
 class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec {
-  "the ChargeRefController card payments endpoints" when {
-    "queuing is disabled" should {
-      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
-      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
-      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
-      behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
+  if (TestSettings.ChargeRefControllerQueuingAndPollingDisabledSpecEnabled) {
+    "the ChargeRefController card payments endpoints" when {
+      "queuing is disabled" should {
+        behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
+        behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
+        behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
+        behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
+      }
     }
   }
-
 
 }

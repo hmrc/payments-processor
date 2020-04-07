@@ -27,32 +27,33 @@ class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControlle
       .configMap
       .updated("queue.enabled", "true")
       .updated("poller.enabled", "true")
+  if (TestSettings.ChargeRefControllerQueuingAndPollingEnabledSpec) {
+    "the ChargeRefController" when {
+      "queuing and polling are both enabled" should {
+        behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
+        behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
+        behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
 
-  "the ChargeRefController" when {
-    "queuing and polling are both enabled" should {
-      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
-      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
-      behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
+        "return Ok and then asynchronously process the notification" when {
+          "the Des call fails with an internal server error" in {
+            val delayInMilliSeconds = 10
 
-      "return Ok and then asynchronously process the notification" when {
-        "the Des call fails with an internal server error" in {
-          val delayInMilliSeconds = 10
+            Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 0)
+            Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 1)
+            Des.cardPaymentsNotificationSucceeds(delayInMilliSeconds, 2)
 
-          Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 0)
-          Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 1)
-          Des.cardPaymentsNotificationSucceeds(delayInMilliSeconds, 2)
-
-          numberOfQueuedNotifications shouldBe 0
-
-          val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue
-          response.status shouldBe Status.OK
-          numberOfQueuedNotifications shouldBe 1
-
-          eventually {
             numberOfQueuedNotifications shouldBe 0
-          }
 
-          verify(3, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
+            val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue
+            response.status shouldBe Status.OK
+            numberOfQueuedNotifications shouldBe 1
+
+            eventually {
+              numberOfQueuedNotifications shouldBe 0
+            }
+
+            verify(3, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
+          }
         }
       }
     }

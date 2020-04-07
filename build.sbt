@@ -1,111 +1,40 @@
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
-import sbt.Tests.{Group, SubProcess}
-import scalariform.formatter.preferences._
 import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-import wartremover.{Wart, wartremoverErrors, wartremoverExcluded, wartremoverWarnings}
+import sbt.Tests.{Group, SubProcess}
+
+val appName = "payments-processor"
+
+val akkaVersion = "2.5.23"
+val akkaHttpVersion = "10.0.15"
+
+dependencyOverrides += "com.typesafe.akka" %% "akka-stream" % akkaVersion
+dependencyOverrides += "com.typesafe.akka" %% "akka-protobuf" % akkaVersion
+dependencyOverrides += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
+dependencyOverrides += "com.typesafe.akka" %% "akka-actor" % akkaVersion
+dependencyOverrides += "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
 
 
-lazy val scalariformSettings = {
-  // description of options found here -> https://github.com/scala-ide/scalariform
-  ScalariformKeys.preferences := ScalariformKeys.preferences.value
-    .setPreference(AlignArguments, true)
-    .setPreference(AlignParameters, true)
-    .setPreference(AlignSingleLineCaseStatements, true)
-    .setPreference(AllowParamGroupsOnNewlines, true)
-    .setPreference(CompactControlReadability, false)
-    .setPreference(CompactStringConcatenation, false)
-    .setPreference(DanglingCloseParenthesis, Preserve)
-    .setPreference(DoubleIndentConstructorArguments, true)
-    .setPreference(DoubleIndentMethodDeclaration, true)
-    .setPreference(FirstArgumentOnNewline, Preserve)
-    .setPreference(FirstParameterOnNewline, Preserve)
-    .setPreference(FormatXml, true)
-    .setPreference(IndentLocalDefs, true)
-    .setPreference(IndentPackageBlocks, true)
-    .setPreference(IndentSpaces, 2)
-    .setPreference(IndentWithTabs, false)
-    .setPreference(MultilineScaladocCommentsStartOnFirstLine, false)
-    .setPreference(NewlineAtEndOfFile, true)
-    .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, false)
-    .setPreference(PreserveSpaceBeforeArguments, true)
-    .setPreference(RewriteArrowSymbols, false)
-    .setPreference(SpaceBeforeColon, false)
-    .setPreference(SpaceBeforeContextColon, false)
-    .setPreference(SpaceInsideBrackets, false)
-    .setPreference(SpaceInsideParentheses, false)
-    .setPreference(SpacesAroundMultiImports, false)
-    .setPreference(SpacesWithinPatternBinders, true)
-}
-lazy val wartRemoverWarning = {
-  val warningWarts = Seq(
-    Wart.JavaSerializable,
-    Wart.StringPlusAny,
-    Wart.AsInstanceOf,
-    Wart.IsInstanceOf,
-    Wart.Any
-  )
-  wartremoverWarnings in(Compile, compile) ++= warningWarts
-}
-lazy val wartRemoverError = {
-  // Error
-  val errorWarts = Seq(
-    Wart.ArrayEquals,
-    Wart.AnyVal,
-    Wart.EitherProjectionPartial,
-    Wart.Enumeration,
-    Wart.ExplicitImplicitTypes,
-    Wart.FinalVal,
-    Wart.JavaConversions,
-    Wart.JavaSerializable,
-    Wart.LeakingSealed,
-    Wart.MutableDataStructures,
-    Wart.Null,
-    Wart.OptionPartial,
-    Wart.Recursion,
-    Wart.Return,
-    Wart.TraversableOps,
-    Wart.TryPartial,
-    Wart.Var,
-    Wart.While)
-
-  wartremoverErrors in(Compile, compile) ++= errorWarts
-}
-lazy val scoverageSettings = {
-  import scoverage.ScoverageKeys
-  Seq(
-    // Semicolon-separated list of regexs matching classes to exclude
-    ScoverageKeys.coverageExcludedPackages := "<empty>;.*BuildInfo.*;Reverse.*;app.Routes.*;prod.*;testOnlyDoNotUseInAppConf.*;forms.*;pp.config.*",
-    ScoverageKeys.coverageExcludedFiles := ".*Routes.*;.*RoutesPrefix.*;.*ValueClassBinder.*;.*microserviceGlobal.*;.*microserviceWiring.*;.*Link.*;.*Language.*;.*LanuageSwitchController.*;.*language_selection.*",
-    ScoverageKeys.coverageMinimum := 80,
-    ScoverageKeys.coverageFailOnMinimum := false,
-    ScoverageKeys.coverageHighlighting := true
-  )
-}
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .disablePlugins(JUnitXmlReportPlugin)
   .settings(
-    scalaVersion := "2.11.12",
     majorVersion := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test ++ AppDependencies.itTest
   )
-  .settings(scalariformSettings: _*)
-  .settings(
-    unmanagedResourceDirectories in Compile += baseDirectory.value / "resources"
-  )
-  .settings(wartRemoverError)
-  .settings(wartRemoverWarning)
+  .settings(ScalariformSettings())
+  .settings(ScoverageSettings())
+  .settings(WartRemoverSettings.wartRemoverError)
+  .settings(WartRemoverSettings.wartRemoverWarning)
   .settings(wartremoverErrors in(Test, compile) --= Seq(Wart.Any, Wart.Equals, Wart.Null, Wart.NonUnitStatements, Wart.PublicInference))
   .settings(wartremoverExcluded ++=
     routes.in(Compile).value ++
       (baseDirectory.value / "it").get ++
       (baseDirectory.value / "test").get ++
       Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
-  .settings(scoverageSettings: _*)
+  .settings(publishingSettings: _*)
   .settings(
     unmanagedSourceDirectories in Test := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common")
   )
-  .settings(publishingSettings: _*)
   .configs(IntegrationTest)
   .settings(
     Keys.fork in IntegrationTest := true,
@@ -115,12 +44,12 @@ lazy val microservice = Project(appName, file("."))
     unmanagedSourceDirectories in IntegrationTest += baseDirectory(_ / "test-common").value,
     parallelExecution in IntegrationTest := false,
     testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value)
-  )  
+  )
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(PlayKeys.playDefaultPort := 9211)
   .settings(
     routesImport ++= Seq(
-      //  "pp.model._"
+      "pp.model._"
     ))
   .settings(
     scalacOptions ++= Seq(
@@ -137,8 +66,8 @@ lazy val microservice = Project(appName, file("."))
       "-Ypartial-unification" //required by cats
     )
   )
-val appName = "payments-processor"
+
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
-  tests map {
-    test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name))))
+  tests map { test =>
+    Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }

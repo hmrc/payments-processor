@@ -25,6 +25,7 @@ import pp.jsonext.EnumFormat
 import scala.collection.immutable
 
 sealed abstract class TaxType extends EnumEntry {
+  val sendToDes: Boolean = false
 }
 
 object TaxType {

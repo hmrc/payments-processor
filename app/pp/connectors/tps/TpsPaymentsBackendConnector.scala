@@ -37,7 +37,7 @@ class TpsPaymentsBackendConnector @Inject() (
 
   def updateWithPcipalData(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)(implicit request: Request[_], hc: HeaderCarrier): Future[HttpResponse] = {
     val update: String = s"$serviceURL/tps-payments-backend/update-with-pcipal-data"
-    Logger.debug(s"""calling tps-payments-updateWithPcipalSessionId find with url ${update}""")
+    Logger.debug(s"""calling tps-payments-updateWithPcipalSessionId find with url $update""")
     httpClient.PATCH[ChargeRefNotificationPcipalRequest, HttpResponse](update, chargeRefNotificationPciPalRequest)
   }
 }

@@ -32,9 +32,11 @@ trait ChargeRefControllerSpec extends ItSpec {
   override def beforeEach(): Unit = {
     repo.removeAll().futureValue
     WireMock.reset()
+    super.beforeEach()
   }
 
   protected def numberOfQueuedNotifications: Integer = repo.count(Json.obj()).futureValue
+
 
   def aSynchronousEndpointWhenTheDesNotificationSucceeds(): Unit = {
       def verifySuccess(response: HttpResponse,
