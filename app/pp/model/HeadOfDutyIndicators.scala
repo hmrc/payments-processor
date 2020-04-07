@@ -21,6 +21,7 @@ import enumeratum._
 import pp.jsonext.EnumFormat
 import play.api.libs.json.Format
 import play.api.mvc.{PathBindable, QueryStringBindable}
+import pp.model.TaxTypes.p800
 
 import scala.collection.immutable
 
@@ -31,7 +32,8 @@ object HeadOfDutyIndicator {
 
 }
 
-sealed abstract class HeadOfDutyIndicator extends EnumEntry {
+sealed trait HeadOfDutyIndicator extends EnumEntry {
+  val taxType: TaxType
 }
 
 object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
@@ -39,15 +41,8 @@ object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
   def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString == code)
 
   case object B extends HeadOfDutyIndicator {
+    override val taxType: TaxType = p800
   }
 
   def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
-
-  def toTaxType(headOfDutyIndicator: HeadOfDutyIndicator): TaxType = {
-    headOfDutyIndicator match {
-      case B => TaxTypes.p800
-      case _ => throw new RuntimeException(s"headOfDutyIndicator ${headOfDutyIndicator.toString} is not supported")
-    }
-  }
-
 }

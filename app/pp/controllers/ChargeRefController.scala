@@ -17,12 +17,12 @@
 package pp.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.{Configuration, Logger}
 import play.api.mvc.{Action, ControllerComponents}
+import play.api.{Configuration, Logger}
 import pp.config.QueueConfig
 import pp.connectors.tps.TpsPaymentsBackendConnector
-import pp.model.{ChargeRefNotificationRequest, HeadOfDutyIndicators, StatusTypes}
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
+import pp.model.{ChargeRefNotificationRequest, StatusTypes}
 import pp.services.ChargeRefService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, NotFoundException, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
@@ -45,7 +45,7 @@ class ChargeRefController @Inject() (
   def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
 
     Logger.debug("sendCardPaymentsNotificationPciPal")
-    val sendChargeRef = sendAllToDes || HeadOfDutyIndicators.toTaxType(request.body.HoD).sendToDes
+    val sendChargeRef = sendAllToDes || request.body.HoD.taxType.sendToDes
     if (request.body.Status == StatusTypes.complete && sendChargeRef) {
       Logger.debug("sendCardPaymentsNotificationPciPal ... sending to DES")
       for {
