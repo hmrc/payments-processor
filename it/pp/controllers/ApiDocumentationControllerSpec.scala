@@ -36,5 +36,13 @@ class ApiDocumentationControllerSpec extends ItSpec {
       json shouldBe PaymentsProcessData.definition(true)
     }
 
+    "DocumentationController return OK status" in {
+      val response: HttpResponse = testConnector.getApiDoc.futureValue
+      response.status shouldBe Status.OK
+
+    }
   }
+
+
 }
+
