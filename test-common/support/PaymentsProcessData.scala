@@ -62,7 +62,7 @@ object PaymentsProcessData {
 
   )
   //language=JSON
-  def definition(endpointsEnabled: Boolean) = Json.parse(s"""{
+  def definition(endpointsEnabled: Boolean, status: String) = Json.parse(s"""{
                                   "scopes":[],
                                   "api": {
                                     "name": "Charge Ref Notification",
@@ -72,7 +72,7 @@ object PaymentsProcessData {
                                     "versions": [
                                       {
                                         "version": "1.0",
-                                        "status": "STABLE",
+                                        "status": "${status}",
                                         "endpointsEnabled": ${endpointsEnabled},
                                         "access": {
                                           "type": "PRIVATE",

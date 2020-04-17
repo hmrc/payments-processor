@@ -33,7 +33,7 @@ class ApiDocumentationControllerSpec extends ItSpec {
       val response: HttpResponse = testConnector.getDef.futureValue
       response.status shouldBe Status.OK
       val json = Json.parse(response.body)
-      json shouldBe PaymentsProcessData.definition(true)
+      json shouldBe PaymentsProcessData.definition(true, "BETA")
     }
 
     "DocumentationController return OK status" in {
