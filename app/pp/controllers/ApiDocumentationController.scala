@@ -40,7 +40,8 @@ class ApiDocumentationController @Inject() (
   override def definition(): Action[AnyContent] = Action.async {
 
     val accessIn: Access = Access(whitelistedApplicationIds = appContext.whiteListedAppIds.getOrElse(Seq.empty[String]))
-    val version: Version = Version(access           = accessIn, endpointsEnabled = configuration.underlying.getBoolean("api.enabled"))
+    val version: Version = Version(access           = accessIn,
+                                   endpointsEnabled = configuration.underlying.getBoolean("api.enabled"), status = configuration.underlying.getString("api.status"))
     val apiIn: Api = Api(context  = appContext.apiContext, versions = Seq(version))
     val apiDefinition: ApiDefinition = ApiDefinition(api = apiIn)
 
