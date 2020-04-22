@@ -24,7 +24,7 @@ class StatusTypesSpec extends UnitSpec {
   "de/serialize TaxTypes" in {
 
     val statusTypes = List(
-      "complete" -> StatusTypes.complete,
+      "validated" -> StatusTypes.validated,
       "failed" -> StatusTypes.failed
     )
 
