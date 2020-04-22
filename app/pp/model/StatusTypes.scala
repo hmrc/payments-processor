@@ -38,7 +38,7 @@ object StatusTypes extends Enum[StatusType] {
 
   def forCode(code: String): Option[StatusType] = values.find(_.toString == code)
 
-  case object complete extends StatusType {
+  case object validated extends StatusType {
   }
 
   case object failed extends StatusType {

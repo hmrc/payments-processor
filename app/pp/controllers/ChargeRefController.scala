@@ -46,7 +46,7 @@ class ChargeRefController @Inject() (
 
     Logger.debug("sendCardPaymentsNotificationPciPal")
     val sendChargeRef = sendAllToDes || request.body.HoD.taxType.sendToDes
-    if (request.body.Status == StatusTypes.complete && sendChargeRef) {
+    if (request.body.Status == StatusTypes.validated && sendChargeRef) {
       Logger.debug("sendCardPaymentsNotificationPciPal ... sending to DES")
       for {
         _ <- tpsPaymentsBackendConnector.updateWithPcipalData(request.body)
