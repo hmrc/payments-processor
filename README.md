@@ -7,7 +7,7 @@ Payments processor is a microservice which allows for asynchronous execution of 
 At the moment there is only one asynchronous flow available which sends a charge ref notification to ETMP via DES.  The DES endpoint is called, if there is a 5** failure 
 the request is placed into the underlying work-item-repo implementation collection.  From here the request will be retried according to the values in the configuration:
 
-queue.retryAfter = 120 seconds
+queue.retryAfter = 120 seconds 
 
 queue.ttl = 24 hours
 
