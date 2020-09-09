@@ -16,12 +16,11 @@
 
 package pp.model
 
-import pp.controllers.ValueClassBinder._
 import enumeratum._
-import pp.jsonext.EnumFormat
 import play.api.libs.json.Format
 import play.api.mvc.{PathBindable, QueryStringBindable}
-import pp.model.TaxTypes.p800
+import pp.controllers.ValueClassBinder._
+import pp.jsonext.EnumFormat
 
 import scala.collection.immutable
 
@@ -29,20 +28,14 @@ object HeadOfDutyIndicator {
   implicit val format: Format[HeadOfDutyIndicator] = EnumFormat(HeadOfDutyIndicators)
   implicit val pathBinder: QueryStringBindable[HeadOfDutyIndicator] = bindableA(_.toString)
   implicit val headOfDutyBinder: PathBindable[HeadOfDutyIndicator] = valueClassBinder(_.toString)
-
 }
 
-sealed trait HeadOfDutyIndicator extends EnumEntry {
-  val taxType: TaxType
-}
+sealed trait HeadOfDutyIndicator extends EnumEntry
 
 object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
-
   def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString == code)
 
-  case object B extends HeadOfDutyIndicator {
-    override val taxType: TaxType = p800
-  }
+  case object B extends HeadOfDutyIndicator
 
   def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
 }

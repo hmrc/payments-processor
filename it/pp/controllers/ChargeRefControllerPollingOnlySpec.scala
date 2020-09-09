@@ -32,7 +32,8 @@ class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
         behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
         behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
         behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
-        behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
+        behave like aSynchronousEndpointWhenTheTpsUodateFailsWithAnInternalError()
+        behave like aSynchronousEndpointWhenTpsGetTaxTypeFailsWith404()
 
         "asynchronously process pre-existing queued notifications" in {
           val delayInMilliSeconds = 10

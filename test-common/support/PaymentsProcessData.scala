@@ -16,32 +16,38 @@
 
 package support
 
-import java.time.{Clock, LocalDateTime}
+import java.time.Clock
+import java.time.Clock.systemUTC
+import java.time.LocalDateTime.now
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
+import play.api.libs.json.Json.parse
 import pp.model.Origins.OPS
-import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
+import pp.model.StatusTypes.validated
+import pp.model.TaxTypes.p800
 import pp.model._
+import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 
 object PaymentsProcessData {
 
-  private val clock: Clock = Clock.systemUTC()
+  private val clock: Clock = systemUTC()
 
   val chargeReferenceNumber = "XQ002610015768"
 
-  val paymentId = PaymentItemId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
-  val pciPalSessionId = PcipalSessionId("48c978bb")
+  val p800PaymentItemId: PaymentItemId = PaymentItemId("p800-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+  val mibPaymentItemId: PaymentItemId = PaymentItemId("mib-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+
+  private val pciPalSessionId = PcipalSessionId("48c978bb")
+
   val reference = "JE231111B"
-  val pid = "123"
-  val transReference = "51e267d84f91"
 
-  val chargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(LocalDateTime.now(clock), TaxTypes.p800, chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem: ChargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(now(clock), p800, chargeReferenceNumber, 100.12, OPS)
 
-  val chargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(TaxTypes.p800, chargeReferenceNumber, 100.11)
+  val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(p800, chargeReferenceNumber, 100.11)
 
-  val chargeRefNotificationRequest = ChargeRefNotificationRequest(TaxTypes.p800, chargeReferenceNumber, 100.11, OPS)
+  val chargeRefNotificationRequest: ChargeRefNotificationRequest = ChargeRefNotificationRequest(p800, chargeReferenceNumber, 100.11, OPS)
 
-  val chargeRefNotificationDesRequestJson: JsValue = Json.parse(
+  val chargeRefNotificationDesRequestJson: JsValue = parse(
     s"""{
        "taxType" : "p800",
        "chargeRefNumber" : "XQ002610015768",
@@ -51,7 +57,7 @@ object PaymentsProcessData {
 
   )
 
-  val chargeRefNotificationRequestJson: JsValue = Json.parse(
+  val chargeRefNotificationRequestJson: JsValue = parse(
     s"""{
        "taxType" : "p800",
        "chargeRefNumber" : "XQ002610015768",
@@ -62,7 +68,7 @@ object PaymentsProcessData {
 
   )
   //language=JSON
-  def definition(endpointsEnabled: Boolean, status: String) = Json.parse(s"""{
+  def definition(endpointsEnabled: Boolean, status: String): JsValue = parse(s"""{
                                   "scopes":[],
                                   "api": {
                                     "name": "Charge Ref Notification",
@@ -84,31 +90,35 @@ object PaymentsProcessData {
                                   }
                                 }""".stripMargin)
 
-  val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
+  val p800PcipalNotification: ChargeRefNotificationPcipalRequest = chargeRefNotificationPciPalRequest(p800PaymentItemId)
+
+  val mibPcipalNotification: ChargeRefNotificationPcipalRequest = chargeRefNotificationPciPalRequest(mibPaymentItemId)
+
+  private def chargeRefNotificationPciPalRequest(paymentItemId: PaymentItemId) = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,
     reference,
     100.11,
     1.23,
     "VISA",
-    StatusTypes.validated,
+    validated,
     pciPalSessionId,
     chargeReferenceNumber,
-    paymentId,
+    paymentItemId,
     "chargeRef"
   )
 
   //language=JSON
-  val chargeRefNotificationPciPalRequestJson = Json.parse(
+  val chargeRefNotificationPciPalRequestJson: JsValue = parse(
     s"""{
             "HoD": "B",
             "TaxReference": "${reference}",
             "Amount": 100.11,
             "Commission": 1.23,
             "CardType": "VISA",
-            "Status": "${StatusTypes.validated.toString}",
+            "Status": "${validated.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "${chargeReferenceNumber}",
-            "paymentItemId": "${paymentId.value}",
+            "paymentItemId": "${p800PaymentItemId.value}",
             "ChargeReference": "chargeRef"
       }""".stripMargin)
 

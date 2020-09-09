@@ -21,8 +21,10 @@ import play.api.mvc.{Action, ControllerComponents}
 import play.api.{Configuration, Logger}
 import pp.config.QueueConfig
 import pp.connectors.tps.TpsPaymentsBackendConnector
+import pp.model.StatusTypes.validated
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
-import pp.model.{ChargeRefNotificationRequest, StatusTypes}
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest.toChargeRefNotificationRequest
+import pp.model.{ChargeRefNotificationRequest, TaxType}
 import pp.services.ChargeRefService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, NotFoundException, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
@@ -43,21 +45,20 @@ class ChargeRefController @Inject() (
   val sendAllToDes: Boolean = configuration.underlying.getBoolean("sendAllToDes")
 
   def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
-
     Logger.debug("sendCardPaymentsNotificationPciPal")
-    val sendChargeRef = sendAllToDes || request.body.HoD.taxType.sendToDes
-    if (request.body.Status == StatusTypes.validated && sendChargeRef) {
-      Logger.debug("sendCardPaymentsNotificationPciPal ... sending to DES")
-      for {
-        _ <- tpsPaymentsBackendConnector.updateWithPcipalData(request.body)
-        _ <- processChargeRefNotificationRequest(ChargeRefNotificationPcipalRequest.toChargeRefNotificationRequest(request.body))
-      } yield Ok
-    } else {
-      Logger.debug(s"sendCardPaymentsNotificationPciPal ... not sending to DES, as status was ${request.body.Status.toString}, ignoreSendChargeRef was $sendChargeRef")
-      for {
-        _ <- tpsPaymentsBackendConnector.updateWithPcipalData(request.body)
-      } yield Ok
-    }
+
+    val notification = request.body
+
+      def sendToDesIfValidatedAndConfigured(taxType: TaxType) =
+        if (notification.Status == validated && (sendAllToDes || taxType.sendToDes))
+          processChargeRefNotificationRequest(toChargeRefNotificationRequest(notification, taxType))
+        else Future successful Ok
+
+    for {
+      taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
+      _ <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)
+      _ <- sendToDesIfValidatedAndConfigured(taxType)
+    } yield Ok
   }
 
   def sendCardPaymentsNotification(): Action[ChargeRefNotificationRequest] = Action.async(parse.json[ChargeRefNotificationRequest]) { implicit request =>

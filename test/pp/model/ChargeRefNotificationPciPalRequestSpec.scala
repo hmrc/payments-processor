@@ -18,16 +18,16 @@ package pp.model
 
 import play.api.libs.json.Json
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
-import support.PaymentsProcessData.{chargeRefNotificationPciPalRequest, chargeRefNotificationPciPalRequestJson}
+import support.PaymentsProcessData.{p800PcipalNotification, chargeRefNotificationPciPalRequestJson}
 import support.UnitSpec
 
 class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
 
   "to json" in {
-    Json.toJson(chargeRefNotificationPciPalRequest) shouldBe chargeRefNotificationPciPalRequestJson
+    Json.toJson(p800PcipalNotification) shouldBe chargeRefNotificationPciPalRequestJson
   }
 
   "from json" in {
-    chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe chargeRefNotificationPciPalRequest
+    chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe p800PcipalNotification
   }
 }

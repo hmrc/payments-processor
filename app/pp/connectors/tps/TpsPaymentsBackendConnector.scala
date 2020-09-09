@@ -17,8 +17,9 @@
 package pp.connectors.tps
 
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
 import play.api.mvc.Request
-import play.api.{Configuration, Logger}
+import pp.model.{PaymentItemId, TaxType}
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -27,17 +28,17 @@ import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TpsPaymentsBackendConnector @Inject() (
-    httpClient:     HttpClient,
-    configuration:  Configuration,
-    servicesConfig: ServicesConfig
-)(implicit ec: ExecutionContext) {
+class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
 
-  private val serviceURL: String = servicesConfig.baseUrl("tps-payments-backend")
+  private val serviceURL: String = s"${servicesConfig.baseUrl("tps-payments-backend")}/tps-payments-backend"
 
-  def updateWithPcipalData(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)(implicit request: Request[_], hc: HeaderCarrier): Future[HttpResponse] = {
-    val update: String = s"$serviceURL/tps-payments-backend/update-with-pcipal-data"
-    Logger.debug(s"""calling tps-payments-updateWithPcipalSessionId find with url $update""")
-    httpClient.PATCH[ChargeRefNotificationPcipalRequest, HttpResponse](update, chargeRefNotificationPciPalRequest)
+  def updateWithPcipalData(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)
+    (implicit request: Request[_], hc: HeaderCarrier): Future[HttpResponse] = {
+    val url: String = s"$serviceURL/update-with-pcipal-data"
+    Logger.debug(s"""calling tps-payments-updateWithPcipalSessionId find with url $url""")
+    httpClient.PATCH[ChargeRefNotificationPcipalRequest, HttpResponse](url, chargeRefNotificationPciPalRequest)
   }
+
+  def getTaxType(paymentItemId: PaymentItemId)(implicit request: Request[_], hc: HeaderCarrier): Future[TaxType] =
+    httpClient.GET[TaxType](s"$serviceURL/payment-items/${paymentItemId.value}/tax-type")
 }
