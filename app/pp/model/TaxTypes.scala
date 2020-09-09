@@ -26,6 +26,7 @@ import scala.collection.immutable
 
 sealed abstract class TaxType extends EnumEntry {
   val sendToDes: Boolean = true
+  val tpsValue: String = entryName.toUpperCase
 }
 
 object TaxType {
