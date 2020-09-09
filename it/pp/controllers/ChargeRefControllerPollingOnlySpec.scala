@@ -19,7 +19,7 @@ package pp.controllers
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import pp.services.ChargeRefService
 import support.{Des, TestSettings}
-import support.PaymentsProcessData.chargeRefNotificationRequest
+import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 
 class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
   override def configMap: Map[String, Any] = super.configMap.updated("poller.enabled", "true")
@@ -42,7 +42,7 @@ class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
           Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 1)
           Des.cardPaymentsNotificationSucceeds(delayInMilliSeconds, 2)
 
-          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest).futureValue
+          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
           numberOfQueuedNotifications shouldBe 1
 
           eventually {

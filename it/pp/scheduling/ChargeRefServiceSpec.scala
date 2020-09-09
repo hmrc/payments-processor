@@ -24,7 +24,7 @@ import pp.config.QueueConfig
 import pp.connectors.des.DesConnector
 import pp.model.ChargeRefNotificationWorkItem
 import pp.services.ChargeRefService
-import support.PaymentsProcessData.chargeRefNotificationRequest
+import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 import support.{Des, ItSpec, TestSettings}
 import uk.gov.hmrc.workitem.{InProgress, ToDo, WorkItem}
 
@@ -50,13 +50,13 @@ class ChargeRefServiceSpec extends ItSpec {
     "sendCardPaymentsNotificationToWorkItemRepo" should {
       "add a notification to the queue" in {
         numberOfQueuedNotifications shouldBe 0
-        val workItem = chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest).futureValue
+        val workItem = chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
         numberOfQueuedNotifications shouldBe 1
 
-        workItem.item.taxType shouldBe chargeRefNotificationRequest.taxType
-        workItem.item.chargeRefNumber shouldBe chargeRefNotificationRequest.chargeRefNumber
-        workItem.item.amountPaid shouldBe chargeRefNotificationRequest.amountPaid
-        workItem.item.origin shouldBe chargeRefNotificationRequest.origin
+        workItem.item.taxType shouldBe p800ChargeRefNotificationRequest.taxType
+        workItem.item.chargeRefNumber shouldBe p800ChargeRefNotificationRequest.chargeRefNumber
+        workItem.item.amountPaid shouldBe p800ChargeRefNotificationRequest.amountPaid
+        workItem.item.origin shouldBe p800ChargeRefNotificationRequest.origin
         workItem.status shouldBe ToDo
       }
     }
@@ -67,7 +67,7 @@ class ChargeRefServiceSpec extends ItSpec {
           Des.cardPaymentsNotificationSucceeds()
 
           numberOfQueuedNotifications shouldBe 0
-          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest).futureValue
+          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
           numberOfQueuedNotifications shouldBe 1
 
           val sentItems: Seq[WorkItem[ChargeRefNotificationWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
@@ -83,7 +83,7 @@ class ChargeRefServiceSpec extends ItSpec {
           Des.cardPaymentsNotificationFailsWithAnInternalServerError()
 
           numberOfQueuedNotifications shouldBe 0
-          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest).futureValue
+          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
           numberOfQueuedNotifications shouldBe 1
 
           chargeRefService.retrieveWorkItems.futureValue.isEmpty shouldBe true
@@ -97,7 +97,7 @@ class ChargeRefServiceSpec extends ItSpec {
           Des.cardPaymentsNotificationSucceeds(0, 1)
 
           numberOfQueuedNotifications shouldBe 0
-          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest).futureValue
+          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
           numberOfQueuedNotifications shouldBe 1
 
           chargeRefService.retrieveWorkItems.futureValue.isEmpty shouldBe true
@@ -120,9 +120,9 @@ class ChargeRefServiceSpec extends ItSpec {
 
         numberOfQueuedNotifications shouldBe 0
 
-        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest).futureValue
-        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015760")).futureValue
-        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015761")).futureValue
+        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
+        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015760")).futureValue
+        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015761")).futureValue
 
         val expectedQueuedNotifications = 3
 
