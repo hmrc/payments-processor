@@ -24,7 +24,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json.parse
 import pp.model.Origins.OPS
 import pp.model.StatusTypes.validated
-import pp.model.TaxTypes.p800
+import pp.model.TaxTypes.{mib, p800}
 import pp.model._
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 
@@ -45,7 +45,9 @@ object PaymentsProcessData {
 
   val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(p800, chargeReferenceNumber, 100.11)
 
-  val chargeRefNotificationRequest: ChargeRefNotificationRequest = ChargeRefNotificationRequest(p800, chargeReferenceNumber, 100.11, OPS)
+  val p800ChargeRefNotificationRequest: ChargeRefNotificationRequest = ChargeRefNotificationRequest(p800, chargeReferenceNumber, 100.11, OPS)
+
+  val mibChargeRefNotificationRequest: ChargeRefNotificationRequest = ChargeRefNotificationRequest(mib, chargeReferenceNumber, 100.11, OPS)
 
   val chargeRefNotificationDesRequestJson: JsValue = parse(
     s"""{

@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{patchRequestedFor, postR
 import org.scalatest.Assertion
 import play.api.libs.json.Json
 import pp.model.StatusTypes.failed
-import pp.model.TaxTypes.{mib, p800}
+import pp.model.TaxTypes.p800
 import pp.scheduling.ChargeRefNotificationMongoRepo
 import support.PaymentsProcessData._
 import support.{Des, ItSpec, TpsPaymentsBackend}
@@ -54,41 +54,35 @@ trait ChargeRefControllerSpec extends ItSpec {
     "return Ok for a POST to the internal endpoint /send-card-payments-notification" when {
       "the Des call succeeds with OK" in {
         Des.cardPaymentsNotificationSucceeds()
-        verifySuccess(testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue)
+        verifySuccess(testConnector.sendCardPaymentsNotification(p800ChargeRefNotificationRequest).futureValue)
       }
 
       "the Des call succeeds with NO_CONTENT" in {
         Des.cardPaymentsNotificationSucceedsWithNoContent()
-        verifySuccess(testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue)
+        verifySuccess(testConnector.sendCardPaymentsNotification(p800ChargeRefNotificationRequest).futureValue)
       }
     }
 
-    Seq((p800PaymentItemId, p800, p800PcipalNotification), (mibPaymentItemId, mib, mibPcipalNotification)).foreach { fixture =>
-      val paymentItemId = fixture._1
-      val taxType = fixture._2
-      val pcipalNotification = fixture._3
+    s"return Ok for a POST to the public api /send-card-payments" when {
+      "the Des call succeeds with OK, status=complete" in {
+        Des.cardPaymentsNotificationSucceeds()
+        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, p800)
+        TpsPaymentsBackend.tpsUpdateOk
+        verifySuccess(testConnector.sendCardPayments(p800PcipalNotification).futureValue, checkTpsBackend = true)
+      }
 
-      s"return Ok for a POST to the public api /send-card-payments for tax type [${taxType.entryName}]" when {
-        "the Des call succeeds with OK, status=complete" in {
-          Des.cardPaymentsNotificationSucceeds()
-          TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
-          TpsPaymentsBackend.tpsUpdateOk
-          verifySuccess(testConnector.sendCardPayments(pcipalNotification).futureValue, checkTpsBackend = true)
-        }
+      "the Des call succeeds with NO_CONTENT,status=complete" in {
+        Des.cardPaymentsNotificationSucceedsWithNoContent()
+        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, p800)
+        TpsPaymentsBackend.tpsUpdateOk
+        verifySuccess(testConnector.sendCardPayments(p800PcipalNotification).futureValue, checkTpsBackend = true)
+      }
 
-        "the Des call succeeds with NO_CONTENT,status=complete" in {
-          Des.cardPaymentsNotificationSucceedsWithNoContent()
-          TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
-          TpsPaymentsBackend.tpsUpdateOk
-          verifySuccess(testConnector.sendCardPayments(pcipalNotification).futureValue, checkTpsBackend = true)
-        }
-
-        "the Des call succeeds with OK, status=failed" in {
-          Des.cardPaymentsNotificationSucceeds()
-          TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
-          TpsPaymentsBackend.tpsUpdateOk
-          verifySuccess(testConnector.sendCardPayments(pcipalNotification.copy(Status = failed)).futureValue, checkDes = false, checkTpsBackend = true)
-        }
+      "the Des call succeeds with OK, status=failed" in {
+        Des.cardPaymentsNotificationSucceeds()
+        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, p800)
+        TpsPaymentsBackend.tpsUpdateOk
+        verifySuccess(testConnector.sendCardPayments(p800PcipalNotification.copy(Status = failed)).futureValue, checkDes = false, checkTpsBackend = true)
       }
     }
   }
@@ -98,7 +92,7 @@ trait ChargeRefControllerSpec extends ItSpec {
       "the Des call returns 400" in {
         Des.cardPaymentsNotificationRespondsWith(400, "")
 
-        val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).failed.futureValue
+        val response = testConnector.sendCardPaymentsNotification(p800ChargeRefNotificationRequest).failed.futureValue
         response.isInstanceOf[BadRequestException] shouldBe true
 
         numberOfQueuedNotifications shouldBe 0
@@ -107,7 +101,7 @@ trait ChargeRefControllerSpec extends ItSpec {
       "the Des call returns 404" in {
         Des.cardPaymentsNotificationRespondsWith(404, "")
 
-        val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).failed.futureValue
+        val response = testConnector.sendCardPaymentsNotification(p800ChargeRefNotificationRequest).failed.futureValue
         response.asInstanceOf[Upstream5xxResponse].reportAs shouldBe 502
 
         numberOfQueuedNotifications shouldBe 0
@@ -116,7 +110,7 @@ trait ChargeRefControllerSpec extends ItSpec {
       "the Des call returns 409" in {
         Des.cardPaymentsNotificationRespondsWith(409, "")
 
-        val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).failed.futureValue
+        val response = testConnector.sendCardPaymentsNotification(p800ChargeRefNotificationRequest).failed.futureValue
         response.asInstanceOf[Upstream5xxResponse].reportAs shouldBe 502
 
         numberOfQueuedNotifications shouldBe 0
@@ -129,7 +123,7 @@ trait ChargeRefControllerSpec extends ItSpec {
       "the des call fails with an error" in {
         Des.cardPaymentsNotificationFailsWithAnInternalServerError()
 
-        val failure = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).failed.futureValue
+        val failure = testConnector.sendCardPaymentsNotification(p800ChargeRefNotificationRequest).failed.futureValue
 
         failure.getMessage should include(Des.errorMessage)
         numberOfQueuedNotifications shouldBe 0

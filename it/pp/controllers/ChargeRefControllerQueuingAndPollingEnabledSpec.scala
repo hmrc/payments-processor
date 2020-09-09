@@ -18,7 +18,7 @@ package pp.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import play.api.http.Status
-import support.PaymentsProcessData.chargeRefNotificationRequest
+import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 import support._
 
 class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControllerSpec {
@@ -45,7 +45,7 @@ class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControlle
 
             numberOfQueuedNotifications shouldBe 0
 
-            val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue
+            val response = testConnector.sendCardPaymentsNotification(p800ChargeRefNotificationRequest).futureValue
             response.status shouldBe Status.OK
             numberOfQueuedNotifications shouldBe 1
 
