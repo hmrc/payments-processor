@@ -25,7 +25,8 @@ class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControll
         behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
         behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
         behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
-        behave like aSynchronousEndpointWhenTheTpsBackendFailsWithAnInternalError()
+        behave like aSynchronousEndpointWhenTheTpsUodateFailsWithAnInternalError()
+        behave like aSynchronousEndpointWhenTpsGetTaxTypeFailsWith404()
       }
     }
   }

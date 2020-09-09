@@ -39,72 +39,54 @@ object TaxTypes extends Enum[TaxType] {
 
   //As per DES API ....
 
-  case object NLIJ extends TaxType {
-  }
+  case object NLIJ extends TaxType
 
-  case object CDSX extends TaxType {
-  }
+  case object CDSX extends TaxType
 
-  case object PARC extends TaxType {
-  }
+  case object PARC extends TaxType
 
-  case object P302 extends TaxType {
-  }
+  case object P302 extends TaxType
 
   //As per standard OPS TaxTypes ....
 
-  case object `self-assessment` extends TaxType {
-  }
+  case object `self-assessment` extends TaxType
 
-  case object vat extends TaxType {
-  }
+  case object vat extends TaxType
 
-  case object epaye extends TaxType {
-  }
+  case object epaye extends TaxType
 
   /**
    * Machine Game Duty
    */
-  case object `mg-duty` extends TaxType {
-  }
+  case object `mg-duty` extends TaxType
 
   /**
    * Merchandise in Baggage
    */
 
   case object mib extends TaxType {
+    override val sendToDes: Boolean = false
   }
 
   /**
    * Other tax types
    */
 
-  case object other extends TaxType {
-  }
+  case object other extends TaxType
 
   /**
    * Stamp Duty Land Tax (Sdlt)
    */
-  case object `stamp-duty` extends TaxType {
-  }
+  case object `stamp-duty` extends TaxType
 
-  case object class2NationalInsurance extends TaxType {
-  }
-
-  //  /**
-  //   * Customs or Custom Declarations Service
-  //   */
-  //  case object cds extends TaxType {
-  //  }
+  case object class2NationalInsurance extends TaxType
 
   /**
    * Passengers
    */
-  case object pngr extends TaxType {
-  }
+  case object pngr extends TaxType
 
-  case object `corporation-tax` extends TaxType {
-  }
+  case object `corporation-tax` extends TaxType
 
   final case object p800 extends TaxType {
     override val sendToDes: Boolean = false
@@ -114,43 +96,33 @@ object TaxTypes extends Enum[TaxType] {
    * Northern Ireland
    */
 
-  case object ni extends TaxType {
-  }
+  case object ni extends TaxType
 
-  case object parcels extends TaxType {
-  }
+  case object parcels extends TaxType
 
   /**
    * Insurance Premium Tax
    */
 
-  case object insurancePremium extends TaxType {
-  }
+  case object insurancePremium extends TaxType
 
   /**
    * class3NationalInsurance
    */
 
-  case object class3NationalInsurance extends TaxType {
-  }
+  case object class3NationalInsurance extends TaxType
 
-  case object `bioFuelsAndRoadGas` extends TaxType {
-  }
+  case object `bioFuelsAndRoadGas` extends TaxType
 
-  case object `airPassengerDuty` extends TaxType {
-  }
+  case object `airPassengerDuty` extends TaxType
 
-  case object `beerDuty` extends TaxType {
-  }
+  case object `beerDuty` extends TaxType
 
-  case object `landfillTax` extends TaxType {
-  }
+  case object `landfillTax` extends TaxType
 
-  case object `aggregatesLevy` extends TaxType {
-  }
+  case object `aggregatesLevy` extends TaxType
 
-  case object `climateChangeLevy` extends TaxType {
-  }
+  case object `climateChangeLevy` extends TaxType
 
   override def values: immutable.IndexedSeq[TaxType] = findValues
 }

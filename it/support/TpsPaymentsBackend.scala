@@ -17,24 +17,37 @@
 package support
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.libs.json.Json.toJson
+import pp.model.{PaymentItemId, TaxType}
 
 object TpsPaymentsBackend {
 
-  val endpoint = s"/tps-payments-backend/update-with-pcipal-data"
-  val errorMessage = "tps failed"
+  private val basePath = "/tps-payments-backend"
+
+  val updateEndpoint = s"$basePath/update-with-pcipal-data"
+  val updateErrorMessage = "tps failed"
+  val notFoundErrorMessage = "404"
   val successMessage = "ok"
 
-  def tpsBackendOk = updateTps(200,successMessage)
+  def getTaxTypeEndpoint(paymentItemId: PaymentItemId) = s"$basePath/payment-items/${paymentItemId.value}/tax-type"
 
-  def tpsBackendFailed = updateTps(500, errorMessage)
+  def tpsUpdateOk: StubMapping = updateTps(200, successMessage)
 
-  def updateTps(status: Int, responseBody: String) = {
+  def tpsUpdateFailed: StubMapping = updateTps(500, updateErrorMessage)
 
-    stubFor(
-      patch(urlEqualTo(endpoint))
-        .willReturn(aResponse()
-          .withStatus(status)
-          .withBody(responseBody)))
-  }
+  def updateTps(status: Int, responseBody: String): StubMapping = stubFor(
+    patch(urlEqualTo(updateEndpoint))
+      .willReturn(aResponse()
+        .withStatus(status)
+        .withBody(responseBody)))
 
+  def getTaxTypeOk(paymentItemId: PaymentItemId, taxType: TaxType): StubMapping = stubFor(
+    get(urlEqualTo(getTaxTypeEndpoint(paymentItemId)))
+      .willReturn(aResponse()
+        .withStatus(200)
+        .withBody(toJson(taxType).toString())))
+
+  def getTaxTypeNotFound(paymentItemId: PaymentItemId): StubMapping =
+    stubFor(get(urlEqualTo(getTaxTypeEndpoint(paymentItemId))).willReturn(aResponse().withStatus(404)))
 }
