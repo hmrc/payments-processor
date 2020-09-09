@@ -46,7 +46,7 @@ object TpsPaymentsBackend {
     get(urlEqualTo(getTaxTypeEndpoint(paymentItemId)))
       .willReturn(aResponse()
         .withStatus(200)
-        .withBody(toJson(taxType).toString())))
+        .withBody(toJson(taxType.tpsValue).toString())))
 
   def getTaxTypeNotFound(paymentItemId: PaymentItemId): StubMapping =
     stubFor(get(urlEqualTo(getTaxTypeEndpoint(paymentItemId))).willReturn(aResponse().withStatus(404)))

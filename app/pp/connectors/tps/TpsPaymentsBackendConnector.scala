@@ -19,7 +19,7 @@ package pp.connectors.tps
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.mvc.Request
-import pp.model.{PaymentItemId, TaxType}
+import pp.model.{PaymentItemId, TaxType, TaxTypes}
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -40,5 +40,7 @@ class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClient, servicesCon
   }
 
   def getTaxType(paymentItemId: PaymentItemId)(implicit request: Request[_], hc: HeaderCarrier): Future[TaxType] =
-    httpClient.GET[TaxType](s"$serviceURL/payment-items/${paymentItemId.value}/tax-type")
+    httpClient.GET[String](s"$serviceURL/payment-items/${paymentItemId.value}/tax-type").map { taxTypeUpperCase =>
+      TaxTypes.forCode(taxTypeUpperCase.toLowerCase).getOrElse(throw new RuntimeException(s"Unknown tax type $taxTypeUpperCase"))
+    }
 }
