@@ -1,29 +1,20 @@
-
 import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import sbt.Tests.{Group, SubProcess}
 
-
-val akkaVersion = "2.5.23"
-val akkaHttpVersion = "10.0.15"
-
-dependencyOverrides += "com.typesafe.akka" %% "akka-stream" % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-protobuf" % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-actor" % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
+val appName = "payments-processor"
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests map { test =>
     Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }
 
+scalaVersion := "2.12.12"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
-    scalaVersion := "2.11.12",
     majorVersion := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test ++ AppDependencies.itTest
   )
@@ -62,6 +53,7 @@ lazy val microservice = Project(appName, file("."))
     ))
   .settings(
     scalacOptions ++= Seq(
+      "-Ywarn-unused:-imports,-patvars,-privates,-locals,-explicits,-implicits,_",
       "-Xfatal-warnings",
       "-Xlint:-missing-interpolator,_",
       "-Yno-adapted-args",
@@ -75,4 +67,3 @@ lazy val microservice = Project(appName, file("."))
       "-Ypartial-unification" //required by cats
     )
   )
-val appName = "payments-processor"
