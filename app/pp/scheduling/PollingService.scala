@@ -17,7 +17,6 @@
 package pp.scheduling
 
 import akka.actor.{ActorSystem, Cancellable}
-import com.google.inject.Inject
 import play.api.Logger
 import pp.config.QueueConfig
 import pp.services.ChargeRefService
@@ -27,9 +26,9 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.FiniteDuration
 import scala.util.{Failure, Success}
 
-abstract class PollingService @Inject() (val actorSystem:      ActorSystem,
-                                         val queueConfig:      QueueConfig,
-                                         val chargeRefService: ChargeRefService)(
+abstract class PollingService(val actorSystem:      ActorSystem,
+                              val queueConfig:      QueueConfig,
+                              val chargeRefService: ChargeRefService)(
     implicit
     ec: ExecutionContext) extends ExclusiveScheduledJob {
 

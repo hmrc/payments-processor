@@ -34,13 +34,11 @@ package pp.scheduling
 
 import java.time.Clock
 
-import javax.inject.{Inject, Singleton}
 import org.joda.time.{DateTime, Duration}
 import play.api.Configuration
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponent
-import pp.config.{ChargeRefQueueConfig, QueueConfig}
-import pp.model.ChargeRefNotificationWorkItem
+import pp.config.QueueConfig
 import pp.scheduling.DateTimeHelpers._
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
@@ -50,27 +48,24 @@ import uk.gov.hmrc.workitem._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class NotificationRepo @Inject() (
+abstract class NotificationRepo[A](
     reactiveMongoComponent: ReactiveMongoComponent,
     configuration:          Configuration,
     clock:                  Clock,
     queueConfig:            QueueConfig)
-  (implicit ec: ExecutionContext)
-  extends WorkItemRepository[ChargeRefNotificationWorkItem, BSONObjectID](
+  (implicit ec: ExecutionContext, format: OFormat[A], mfItem: Manifest[A])
+  extends WorkItemRepository[A, BSONObjectID](
     collectionName = queueConfig.collectionName,
     mongo          = reactiveMongoComponent.mongoConnector.db,
-    itemFormat     = ChargeRefNotificationWorkItem.workItemFormats,
+    itemFormat     = WorkItem.workItemMongoFormat[A],
     configuration.underlying) {
 
-  override val inProgressRetryAfterProperty: String = queueConfig.retryAfterProperty
-
   lazy val retryIntervalMillis: Long = configuration.getMillis(inProgressRetryAfterProperty)
-
   override lazy val inProgressRetryAfter: Duration = Duration.millis(retryIntervalMillis)
-
   private lazy val ttlInSeconds = {
     queueConfig.ttl.getSeconds
   }
+  override val inProgressRetryAfterProperty: String = queueConfig.retryAfterProperty
 
   override def indexes: Seq[Index] = super.indexes ++ Seq(
     Index(key     = Seq("receivedAt" -> IndexType.Ascending), name = Some("receivedAtTime"), options = BSONDocument("expireAfterSeconds" -> ttlInSeconds)))
@@ -84,7 +79,7 @@ abstract class NotificationRepo @Inject() (
     val failureCount = "failureCount"
   }
 
-  def pullOutstanding(implicit ec: ExecutionContext): Future[Option[WorkItem[ChargeRefNotificationWorkItem]]] =
+  def pullOutstanding(implicit ec: ExecutionContext): Future[Option[WorkItem[A]]] =
     super.pullOutstanding(now.minusMillis(retryIntervalMillis.toInt), now)
 
   def complete(id: BSONObjectID)(implicit ec: ExecutionContext): Future[Boolean] = {

@@ -22,6 +22,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.modules.reactivemongo.ReactiveMongoComponent
 import pp.config.ChargeRefQueueConfig
+import pp.model.ChargeRefNotificationWorkItem
 import pp.scheduling.NotificationRepo
 
 import scala.concurrent.ExecutionContext
@@ -31,5 +32,6 @@ class ChargeRefNotificationMongoRepo @Inject() (
     reactiveMongoComponent: ReactiveMongoComponent,
     configuration:          Configuration,
     clock:                  Clock,
-    queueConfig:            ChargeRefQueueConfig)(implicit ec: ExecutionContext) extends NotificationRepo(reactiveMongoComponent, configuration, clock, queueConfig)
+    queueConfig:            ChargeRefQueueConfig)(implicit ec: ExecutionContext)
+  extends NotificationRepo[ChargeRefNotificationWorkItem](reactiveMongoComponent, configuration, clock, queueConfig)
 

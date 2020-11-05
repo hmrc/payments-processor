@@ -22,7 +22,6 @@ package pp.model
 import java.time.LocalDateTime
 
 import play.api.libs.json._
-import uk.gov.hmrc.workitem.WorkItem
 
 case class ChargeRefNotificationWorkItem(
     createdOn:       LocalDateTime,
@@ -33,6 +32,5 @@ case class ChargeRefNotificationWorkItem(
 
 object ChargeRefNotificationWorkItem {
   implicit val format: OFormat[ChargeRefNotificationWorkItem] = Json.format[ChargeRefNotificationWorkItem]
-  val workItemFormats: Format[WorkItem[ChargeRefNotificationWorkItem]] = WorkItem.workItemMongoFormat[ChargeRefNotificationWorkItem]
 }
 
