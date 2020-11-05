@@ -24,7 +24,7 @@ import pp.model.TaxTypes.CDSX
 import support._
 
 class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
-  override def configMap: Map[String, Any] = super.configMap.updated("queue.enabled", "true")
+  override def configMap: Map[String, Any] = super.configMap.updated("chargeref.queue.enabled", "true")
 
   if (TestSettings.ChargeRefControllerQueuingOnlySpecEnabled) {
     "the ChargeRefController" when {

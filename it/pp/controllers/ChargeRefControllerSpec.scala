@@ -22,7 +22,7 @@ import org.scalatest.Assertion
 import play.api.libs.json.Json
 import pp.model.StatusTypes.failed
 import pp.model.TaxTypes.p800
-import pp.scheduling.ChargeRefNotificationMongoRepo
+import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import support.PaymentsProcessData._
 import support.{Des, ItSpec, TpsPaymentsBackend}
 import uk.gov.hmrc.http.{BadRequestException, HttpResponse, Upstream5xxResponse}

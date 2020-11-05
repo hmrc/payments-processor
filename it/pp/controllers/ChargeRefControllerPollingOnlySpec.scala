@@ -22,7 +22,7 @@ import support.{Des, TestSettings}
 import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 
 class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
-  override def configMap: Map[String, Any] = super.configMap.updated("poller.enabled", "true")
+  override def configMap: Map[String, Any] = super.configMap.updated("chargeref.poller.enabled", "true")
 
   private lazy val chargeRefService = injector.instanceOf[ChargeRefService]
 

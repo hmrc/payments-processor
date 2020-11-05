@@ -19,7 +19,7 @@ package pp.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, ControllerComponents}
 import play.api.{Configuration, Logger}
-import pp.config.QueueConfig
+import pp.config.ChargeRefQueueConfig
 import pp.connectors.tps.TpsPaymentsBackendConnector
 import pp.model.StatusTypes.validated
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChargeRefController @Inject() (
     cc:                          ControllerComponents,
     chargeRefService:            ChargeRefService,
-    queueConfig:                 QueueConfig,
+    queueConfig:                 ChargeRefQueueConfig,
     tpsPaymentsBackendConnector: TpsPaymentsBackendConnector,
     configuration:               Configuration
 )

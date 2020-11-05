@@ -20,9 +20,10 @@ import java.time.Clock
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
-import pp.config.QueueConfig
+import pp.config.ChargeRefQueueConfig
 import pp.connectors.des.DesConnector
 import pp.model.ChargeRefNotificationWorkItem
+import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import pp.services.ChargeRefService
 import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 import support.{Des, ItSpec, TestSettings}
@@ -31,11 +32,11 @@ import uk.gov.hmrc.workitem.{InProgress, ToDo, WorkItem}
 class ChargeRefServiceSpec extends ItSpec {
   private val pollLimit = 2
 
-  override def configMap: Map[String, Any] = super.configMap.updated("poller.pollLimit", s"$pollLimit")
+  override def configMap: Map[String, Any] = super.configMap.updated("chargeref.poller.pollLimit", s"$pollLimit")
 
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
   private lazy val desConnector = injector.instanceOf[DesConnector]
-  private lazy val queueConfig = injector.instanceOf[QueueConfig]
+  private lazy val queueConfig = injector.instanceOf[ChargeRefQueueConfig]
 
   private lazy val chargeRefService = new ChargeRefService(desConnector, repo, Clock.systemDefaultZone(), queueConfig)
 

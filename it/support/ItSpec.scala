@@ -80,11 +80,11 @@ trait ItSpec
   def configMap: Map[String, Any] = Map[String, Any](
     "mongodb.uri " -> "mongodb://localhost:27017/payments-processor-it",
     "microservice.services.des.port" -> WireMockSupport.port,
-    "queue.enabled" -> false,
-    "poller.enabled" -> false,
-    "queue.retryAfter" -> "1 seconds",
-    "poller.initialDelay" -> "0 seconds",
-    "poller.interval" -> "1 seconds",
+    "chargeref.queue.enabled" -> false,
+    "chargeref.poller.enabled" -> false,
+    "chargeref.queue.retryAfter" -> "1 seconds",
+    "chargeref.poller.initialDelay" -> "0 seconds",
+    "chargeref.poller.interval" -> "1 seconds",
     "microservice.services.tps-payments-backend.port" -> WireMockSupport.port,
     "sendAllToDes" -> true
   )

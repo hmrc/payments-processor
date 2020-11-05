@@ -21,10 +21,10 @@ import java.time.{Clock, LocalDateTime, ZoneId}
 import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import play.api.Logger
-import pp.config.QueueConfig
+import pp.config.ChargeRefQueueConfig
 import pp.connectors.des.DesConnector
 import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
-import pp.scheduling.ChargeRefNotificationMongoRepo
+import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.workitem.{Failed, WorkItem}
 
@@ -35,7 +35,7 @@ class ChargeRefService @Inject() (
     desConnector:                   DesConnector,
     chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
     clock:                          Clock,
-    queueConfig:                    QueueConfig
+    queueConfig:                    ChargeRefQueueConfig
 )(implicit executionContext: ExecutionContext) {
 
   def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[HttpResponse] = {

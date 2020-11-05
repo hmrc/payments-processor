@@ -15,25 +15,35 @@
  */
 
 package pp.config
-
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+import java.time.Duration
 import java.util.concurrent.TimeUnit
+
+import play.api.Configuration
+
 import scala.concurrent.duration.FiniteDuration
 
-@Singleton
-class QueueConfig @Inject() (configuration: Configuration) {
+trait QueueConfig {
 
-  val queueEnabled: Boolean = configuration.underlying.getBoolean("queue.enabled")
+  val prefix: String
 
-  val pollLimit: Int = configuration.underlying.getInt("poller.pollLimit")
+  val configuration: Configuration
 
-  val pollerInitialDelay: FiniteDuration = FiniteDuration(configuration.underlying.getDuration("poller.initialDelay").toNanos, TimeUnit.NANOSECONDS)
+  val collectionName: String
 
-  val pollerInterval: FiniteDuration = FiniteDuration(configuration.underlying.getDuration("poller.interval").toNanos, TimeUnit.NANOSECONDS)
+  lazy val queueEnabled: Boolean = configuration.underlying.getBoolean(s"$prefix.queue.enabled")
 
-  val pollerEnabled: Boolean = configuration.underlying.getBoolean("poller.enabled")
+  lazy val pollLimit: Int = configuration.underlying.getInt(s"$prefix.poller.pollLimit")
 
-  val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
+  lazy val pollerInitialDelay: FiniteDuration = FiniteDuration(configuration.underlying.getDuration(s"$prefix.poller.initialDelay").toNanos, TimeUnit.NANOSECONDS)
+
+  lazy val pollerInterval: FiniteDuration = FiniteDuration(configuration.underlying.getDuration(s"$prefix.poller.interval").toNanos, TimeUnit.NANOSECONDS)
+
+  lazy val pollerEnabled: Boolean = configuration.underlying.getBoolean(s"$prefix.poller.enabled")
+
+  lazy val retryAfter: String = configuration.underlying.getString(s"$prefix.queue.retryAfter")
+
+  lazy val retryAfterProperty: String = s"$prefix.queue.retryAfter"
+
+  lazy val ttl: Duration = configuration.underlying.getDuration(s"$prefix.queue.ttl")
+
 }
-

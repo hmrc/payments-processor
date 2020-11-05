@@ -25,8 +25,8 @@ class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControlle
   override def configMap: Map[String, Any] =
     super
       .configMap
-      .updated("queue.enabled", "true")
-      .updated("poller.enabled", "true")
+      .updated("chargeref.queue.enabled", "true")
+      .updated("chargeref.poller.enabled", "true")
   if (TestSettings.ChargeRefControllerQueuingAndPollingEnabledSpec) {
     "the ChargeRefController" when {
       "queuing and polling are both enabled" should {
