@@ -33,6 +33,8 @@ class DesConnector @Inject() (
     configuration:  Configuration)
   (implicit ec: ExecutionContext) {
 
+  private val logger: Logger = Logger(this.getClass.getSimpleName)
+
   private val serviceURL: String = servicesConfig.baseUrl("des")
   private val authorizationToken: String = configuration.underlying.getString("microservice.services.des.authorizationToken")
   private val serviceEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
@@ -42,10 +44,10 @@ class DesConnector @Inject() (
     .withExtraHeaders("Environment" -> serviceEnvironment, "OriginatorID" -> "MDTP")
 
   def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[HttpResponse] = {
-    Logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
+    logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
     implicit val hc: HeaderCarrier = desHeaderCarrier
     val sendChargeRefUrl: String = s"$serviceURL$chargeref"
-    Logger.debug(s"""Calling des api 1541 with url $sendChargeRefUrl""")
+    logger.debug(s"""Calling des api 1541 with url $sendChargeRefUrl""")
     httpClient.POST[ChargeRefNotificationDesRequest, HttpResponse](sendChargeRefUrl, chargeRefNotificationDesRequest)
   }
 

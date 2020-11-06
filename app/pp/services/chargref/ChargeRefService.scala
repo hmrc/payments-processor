@@ -39,6 +39,8 @@ class ChargeRefService @Inject() (
     queueConfig:                    ChargeRefQueueConfig
 )(implicit executionContext: ExecutionContext) extends WorkItemService[ChargeRefNotificationWorkItem] {
 
+  private val logger: Logger = Logger(this.getClass.getSimpleName)
+
   //Need to have an implementation of this.  Nuts and Bolts of getting items from the queue ... needs to satisfy interface WorkItemService
   def retrieveWorkItems: Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
 
@@ -65,7 +67,7 @@ class ChargeRefService @Inject() (
   //These are all specific to charge reference processing
 
   def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[HttpResponse] = {
-    Logger.debug("inside sendCardPaymentsNotificationSync")
+    logger.debug("inside sendCardPaymentsNotificationSync")
 
     val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationPciPalRequest.taxType,
                                                        chargeRefNotificationPciPalRequest.chargeRefNumber,
@@ -75,7 +77,7 @@ class ChargeRefService @Inject() (
   }
 
   def sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[WorkItem[ChargeRefNotificationWorkItem]] = {
-    Logger.debug("inside sendCardPaymentsNotificationAsync")
+    logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
 
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
@@ -89,7 +91,7 @@ class ChargeRefService @Inject() (
 
   private def sendWorkItemToDes(chargeRefNotificationWorkItem: WorkItem[ChargeRefNotificationWorkItem]) = {
 
-    Logger.debug("inside sendWorkItemToDes")
+    logger.debug("inside sendWorkItemToDes")
     val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationWorkItem.item.taxType,
                                                        chargeRefNotificationWorkItem.item.chargeRefNumber,
                                                        chargeRefNotificationWorkItem.item.amountPaid)
@@ -100,7 +102,7 @@ class ChargeRefService @Inject() (
   }
 
   private def sendNotificationMarkAsComplete(acc: Seq[WorkItem[ChargeRefNotificationWorkItem]], workItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
-    Logger.debug("inside sendNotificationMarkAsComplete")
+    logger.debug("inside sendNotificationMarkAsComplete")
     sendWorkItemToDes(workItem)
       .map(_ => chargeRefNotificationMongoRepo.complete(workItem.id))
       .map(_ => acc :+ workItem)

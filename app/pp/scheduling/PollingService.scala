@@ -35,8 +35,9 @@ abstract class PollingService[P <: WorkItemFields](val actorSystem:     ActorSys
 
   lazy val initialDelay: FiniteDuration = queueConfig.pollerInitialDelay
   lazy val interval: FiniteDuration = queueConfig.pollerInterval
+  private val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  Logger.debug(s"Starting $name, Initial delay: $initialDelay, Polling interval: $interval")
+  logger.debug(s"Starting $name, Initial delay: $initialDelay, Polling interval: $interval")
 
   callExecutor(name)
 
@@ -48,7 +49,7 @@ abstract class PollingService[P <: WorkItemFields](val actorSystem:     ActorSys
       if (queueConfig.pollerEnabled) {
         executor(name)
       } else {
-        Logger.warn(s"$name: Poller enabled is false")
+        logger.warn(s"$name: Poller enabled is false")
       }
     }
   }
@@ -56,9 +57,9 @@ abstract class PollingService[P <: WorkItemFields](val actorSystem:     ActorSys
   def executor(name: String)(implicit ec: ExecutionContext): Unit = {
     execute.onComplete({
       case Success(Result(res)) =>
-        Logger.debug(res)
+        logger.debug(res)
       case Failure(throwable) =>
-        Logger.error(s"$name: Exception completing work item", throwable)
+        logger.error(s"$name: Exception completing work item", throwable)
     })
   }
 }
