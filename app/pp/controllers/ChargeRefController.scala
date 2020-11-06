@@ -24,8 +24,9 @@ import pp.connectors.tps.TpsPaymentsBackendConnector
 import pp.model.StatusTypes.validated
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest.toChargeRefNotificationRequest
-import pp.model.{ChargeRefNotificationRequest, TaxType}
-import pp.services.ChargeRefService
+import pp.model.TaxType
+import pp.model.chargeref.ChargeRefNotificationRequest
+import pp.services.chargref.ChargeRefService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, NotFoundException, Upstream4xxResponse}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.workitem.ToDo

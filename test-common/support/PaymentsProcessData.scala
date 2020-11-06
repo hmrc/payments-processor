@@ -25,7 +25,8 @@ import play.api.libs.json.Json.parse
 import pp.model.Origins.OPS
 import pp.model.StatusTypes.validated
 import pp.model.TaxTypes.{mib, p800}
-import pp.model._
+import pp.model.{chargeref, _}
+import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 
 object PaymentsProcessData {
@@ -41,13 +42,13 @@ object PaymentsProcessData {
 
   val reference = "JE231111B"
 
-  val chargeRefNotificationWorkItem: ChargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(now(clock), p800, chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem: ChargeRefNotificationWorkItem = chargeref.ChargeRefNotificationWorkItem(now(clock), p800, chargeReferenceNumber, 100.12, OPS)
 
-  val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = ChargeRefNotificationDesRequest(p800, chargeReferenceNumber, 100.11)
+  val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = chargeref.ChargeRefNotificationDesRequest(p800, chargeReferenceNumber, 100.11)
 
-  val p800ChargeRefNotificationRequest: ChargeRefNotificationRequest = ChargeRefNotificationRequest(p800, chargeReferenceNumber, 100.11, OPS)
+  val p800ChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(p800, chargeReferenceNumber, 100.11, OPS)
 
-  val mibChargeRefNotificationRequest: ChargeRefNotificationRequest = ChargeRefNotificationRequest(mib, chargeReferenceNumber, 100.11, OPS)
+  val mibChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(mib, chargeReferenceNumber, 100.11, OPS)
 
   val chargeRefNotificationDesRequestJson: JsValue = parse(
     s"""{

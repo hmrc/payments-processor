@@ -15,15 +15,12 @@
  */
 
 package pp.model
-import play.api.libs.json._
 
-case class ChargeRefNotificationRequest(
-    taxType:         TaxType,
-    chargeRefNumber: String,
-    amountPaid:      BigDecimal,
-    origin:          Origin)
+import java.time.LocalDateTime
 
-object ChargeRefNotificationRequest {
-  implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
+trait WorkItemFields {
+  val createdOn: LocalDateTime
+  val taxType: TaxType
+  val origin: Origin
+
 }
-

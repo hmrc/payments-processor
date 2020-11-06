@@ -19,16 +19,17 @@ package pp.scheduling
 import akka.actor.{ActorSystem, Cancellable}
 import play.api.Logger
 import pp.config.QueueConfig
-import pp.services.ChargeRefService
+import pp.model.WorkItemFields
+import pp.services.WorkItemService
 import uk.gov.hmrc.play.scheduling.ExclusiveScheduledJob
 
-import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-abstract class PollingService(val actorSystem:      ActorSystem,
-                              val queueConfig:      QueueConfig,
-                              val chargeRefService: ChargeRefService)(
+abstract class PollingService[P <: WorkItemFields](val actorSystem:     ActorSystem,
+                                                   val queueConfig:     QueueConfig,
+                                                   val workItemService: WorkItemService[P])(
     implicit
     ec: ExecutionContext) extends ExclusiveScheduledJob {
 
@@ -38,6 +39,9 @@ abstract class PollingService(val actorSystem:      ActorSystem,
   Logger.debug(s"Starting $name, Initial delay: $initialDelay, Polling interval: $interval")
 
   callExecutor(name)
+
+  override def executeInMutex(implicit ec: ExecutionContext): Future[Result] =
+    workItemService.retrieveWorkItems.map(items => Result(s"$name: Processed ${items.size} items"))
 
   def callExecutor(name: String)(implicit ec: ExecutionContext): Cancellable = {
     actorSystem.scheduler.schedule(initialDelay, interval) {

@@ -3,7 +3,7 @@ package pp.controllers
 import com.github.tomakehurst.wiremock.client.WireMock.{patchRequestedFor, postRequestedFor, urlEqualTo, verify}
 import pp.model.TaxTypes.{mib, p800}
 import support.PaymentsProcessData._
-import support.{Des, TestSettings, TpsPaymentsBackend}
+import support.{Des, TpsPaymentsBackend}
 import uk.gov.hmrc.http.HttpResponse
 
 class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
@@ -34,15 +34,15 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
     val pcipalNotification = fixture._3
     val chargeRefNotificationRequest = fixture._4
 
-    if (TestSettings.ChargeRefControllerTaxtypeCheckEnabled) {
-      "return Ok for a POST to the public api /send-card-payments with no call to des" when {
-        s"status=complete, taxType = $taxType" in {
-          TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
-          TpsPaymentsBackend.tpsUpdateOk
-          verifySuccess(testConnector.sendCardPayments(pcipalNotification).futureValue, checkTpsBackend = true)
-        }
+
+    "return Ok for a POST to the public api /send-card-payments with no call to des" when {
+      s"status=complete, taxType = $taxType" in {
+        TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
+        TpsPaymentsBackend.tpsUpdateOk
+        verifySuccess(testConnector.sendCardPayments(pcipalNotification).futureValue, checkTpsBackend = true)
       }
     }
+
 
     "return Ok for a POST to the synchronous api with no call to des" when {
       s"status=complete, taxType = $taxType" in {

@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package pp.model
+//Note if you run a clean it may removed the following import which is needed !
+// import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
-import play.api.libs.json.Json.toJson
-import pp.model.chargeref.ChargeRefNotificationRequest
-import support.PaymentsProcessData.{chargeRefNotificationRequestJson, p800ChargeRefNotificationRequest}
-import support.UnitSpec
+package pp.model.chargeref
 
-class ChargeRefNotificationRequestSpec extends UnitSpec {
+import play.api.libs.json._
+import pp.model.TaxType
 
-  "to json" in {
-    toJson(p800ChargeRefNotificationRequest) shouldBe chargeRefNotificationRequestJson
-  }
+case class ChargeRefNotificationDesRequest(
+    taxType:         TaxType,
+    chargeRefNumber: String,
+    amountPaid:      BigDecimal)
 
-  "from json" in {
-    chargeRefNotificationRequestJson.as[ChargeRefNotificationRequest] shouldBe p800ChargeRefNotificationRequest
-  }
+object ChargeRefNotificationDesRequest {
+  implicit val format: OFormat[ChargeRefNotificationDesRequest] = Json.format[ChargeRefNotificationDesRequest]
 }
 

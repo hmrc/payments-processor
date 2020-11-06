@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pp.services
+package pp.services.chargref
 
 import java.time.{Clock, LocalDateTime, ZoneId}
 
@@ -23,8 +23,9 @@ import org.joda.time.DateTime
 import play.api.Logger
 import pp.config.ChargeRefQueueConfig
 import pp.connectors.des.DesConnector
-import pp.model.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
+import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
+import pp.services.WorkItemService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.workitem.{Failed, WorkItem}
 
@@ -36,7 +37,32 @@ class ChargeRefService @Inject() (
     chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
     clock:                          Clock,
     queueConfig:                    ChargeRefQueueConfig
-)(implicit executionContext: ExecutionContext) {
+)(implicit executionContext: ExecutionContext) extends WorkItemService[ChargeRefNotificationWorkItem] {
+
+  //Need to have an implementation of this.  Nuts and Bolts of getting items from the queue ... needs to satisfy interface WorkItemService
+  def retrieveWorkItems: Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
+
+      @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
+      def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[ChargeRefNotificationWorkItem]]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
+
+          def retrieveWorkItem(count: Int): Future[Option[WorkItem[ChargeRefNotificationWorkItem]]] = {
+            if (count == queueConfig.pollLimit) Future successful None
+            else chargeRefNotificationMongoRepo.pullOutstanding
+          }
+
+        retrieveWorkItem(count).flatMap {
+          case None => Future successful sentWorkItems
+          case Some(workItem) =>
+            sendNotificationMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
+              sendNotificationIfFound(count + 1, workItems)
+            }
+        }
+      }
+
+    sendNotificationIfFound(0, Seq.empty)
+  }
+
+  //These are all specific to charge reference processing
 
   def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[HttpResponse] = {
     Logger.debug("inside sendCardPaymentsNotificationSync")
@@ -71,28 +97,6 @@ class ChargeRefService @Inject() (
       _ <- desConnector.sendCardPaymentsNotification(desChargeRef)
     } yield ()
 
-  }
-
-  def retrieveWorkItems: Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
-
-      @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
-      def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[ChargeRefNotificationWorkItem]]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
-
-          def retrieveWorkItem(count: Int): Future[Option[WorkItem[ChargeRefNotificationWorkItem]]] = {
-            if (count == queueConfig.pollLimit) Future successful None
-            else chargeRefNotificationMongoRepo.pullOutstanding
-          }
-
-        retrieveWorkItem(count).flatMap {
-          case None => Future successful sentWorkItems
-          case Some(workItem) =>
-            sendNotificationMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
-              sendNotificationIfFound(count + 1, workItems)
-            }
-        }
-      }
-
-    sendNotificationIfFound(0, Seq.empty)
   }
 
   private def sendNotificationMarkAsComplete(acc: Seq[WorkItem[ChargeRefNotificationWorkItem]], workItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {

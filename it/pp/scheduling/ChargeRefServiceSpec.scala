@@ -22,23 +22,21 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
 import pp.config.ChargeRefQueueConfig
 import pp.connectors.des.DesConnector
-import pp.model.ChargeRefNotificationWorkItem
+import pp.model.chargeref.ChargeRefNotificationWorkItem
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
-import pp.services.ChargeRefService
+import pp.services.chargref.ChargeRefService
 import support.PaymentsProcessData.p800ChargeRefNotificationRequest
-import support.{Des, ItSpec, TestSettings}
+import support.{Des, ItSpec}
 import uk.gov.hmrc.workitem.{InProgress, ToDo, WorkItem}
 
 class ChargeRefServiceSpec extends ItSpec {
-  private val pollLimit = 2
-
-  override def configMap: Map[String, Any] = super.configMap.updated("chargeref.poller.pollLimit", s"$pollLimit")
-
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
   private lazy val desConnector = injector.instanceOf[DesConnector]
   private lazy val queueConfig = injector.instanceOf[ChargeRefQueueConfig]
-
   private lazy val chargeRefService = new ChargeRefService(desConnector, repo, Clock.systemDefaultZone(), queueConfig)
+  private val pollLimit = 2
+
+  override def configMap: Map[String, Any] = super.configMap.updated("chargeref.poller.pollLimit", s"$pollLimit")
 
   override def beforeEach(): Unit = {
     val _ = repo.removeAll().futureValue
@@ -47,30 +45,64 @@ class ChargeRefServiceSpec extends ItSpec {
   }
 
   protected def numberOfQueuedNotifications: Integer = repo.count(Json.obj()).futureValue
-  if (TestSettings.ChargeRefServiceSpecEnabled) {
-    "sendCardPaymentsNotificationToWorkItemRepo" should {
-      "add a notification to the queue" in {
+
+  "sendCardPaymentsNotificationToWorkItemRepo" should {
+    "add a notification to the queue" in {
+      numberOfQueuedNotifications shouldBe 0
+      val workItem = chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
+      numberOfQueuedNotifications shouldBe 1
+
+      workItem.item.taxType shouldBe p800ChargeRefNotificationRequest.taxType
+      workItem.item.chargeRefNumber shouldBe p800ChargeRefNotificationRequest.chargeRefNumber
+      workItem.item.amountPaid shouldBe p800ChargeRefNotificationRequest.amountPaid
+      workItem.item.origin shouldBe p800ChargeRefNotificationRequest.origin
+      workItem.status shouldBe ToDo
+    }
+  }
+
+  "retrieveWorkItems" should {
+    "send queued work items to des" when {
+      "the des call succeeds" in {
+        Des.cardPaymentsNotificationSucceeds()
+
         numberOfQueuedNotifications shouldBe 0
-        val workItem = chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
+        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
         numberOfQueuedNotifications shouldBe 1
 
-        workItem.item.taxType shouldBe p800ChargeRefNotificationRequest.taxType
-        workItem.item.chargeRefNumber shouldBe p800ChargeRefNotificationRequest.chargeRefNumber
-        workItem.item.amountPaid shouldBe p800ChargeRefNotificationRequest.amountPaid
-        workItem.item.origin shouldBe p800ChargeRefNotificationRequest.origin
-        workItem.status shouldBe ToDo
+        val sentItems: Seq[WorkItem[ChargeRefNotificationWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
+
+        sentItems.size shouldBe 1
+        sentItems.head.status shouldBe InProgress
+        numberOfQueuedNotifications shouldBe 0
       }
     }
 
-    "retrieveWorkItems" should {
-      "send queued work items to des" when {
-        "the des call succeeds" in {
-          Des.cardPaymentsNotificationSucceeds()
+    "retain queued work items" when {
+      "the retry des call fails" in {
+        Des.cardPaymentsNotificationFailsWithAnInternalServerError()
 
-          numberOfQueuedNotifications shouldBe 0
-          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
-          numberOfQueuedNotifications shouldBe 1
+        numberOfQueuedNotifications shouldBe 0
+        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
+        numberOfQueuedNotifications shouldBe 1
 
+        chargeRefService.retrieveWorkItems.futureValue.isEmpty shouldBe true
+        numberOfQueuedNotifications shouldBe 1
+      }
+    }
+
+    "process a previously queued work item after the retry interval" when {
+      "the first des retry call fails but the second succeeds" in {
+        Des.cardPaymentsNotificationFailsWithAnInternalServerError()
+        Des.cardPaymentsNotificationSucceeds(0, 1)
+
+        numberOfQueuedNotifications shouldBe 0
+        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
+        numberOfQueuedNotifications shouldBe 1
+
+        chargeRefService.retrieveWorkItems.futureValue.isEmpty shouldBe true
+        numberOfQueuedNotifications shouldBe 1
+
+        eventually {
           val sentItems: Seq[WorkItem[ChargeRefNotificationWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
 
           sentItems.size shouldBe 1
@@ -78,65 +110,30 @@ class ChargeRefServiceSpec extends ItSpec {
           numberOfQueuedNotifications shouldBe 0
         }
       }
+    }
 
-      "retain queued work items" when {
-        "the retry des call fails" in {
-          Des.cardPaymentsNotificationFailsWithAnInternalServerError()
+    "process a number of queued work items up to the poll limit" in {
+      Des.cardPaymentsNotificationSucceeds()
+      Des.cardPaymentsNotificationSucceeds(0, 1)
+      Des.cardPaymentsNotificationSucceeds(0, 2)
 
-          numberOfQueuedNotifications shouldBe 0
-          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
-          numberOfQueuedNotifications shouldBe 1
+      numberOfQueuedNotifications shouldBe 0
 
-          chargeRefService.retrieveWorkItems.futureValue.isEmpty shouldBe true
-          numberOfQueuedNotifications shouldBe 1
-        }
-      }
+      chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
+      chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015760")).futureValue
+      chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015761")).futureValue
 
-      "process a previously queued work item after the retry interval" when {
-        "the first des retry call fails but the second succeeds" in {
-          Des.cardPaymentsNotificationFailsWithAnInternalServerError(0, 0)
-          Des.cardPaymentsNotificationSucceeds(0, 1)
+      val expectedQueuedNotifications = 3
 
-          numberOfQueuedNotifications shouldBe 0
-          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
-          numberOfQueuedNotifications shouldBe 1
+      numberOfQueuedNotifications shouldBe expectedQueuedNotifications
+      numberOfQueuedNotifications > pollLimit shouldBe true
 
-          chargeRefService.retrieveWorkItems.futureValue.isEmpty shouldBe true
-          numberOfQueuedNotifications shouldBe 1
+      eventually {
+        val sentItems: Seq[WorkItem[ChargeRefNotificationWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
 
-          eventually {
-            val sentItems: Seq[WorkItem[ChargeRefNotificationWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
-
-            sentItems.size shouldBe 1
-            sentItems.head.status shouldBe InProgress
-            numberOfQueuedNotifications shouldBe 0
-          }
-        }
-      }
-
-      "process a number of queued work items up to the poll limit" in {
-        Des.cardPaymentsNotificationSucceeds(0, 0)
-        Des.cardPaymentsNotificationSucceeds(0, 1)
-        Des.cardPaymentsNotificationSucceeds(0, 2)
-
-        numberOfQueuedNotifications shouldBe 0
-
-        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
-        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015760")).futureValue
-        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015761")).futureValue
-
-        val expectedQueuedNotifications = 3
-
-        numberOfQueuedNotifications shouldBe expectedQueuedNotifications
-        numberOfQueuedNotifications > pollLimit shouldBe true
-
-        eventually {
-          val sentItems: Seq[WorkItem[ChargeRefNotificationWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
-
-          sentItems.size shouldBe pollLimit
-          sentItems.map(_.status).toSet shouldBe Set(InProgress)
-          numberOfQueuedNotifications shouldBe 1
-        }
+        sentItems.size shouldBe pollLimit
+        sentItems.map(_.status).toSet shouldBe Set(InProgress)
+        numberOfQueuedNotifications shouldBe 1
       }
     }
   }

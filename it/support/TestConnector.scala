@@ -17,7 +17,7 @@
 package support
 
 import javax.inject.{Inject, Singleton}
-import pp.model.ChargeRefNotificationRequest
+import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient

@@ -18,7 +18,7 @@ package pp.connectors.des
 
 import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Logger}
-import pp.model.ChargeRefNotificationDesRequest
+import pp.model.chargeref.ChargeRefNotificationDesRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.http.logging.Authorization
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

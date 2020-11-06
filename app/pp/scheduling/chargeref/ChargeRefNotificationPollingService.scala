@@ -19,19 +19,17 @@ package pp.scheduling.chargeref
 import akka.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
 import pp.config.ChargeRefQueueConfig
+import pp.model.chargeref.ChargeRefNotificationWorkItem
 import pp.scheduling.PollingService
-import pp.services.ChargeRefService
+import pp.services.chargref.ChargeRefService
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ChargeRefNotificationPollingService @Inject() (actorSystem: ActorSystem,
-                                                     queueConfig: ChargeRefQueueConfig, chargeRefService: ChargeRefService)(
+                                                     queueConfig: ChargeRefQueueConfig, workItemService: ChargeRefService)(
     implicit
-    ec: ExecutionContext) extends PollingService(actorSystem, queueConfig, chargeRefService) {
-
-  override def executeInMutex(implicit ec: ExecutionContext): Future[Result] =
-    chargeRefService.retrieveWorkItems.map(items => Result(s"$name: Processed ${items.size} items"))
+    ec: ExecutionContext) extends PollingService[ChargeRefNotificationWorkItem](actorSystem, queueConfig, workItemService) {
 
   override def name: String = "ChargeRefNotificationPollingService"
 

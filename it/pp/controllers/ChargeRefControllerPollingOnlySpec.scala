@@ -17,40 +17,38 @@
 package pp.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
-import pp.services.ChargeRefService
-import support.{Des, TestSettings}
+import pp.services.chargref.ChargeRefService
+import support.Des
 import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 
 class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
-  override def configMap: Map[String, Any] = super.configMap.updated("chargeref.poller.enabled", "true")
-
   private lazy val chargeRefService = injector.instanceOf[ChargeRefService]
 
-  if (TestSettings.ChargeRefControllerPollingOnlySpecEnabled) {
-    "the ChargeRefController" when {
-      "polling is enabled and queuing is disabled" should {
-        behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
-        behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
-        behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
-        behave like aSynchronousEndpointWhenTheTpsUodateFailsWithAnInternalError()
-        behave like aSynchronousEndpointWhenTpsGetTaxTypeFailsWith404()
+  override def configMap: Map[String, Any] = super.configMap.updated("chargeref.poller.enabled", "true")
 
-        "asynchronously process pre-existing queued notifications" in {
-          val delayInMilliSeconds = 10
+  "the ChargeRefController" when {
+    "polling is enabled and queuing is disabled" should {
+      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
+      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
+      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
+      behave like aSynchronousEndpointWhenTheTpsUodateFailsWithAnInternalError()
+      behave like aSynchronousEndpointWhenTpsGetTaxTypeFailsWith404()
 
-          Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 0)
-          Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 1)
-          Des.cardPaymentsNotificationSucceeds(delayInMilliSeconds, 2)
+      "asynchronously process pre-existing queued notifications" in {
+        val delayInMilliSeconds = 10
 
-          chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
-          numberOfQueuedNotifications shouldBe 1
+        Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds)
+        Des.cardPaymentsNotificationFailsWithAnInternalServerError(delayInMilliSeconds, 1)
+        Des.cardPaymentsNotificationSucceeds(delayInMilliSeconds, 2)
 
-          eventually {
-            numberOfQueuedNotifications shouldBe 0
-          }
+        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
+        numberOfQueuedNotifications shouldBe 1
 
-          verify(3, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
+        eventually {
+          numberOfQueuedNotifications shouldBe 0
         }
+
+        verify(3, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
       }
     }
   }

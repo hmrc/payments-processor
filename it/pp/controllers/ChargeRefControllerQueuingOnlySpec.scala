@@ -18,40 +18,40 @@ package pp.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import play.api.http.Status
-import pp.model.ChargeRefNotificationRequest
 import pp.model.Origins.OPS
 import pp.model.TaxTypes.CDSX
+import pp.model.chargeref
 import support._
 
 class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
   override def configMap: Map[String, Any] = super.configMap.updated("chargeref.queue.enabled", "true")
 
-  if (TestSettings.ChargeRefControllerQueuingOnlySpecEnabled) {
-    "the ChargeRefController" when {
-      "queuing is enabled and polling is disabled" should {
-        behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
-        behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
-        behave like aSynchronousEndpointWhenTheTpsUodateFailsWithAnInternalError()
-        behave like aSynchronousEndpointWhenTpsGetTaxTypeFailsWith404()
 
-        "return OK and persist to the queue but not process asynchronously" when {
-          "the Des call fails with an internal server error" in {
-            val chargeReferenceNumber = "XQ000123456789"
-            val chargeRefNotificationRequest = ChargeRefNotificationRequest(CDSX, chargeReferenceNumber, 101.01, OPS)
+  "the ChargeRefController" when {
+    "queuing is enabled and polling is disabled" should {
+      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
+      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
+      behave like aSynchronousEndpointWhenTheTpsUodateFailsWithAnInternalError()
+      behave like aSynchronousEndpointWhenTpsGetTaxTypeFailsWith404()
 
-            Des.cardPaymentsNotificationFailsWithAnInternalServerError()
+      "return OK and persist to the queue but not process asynchronously" when {
+        "the Des call fails with an internal server error" in {
+          val chargeReferenceNumber = "XQ000123456789"
+          val chargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(CDSX, chargeReferenceNumber, 101.01, OPS)
 
-            numberOfQueuedNotifications shouldBe 0
+          Des.cardPaymentsNotificationFailsWithAnInternalServerError()
 
-            val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue
-            response.status shouldBe Status.OK
+          numberOfQueuedNotifications shouldBe 0
 
-            numberOfQueuedNotifications shouldBe 1
+          val response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue
+          response.status shouldBe Status.OK
 
-            verify(1, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
-          }
+          numberOfQueuedNotifications shouldBe 1
+
+          verify(1, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
         }
       }
     }
   }
+
 }
