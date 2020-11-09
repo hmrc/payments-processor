@@ -66,7 +66,7 @@ class ChargeRefService @Inject() (
 
   //These are all specific to charge reference processing
 
-  def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[HttpResponse] = {
+  def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[Unit] = {
     logger.debug("inside sendCardPaymentsNotificationSync")
 
     val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationPciPalRequest.taxType,

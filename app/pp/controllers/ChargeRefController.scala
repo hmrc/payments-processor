@@ -27,7 +27,7 @@ import pp.model.pcipal.ChargeRefNotificationPcipalRequest.toChargeRefNotificatio
 import pp.model.TaxType
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.services.chargref.ChargeRefService
-import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, NotFoundException, Upstream4xxResponse}
+import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.workitem.ToDo
 
@@ -82,9 +82,12 @@ class ChargeRefController @Inject() (
       .sendCardPaymentsNotificationSync(chargeRefNotificationRequest)
       .map(_ => Ok)
       .recoverWith {
-        case e: BadRequestException                                  => Future.failed(e)
-        case e: NotFoundException                                    => Future.failed(new BadGatewayException(e.message))
-        case e: Upstream4xxResponse if e.upstreamResponseCode == 409 => Future.failed(e)
+        case e: UpstreamErrorResponse if e.statusCode == 400 =>
+          Future.failed(new BadRequestException(e.getMessage()))
+        case e: UpstreamErrorResponse if e.statusCode == 404 =>
+          Future.failed(new BadGatewayException(e.message))
+        case e: UpstreamErrorResponse if e.statusCode == 409 =>
+          Future.failed(e)
         case e =>
           if (queueConfig.queueEnabled) {
             logger.debug("Queue enabled")

@@ -19,11 +19,13 @@ package pp.connectors.tps
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.mvc.Request
+import pp.connectors.ResponseReadsThrowingException
 import pp.model.{PaymentItemId, TaxType, TaxTypes}
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,6 +36,8 @@ class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClient, servicesCon
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
+  implicit val readRaw: HttpReads[HttpResponse] = ResponseReadsThrowingException.readResponse
+
   def updateWithPcipalData(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)
     (implicit request: Request[_], hc: HeaderCarrier): Future[HttpResponse] = {
     val url: String = s"$serviceURL/update-with-pcipal-data"
@@ -42,7 +46,8 @@ class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClient, servicesCon
   }
 
   def getTaxType(paymentItemId: PaymentItemId)(implicit request: Request[_], hc: HeaderCarrier): Future[TaxType] =
-    httpClient.GET[String](s"$serviceURL/payment-items/${paymentItemId.value}/tax-type").map { taxTypeUpperCase =>
-      TaxTypes.forCode(taxTypeUpperCase.toLowerCase).getOrElse(throw new RuntimeException(s"Unknown tax type $taxTypeUpperCase"))
-    }
+    httpClient.GET[String](s"$serviceURL/payment-items/${paymentItemId.value}/tax-type")
+      .map { taxTypeUpperCase =>
+        TaxTypes.forCode(taxTypeUpperCase.toLowerCase).getOrElse(throw new RuntimeException(s"Unknown tax type $taxTypeUpperCase"))
+      }
 }

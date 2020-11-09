@@ -17,10 +17,12 @@
 package support
 
 import javax.inject.{Inject, Singleton}
+import pp.connectors.ResponseReadsThrowingException
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
+
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -30,13 +32,16 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   val port = 19001
   val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
 
+
+  implicit val readRaw: HttpReads[HttpResponse] = ResponseReadsThrowingException.readResponse
+
   def sendCardPaymentsNotification(cardPaymentsNotificationRequest: ChargeRefNotificationRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST(s"http://localhost:$port/payments-processor/send-card-payments-notification", cardPaymentsNotificationRequest, headers)
+    httpClient.POST[ChargeRefNotificationRequest, HttpResponse](s"http://localhost:$port/payments-processor/send-card-payments-notification", cardPaymentsNotificationRequest, headers)
 
   def sendCardPayments(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST(s"http://localhost:$port/send-card-payments", chargeRefNotificationPciPalRequest, headers)
+    httpClient.POST[ChargeRefNotificationPcipalRequest,HttpResponse](s"http://localhost:$port/send-card-payments", chargeRefNotificationPciPalRequest, headers)
 
-  def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET(s"http://localhost:$port/api/conf/1.0/application.raml")
+  def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/conf/1.0/application.raml")
 
-  def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET(s"http://localhost:$port/api/definition")
+  def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/definition")
 }
