@@ -21,16 +21,16 @@ object AppDependencies {
 
   val compile = Seq(
 
-    "uk.gov.hmrc"  %% "simple-reactivemongo" % "7.26.0-play-26",
-    "uk.gov.hmrc"  %% "bootstrap-play-26" % "1.7.0",
-    "uk.gov.hmrc"  %% "work-item-repo" % "7.3.0-play-26",
+    "uk.gov.hmrc"  %% "simple-reactivemongo" % "7.30.0-play-26",
+    "uk.gov.hmrc"  %% "bootstrap-play-26" % "2.0.0",
+    "uk.gov.hmrc"  %% "work-item-repo" % "7.10.0-play-26",
     "com.beachape" %% "enumeratum" % "1.5.13",
     "uk.gov.hmrc"  %% "play-hmrc-api" % "4.1.0-play-26",
     "uk.gov.hmrc"  %% "play-scheduling"    % "7.4.0-play-26"
   )
 
   val test = Seq(
-    "uk.gov.hmrc" %% "bootstrap-play-26" % "1.7.0" % Test,
+    "uk.gov.hmrc" %% "bootstrap-play-26" % "2.0.0" % Test,
     "org.scalatest" %% "scalatest" % "3.0.8" % Test,
     "com.typesafe.play" %% "play-test" % current % Test,
     "org.pegdown" % "pegdown" % "1.6.0" % Test,
@@ -39,7 +39,7 @@ object AppDependencies {
   )
 
   val itTest = Seq(
-    "uk.gov.hmrc" %% "bootstrap-play-26" % "1.7.0" % "it",
+    "uk.gov.hmrc" %% "bootstrap-play-26" % "2.0.0" % "it",
     "org.scalatest" %% "scalatest" % "3.0.8" % "it",
     "com.typesafe.play" %% "play-test" % current % "it",
     "org.pegdown" % "pegdown" % "1.6.0" % "it",

@@ -2,7 +2,7 @@ package pp.controllers
 
 import play.api.http.Status
 import play.api.libs.json.Json
-import support.{ItSpec, PaymentsProcessData, TestSettings}
+import support.{ItSpec, PaymentsProcessData}
 import uk.gov.hmrc.http.HttpResponse
 
 class ApiDocumentationControllerNotEnabledSpec extends ItSpec {
@@ -11,16 +11,16 @@ class ApiDocumentationControllerNotEnabledSpec extends ItSpec {
     super
       .configMap
       .updated("api.enabled", "false")
-      .updated("api.status","STABLE")
+      .updated("api.status", "STABLE")
 
-  if (TestSettings.ApiDocumentationControllerNotEnabledSpecEnabled) {
-    "DefinitionController.definition return OK status" in {
-      val response: HttpResponse = testConnector.getDef.futureValue
-      response.status shouldBe Status.OK
-      val json = Json.parse(response.body)
-      json shouldBe PaymentsProcessData.definition(false,"STABLE")
-    }
+
+  "DefinitionController.definition return OK status" in {
+    val response: HttpResponse = testConnector.getDef.futureValue
+    response.status shouldBe Status.OK
+    val json = Json.parse(response.body)
+    json shouldBe PaymentsProcessData.definition(endpointsEnabled = false, "STABLE")
   }
+
 
 }
 

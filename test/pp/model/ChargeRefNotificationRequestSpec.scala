@@ -17,7 +17,8 @@
 package pp.model
 
 import play.api.libs.json.Json.toJson
-import support.PaymentsProcessData.{p800ChargeRefNotificationRequest, chargeRefNotificationRequestJson}
+import pp.model.chargeref.ChargeRefNotificationRequest
+import support.PaymentsProcessData.{chargeRefNotificationRequestJson, p800ChargeRefNotificationRequest}
 import support.UnitSpec
 
 class ChargeRefNotificationRequestSpec extends UnitSpec {

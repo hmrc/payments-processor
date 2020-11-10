@@ -18,7 +18,8 @@ package pp.model.pcipal
 
 import play.api.libs.json.{Json, OFormat}
 import pp.model.Origins.PCI_PAL
-import pp.model._
+import pp.model.{chargeref, _}
+import pp.model.chargeref.ChargeRefNotificationRequest
 
 final case class ChargeRefNotificationPcipalRequest(
     HoD:                  HeadOfDutyIndicator,
@@ -37,7 +38,7 @@ object ChargeRefNotificationPcipalRequest {
   implicit val format: OFormat[ChargeRefNotificationPcipalRequest] = Json.format[ChargeRefNotificationPcipalRequest]
 
   def toChargeRefNotificationRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest, taxType: TaxType): ChargeRefNotificationRequest = {
-    ChargeRefNotificationRequest(
+    chargeref.ChargeRefNotificationRequest(
       taxType, chargeRefNotificationPciPalRequest.ChargeReference, chargeRefNotificationPciPalRequest.Amount, PCI_PAL)
   }
 }

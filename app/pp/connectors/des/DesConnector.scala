@@ -18,13 +18,14 @@ package pp.connectors.des
 
 import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Logger}
-import pp.model.ChargeRefNotificationDesRequest
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import pp.connectors.UnitReadsThrowingException
+import pp.model.chargeref.ChargeRefNotificationDesRequest
 import uk.gov.hmrc.http.logging.Authorization
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class DesConnector @Inject() (
@@ -33,20 +34,26 @@ class DesConnector @Inject() (
     configuration:  Configuration)
   (implicit ec: ExecutionContext) {
 
+  private val logger: Logger = Logger(this.getClass.getSimpleName)
+
   private val serviceURL: String = servicesConfig.baseUrl("des")
   private val authorizationToken: String = configuration.underlying.getString("microservice.services.des.authorizationToken")
   private val serviceEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
   private val chargeref: String = configuration.underlying.getString("microservice.services.des.chargeref-url")
 
+  implicit val readUnit: HttpReads[Unit] = UnitReadsThrowingException.readUnit
+
   private val desHeaderCarrier: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(s"Bearer $authorizationToken")))
     .withExtraHeaders("Environment" -> serviceEnvironment, "OriginatorID" -> "MDTP")
 
-  def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[HttpResponse] = {
-    Logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
+  def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest) = {
+    logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
     implicit val hc: HeaderCarrier = desHeaderCarrier
     val sendChargeRefUrl: String = s"$serviceURL$chargeref"
-    Logger.debug(s"""Calling des api 1541 with url $sendChargeRefUrl""")
-    httpClient.POST[ChargeRefNotificationDesRequest, HttpResponse](sendChargeRefUrl, chargeRefNotificationDesRequest)
+    logger.debug(s"""Calling des api 1541 with url $sendChargeRefUrl""")
+
+    httpClient.POST[ChargeRefNotificationDesRequest, Unit](sendChargeRefUrl, chargeRefNotificationDesRequest)
+
   }
 
 }

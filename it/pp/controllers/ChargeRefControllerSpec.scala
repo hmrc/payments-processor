@@ -22,10 +22,10 @@ import org.scalatest.Assertion
 import play.api.libs.json.Json
 import pp.model.StatusTypes.failed
 import pp.model.TaxTypes.p800
-import pp.scheduling.ChargeRefNotificationMongoRepo
+import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import support.PaymentsProcessData._
 import support.{Des, ItSpec, TpsPaymentsBackend}
-import uk.gov.hmrc.http.{BadRequestException, HttpResponse, Upstream5xxResponse}
+import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
 trait ChargeRefControllerSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
@@ -93,7 +93,7 @@ trait ChargeRefControllerSpec extends ItSpec {
         Des.cardPaymentsNotificationRespondsWith(400, "")
 
         val response = testConnector.sendCardPaymentsNotification(p800ChargeRefNotificationRequest).failed.futureValue
-        response.isInstanceOf[BadRequestException] shouldBe true
+        response.isInstanceOf[UpstreamErrorResponse] shouldBe true
 
         numberOfQueuedNotifications shouldBe 0
       }
@@ -102,7 +102,7 @@ trait ChargeRefControllerSpec extends ItSpec {
         Des.cardPaymentsNotificationRespondsWith(404, "")
 
         val response = testConnector.sendCardPaymentsNotification(p800ChargeRefNotificationRequest).failed.futureValue
-        response.asInstanceOf[Upstream5xxResponse].reportAs shouldBe 502
+        response.asInstanceOf[UpstreamErrorResponse].reportAs shouldBe 502
 
         numberOfQueuedNotifications shouldBe 0
       }
@@ -111,7 +111,7 @@ trait ChargeRefControllerSpec extends ItSpec {
         Des.cardPaymentsNotificationRespondsWith(409, "")
 
         val response = testConnector.sendCardPaymentsNotification(p800ChargeRefNotificationRequest).failed.futureValue
-        response.asInstanceOf[Upstream5xxResponse].reportAs shouldBe 502
+        response.asInstanceOf[UpstreamErrorResponse].reportAs shouldBe 502
 
         numberOfQueuedNotifications shouldBe 0
       }

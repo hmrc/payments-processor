@@ -17,6 +17,7 @@
 package pp.model
 
 import play.api.libs.json.Json
+import pp.model.chargeref.ChargeRefNotificationDesRequest
 import support.PaymentsProcessData.{chargeRefNotificationDesRequest, chargeRefNotificationDesRequestJson}
 import support.UnitSpec
 

@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package pp.model
-import play.api.libs.json._
+package pp.connectors
 
-case class ChargeRefNotificationRequest(
-    taxType:         TaxType,
-    chargeRefNumber: String,
-    amountPaid:      BigDecimal,
-    origin:          Origin)
+import uk.gov.hmrc.http.{HttpReads, HttpReadsInstances, HttpResponse}
 
-object ChargeRefNotificationRequest {
-  implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
+object ResponseReadsThrowingException {
+
+  implicit val readResponse: HttpReads[HttpResponse] = HttpReadsInstances.throwOnFailure(HttpReadsInstances.readEitherOf(HttpReadsInstances.readRaw))
+
 }
-

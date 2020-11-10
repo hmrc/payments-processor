@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+//Note if you run a clean it may removed the following import which is needed !
+// import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.chargeref.ChargeRefNotificationPollingService
+package pp.model.chargeref
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton()
-  }
+import play.api.libs.json._
+import pp.model.TaxType
 
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
+case class ChargeRefNotificationDesRequest(
+    taxType:         TaxType,
+    chargeRefNumber: String,
+    amountPaid:      BigDecimal)
 
+object ChargeRefNotificationDesRequest {
+  implicit val format: OFormat[ChargeRefNotificationDesRequest] = Json.format[ChargeRefNotificationDesRequest]
 }
+

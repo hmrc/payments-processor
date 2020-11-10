@@ -16,47 +16,56 @@
 
 package pp.scheduling
 
+/*
+ * Copyright 2020 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import java.time.Clock
 
-import javax.inject.{Inject, Singleton}
-import pp.model.ChargeRefNotificationWorkItem
 import org.joda.time.{DateTime, Duration}
 import play.api.Configuration
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponent
+import pp.config.QueueConfig
+import pp.scheduling.DateTimeHelpers._
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import reactivemongo.play.json.ImplicitBSONHandlers._
-import pp.scheduling.DateTimeHelpers._
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.workitem._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class ChargeRefNotificationMongoRepo @Inject() (
+abstract class NotificationRepo[A](
     reactiveMongoComponent: ReactiveMongoComponent,
     configuration:          Configuration,
     clock:                  Clock,
-    servicesConfig:         ServicesConfig)
-  (implicit ec: ExecutionContext)
-  extends WorkItemRepository[ChargeRefNotificationWorkItem, BSONObjectID](
-    collectionName = "charge-ref-notifications",
+    queueConfig:            QueueConfig)
+  (implicit ec: ExecutionContext, format: OFormat[A], mfItem: Manifest[A])
+  extends WorkItemRepository[A, BSONObjectID](
+    collectionName = queueConfig.collectionName,
     mongo          = reactiveMongoComponent.mongoConnector.db,
-    itemFormat     = ChargeRefNotificationWorkItem.workItemFormats,
+    itemFormat     = WorkItem.workItemMongoFormat[A],
     configuration.underlying) {
 
-  override val inProgressRetryAfterProperty: String = "queue.retryAfter"
-
   lazy val retryIntervalMillis: Long = configuration.getMillis(inProgressRetryAfterProperty)
-
   override lazy val inProgressRetryAfter: Duration = Duration.millis(retryIntervalMillis)
-
   private lazy val ttlInSeconds = {
-    val duration = servicesConfig.getDuration("queue.ttl")
-    duration.toSeconds
+    queueConfig.ttl.getSeconds
   }
+  override val inProgressRetryAfterProperty: String = queueConfig.retryAfterProperty
 
   override def indexes: Seq[Index] = super.indexes ++ Seq(
     Index(key     = Seq("receivedAt" -> IndexType.Ascending), name = Some("receivedAtTime"), options = BSONDocument("expireAfterSeconds" -> ttlInSeconds)))
@@ -70,7 +79,7 @@ class ChargeRefNotificationMongoRepo @Inject() (
     val failureCount = "failureCount"
   }
 
-  def pullOutstanding(implicit ec: ExecutionContext): Future[Option[WorkItem[ChargeRefNotificationWorkItem]]] =
+  def pullOutstanding(implicit ec: ExecutionContext): Future[Option[WorkItem[A]]] =
     super.pullOutstanding(now.minusMillis(retryIntervalMillis.toInt), now)
 
   def complete(id: BSONObjectID)(implicit ec: ExecutionContext): Future[Boolean] = {

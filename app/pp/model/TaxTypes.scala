@@ -32,6 +32,7 @@ sealed abstract class TaxType extends EnumEntry {
 object TaxType {
   implicit val format: Format[TaxType] = EnumFormat(TaxTypes)
   implicit val pathBinder: QueryStringBindable[TaxType] = bindableA(_.toString)
+
 }
 
 object TaxTypes extends Enum[TaxType] {

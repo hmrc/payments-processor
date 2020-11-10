@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-//Note if you run a clean it may removed the following import which is needed !
-// import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
-
-package pp.model
-
-import java.time.LocalDateTime
+package pp.model.chargeref
 
 import play.api.libs.json._
-import uk.gov.hmrc.workitem.WorkItem
+import pp.model.{Origin, TaxType}
 
-case class ChargeRefNotificationWorkItem(
-    createdOn:       LocalDateTime,
+case class ChargeRefNotificationRequest(
     taxType:         TaxType,
     chargeRefNumber: String,
     amountPaid:      BigDecimal,
     origin:          Origin)
 
-object ChargeRefNotificationWorkItem {
-  implicit val format: OFormat[ChargeRefNotificationWorkItem] = Json.format[ChargeRefNotificationWorkItem]
-  val workItemFormats: Format[WorkItem[ChargeRefNotificationWorkItem]] = WorkItem.workItemMongoFormat[ChargeRefNotificationWorkItem]
+object ChargeRefNotificationRequest {
+  implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
 }
 

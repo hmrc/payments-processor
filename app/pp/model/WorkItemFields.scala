@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package pp.model
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.chargeref.ChargeRefNotificationPollingService
+import java.time.LocalDateTime
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton()
-  }
-
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
+trait WorkItemFields {
+  val createdOn: LocalDateTime
+  val taxType: TaxType
+  val origin: Origin
 
 }

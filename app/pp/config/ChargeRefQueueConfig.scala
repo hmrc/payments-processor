@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package pp.config
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.chargeref.ChargeRefNotificationPollingService
+import javax.inject.{Inject, Singleton}
+import play.api.Configuration
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton()
-  }
+@Singleton
+class ChargeRefQueueConfig @Inject() (val configuration: Configuration) extends QueueConfig {
+  //All Configs need these
+  val prefix = "chargeref"
+  val collectionName = "charge-ref-notifications"
 
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
+  //Specific to this config
+  val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
 }
+

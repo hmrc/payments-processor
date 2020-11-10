@@ -19,14 +19,15 @@ package pp.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, ControllerComponents}
 import play.api.{Configuration, Logger}
-import pp.config.QueueConfig
+import pp.config.ChargeRefQueueConfig
 import pp.connectors.tps.TpsPaymentsBackendConnector
 import pp.model.StatusTypes.validated
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest.toChargeRefNotificationRequest
-import pp.model.{ChargeRefNotificationRequest, TaxType}
-import pp.services.ChargeRefService
-import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, NotFoundException, Upstream4xxResponse}
+import pp.model.TaxType
+import pp.model.chargeref.ChargeRefNotificationRequest
+import pp.services.chargref.ChargeRefService
+import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.workitem.ToDo
 
@@ -36,16 +37,17 @@ import scala.concurrent.{ExecutionContext, Future}
 class ChargeRefController @Inject() (
     cc:                          ControllerComponents,
     chargeRefService:            ChargeRefService,
-    queueConfig:                 QueueConfig,
+    queueConfig:                 ChargeRefQueueConfig,
     tpsPaymentsBackendConnector: TpsPaymentsBackendConnector,
     configuration:               Configuration
 )
   (implicit executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator {
 
   val sendAllToDes: Boolean = configuration.underlying.getBoolean("sendAllToDes")
+  private val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
-    Logger.debug("sendCardPaymentsNotificationPciPal")
+    logger.debug("sendCardPaymentsNotificationPciPal")
 
     val notification = request.body
 
@@ -62,42 +64,45 @@ class ChargeRefController @Inject() (
   }
 
   def sendCardPaymentsNotification(): Action[ChargeRefNotificationRequest] = Action.async(parse.json[ChargeRefNotificationRequest]) { implicit request =>
-    Logger.debug("sendCardPaymentsNotification")
+    logger.debug("sendCardPaymentsNotification")
 
     val sendChargeRef = sendAllToDes || request.body.taxType.sendToDes
     if (sendChargeRef) {
       processChargeRefNotificationRequest(request.body)
     } else {
-      Logger.debug(s"Not sending des notification for ${request.body.taxType}, ignoreSendChargeRef was $sendChargeRef")
+      logger.debug(s"Not sending des notification for ${request.body.taxType}, ignoreSendChargeRef was $sendChargeRef")
       Future.successful(Ok)
     }
 
   }
 
   private def processChargeRefNotificationRequest(chargeRefNotificationRequest: ChargeRefNotificationRequest) = {
-    Logger.debug("processChargeRefNotificationRequest")
+    logger.debug("processChargeRefNotificationRequest")
     chargeRefService
       .sendCardPaymentsNotificationSync(chargeRefNotificationRequest)
       .map(_ => Ok)
       .recoverWith {
-        case e: BadRequestException                                  => Future.failed(e)
-        case e: NotFoundException                                    => Future.failed(new BadGatewayException(e.message))
-        case e: Upstream4xxResponse if e.upstreamResponseCode == 409 => Future.failed(e)
+        case e: UpstreamErrorResponse if e.statusCode == 400 =>
+          Future.failed(new BadRequestException(e.getMessage()))
+        case e: UpstreamErrorResponse if e.statusCode == 404 =>
+          Future.failed(new BadGatewayException(e.message))
+        case e: UpstreamErrorResponse if e.statusCode == 409 =>
+          Future.failed(e)
         case e =>
           if (queueConfig.queueEnabled) {
-            Logger.debug("Queue enabled")
+            logger.debug("Queue enabled")
             chargeRefService
               .sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest)
               .map(
                 res => res.status match {
                   case ToDo => Ok
                   case _ =>
-                    Logger.error("Could not add message to work item repo")
+                    logger.error("Could not add message to work item repo")
                     InternalServerError
                 }
               )
           } else {
-            Logger.warn("Queue disabled")
+            logger.warn("Queue disabled")
             Future.failed(e)
           }
       }

@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-//Note if you run a clean it may removed the following import which is needed !
-// import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
+package pp.services
 
-package pp.model
-import play.api.libs.json._
+import pp.model.WorkItemFields
+import uk.gov.hmrc.workitem.WorkItem
 
-case class ChargeRefNotificationDesRequest(
-    taxType:         TaxType,
-    chargeRefNumber: String,
-    amountPaid:      BigDecimal)
+import scala.concurrent.Future
 
-object ChargeRefNotificationDesRequest {
-  implicit val format: OFormat[ChargeRefNotificationDesRequest] = Json.format[ChargeRefNotificationDesRequest]
+trait WorkItemService[P <: WorkItemFields] {
+
+  def retrieveWorkItems: Future[Seq[WorkItem[P]]]
 }
 

@@ -18,7 +18,7 @@ package pp.controllers
 
 import play.api.http.Status
 import play.api.libs.json.Json
-import support.{ItSpec, PaymentsProcessData, TestSettings}
+import support.{ItSpec, PaymentsProcessData}
 import uk.gov.hmrc.http.HttpResponse
 
 class ApiDocumentationControllerSpec extends ItSpec {
@@ -28,21 +28,18 @@ class ApiDocumentationControllerSpec extends ItSpec {
       .configMap
       .updated("api.enabled", "true")
 
-  if (TestSettings.ApiDocumentationControllerSpecEnabled) {
-    "DefinitionController.definition return OK status" in {
-      val response: HttpResponse = testConnector.getDef.futureValue
-      response.status shouldBe Status.OK
-      val json = Json.parse(response.body)
-      json shouldBe PaymentsProcessData.definition(true, "BETA")
-    }
-
-    "DocumentationController return OK status" in {
-      val response: HttpResponse = testConnector.getApiDoc.futureValue
-      response.status shouldBe Status.OK
-
-    }
+  "DefinitionController.definition return OK status" in {
+    val response: HttpResponse = testConnector.getDef.futureValue
+    response.status shouldBe Status.OK
+    val json = Json.parse(response.body)
+    json shouldBe PaymentsProcessData.definition(endpointsEnabled = true, "BETA")
   }
 
+  "DocumentationController return OK status" in {
+    val response: HttpResponse = testConnector.getApiDoc.futureValue
+    response.status shouldBe Status.OK
+
+  }
 
 }
 
