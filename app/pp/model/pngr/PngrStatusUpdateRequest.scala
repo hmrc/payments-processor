@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package pp.model.pngr
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.chargeref.ChargeRefNotificationPollingService
-import pp.scheduling.pngr.PngrPollingService
+import play.api.libs.json.{Json, OFormat}
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton()
-    bind(classOf[PngrPollingService]).asEagerSingleton()
-  }
+final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusType)
 
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
+object PngrStatusUpdateRequest {
+  implicit val format: OFormat[PngrStatusUpdateRequest] = Json.format[PngrStatusUpdateRequest]
 }

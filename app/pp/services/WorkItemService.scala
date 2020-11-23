@@ -24,5 +24,7 @@ import scala.concurrent.Future
 trait WorkItemService[P <: WorkItemFields] {
 
   def retrieveWorkItems: Future[Seq[WorkItem[P]]]
+
+  def processThenMarkAsComplete(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]]
 }
 

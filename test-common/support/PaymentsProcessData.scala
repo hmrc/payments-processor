@@ -24,10 +24,11 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json.parse
 import pp.model.Origins.OPS
 import pp.model.StatusTypes.validated
-import pp.model.TaxTypes.{mib, p800}
+import pp.model.TaxTypes.{mib, p800, pngr}
 import pp.model.{chargeref, _}
 import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
+import pp.model.pngr.{PngrStatusTypes, PngrStatusUpdateRequest}
 
 object PaymentsProcessData {
 
@@ -37,6 +38,9 @@ object PaymentsProcessData {
 
   val p800PaymentItemId: PaymentItemId = PaymentItemId("p800-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val mibPaymentItemId: PaymentItemId = PaymentItemId("mib-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+
+  val pngrPaymentItemId: PaymentItemId = PaymentItemId("pngr-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+  val pngrStatusUpdateRequest: PngrStatusUpdateRequest = PngrStatusUpdateRequest("chargeref", PngrStatusTypes.Successful)
 
   private val pciPalSessionId = PcipalSessionId("48c978bb")
 
@@ -96,6 +100,8 @@ object PaymentsProcessData {
   val p800PcipalNotification: ChargeRefNotificationPcipalRequest = chargeRefNotificationPciPalRequest(p800PaymentItemId)
 
   val mibPcipalNotification: ChargeRefNotificationPcipalRequest = chargeRefNotificationPciPalRequest(mibPaymentItemId)
+
+  val pngrPcipalNotification: ChargeRefNotificationPcipalRequest = chargeRefNotificationPciPalRequest(pngrPaymentItemId)
 
   private def chargeRefNotificationPciPalRequest(paymentItemId: PaymentItemId) = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,

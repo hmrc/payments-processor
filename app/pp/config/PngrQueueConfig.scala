@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package pp.config
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.chargeref.ChargeRefNotificationPollingService
-import pp.scheduling.pngr.PngrPollingService
+import javax.inject.{Inject, Singleton}
+import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton()
-    bind(classOf[PngrPollingService]).asEagerSingleton()
-  }
+@Singleton
+class PngrQueueConfig @Inject() (val configuration: Configuration, servicesConfig: ServicesConfig) extends QueueConfig {
+  //All Configs need these
+  val prefix = "pngr"
+  val collectionName = "pngr-notifications"
 
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
+  //Specific to this config
+  val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
 
+  private val serviceURL: String = servicesConfig.baseUrl("tps-payments-backend")
 }
+

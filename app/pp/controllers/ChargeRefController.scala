@@ -19,93 +19,65 @@ package pp.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, ControllerComponents}
 import play.api.{Configuration, Logger}
-import pp.config.ChargeRefQueueConfig
+import pp.config.{ChargeRefQueueConfig, PngrQueueConfig}
+import pp.connectors.pngr.PngrConnector
 import pp.connectors.tps.TpsPaymentsBackendConnector
+import pp.controllers.retries.{ChargeRefDesRetries, PngrRetries}
 import pp.model.StatusTypes.validated
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest.toChargeRefNotificationRequest
-import pp.model.TaxType
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest.toPngrStatusUpdateRequest
+import pp.model.{TaxType, TaxTypes}
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.services.chargref.ChargeRefService
-import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
+import pp.services.pngr.PngrService
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
-import uk.gov.hmrc.workitem.ToDo
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ChargeRefController @Inject() (
     cc:                          ControllerComponents,
-    chargeRefService:            ChargeRefService,
-    queueConfig:                 ChargeRefQueueConfig,
+    val chargeRefService:        ChargeRefService,
+    val chargeRefQueueConfig:    ChargeRefQueueConfig,
+    val pngrQueueConfig:         PngrQueueConfig,
     tpsPaymentsBackendConnector: TpsPaymentsBackendConnector,
-    configuration:               Configuration
-)
-  (implicit executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator {
+    val configuration:           Configuration,
+    val pngrService:             PngrService,
+    val pngrConnector:           PngrConnector
 
-  val sendAllToDes: Boolean = configuration.underlying.getBoolean("sendAllToDes")
-  private val logger: Logger = Logger(this.getClass.getSimpleName)
+)
+  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator with ChargeRefDesRetries with PngrRetries {
+
+  val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
     logger.debug("sendCardPaymentsNotificationPciPal")
 
     val notification = request.body
 
-      def sendToDesIfValidatedAndConfigured(taxType: TaxType) =
-        if (notification.Status == validated && (sendAllToDes || taxType.sendToDes))
+      def sendToDesIfValidatedAndConfigured(taxType: TaxType): Future[Status] = {
+        if (notification.Status == validated && (sendAllToDes || taxType.sendToDes)) {
           processChargeRefNotificationRequest(toChargeRefNotificationRequest(notification, taxType))
-        else Future successful Ok
+        } else Future successful Ok
+      }
+
+      def sendStatusUpdateToPngrIfConfigured(taxType: TaxType): Future[Status] =
+        if (taxType == TaxTypes.pngr) {
+          sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
+        } else Future successful Ok
 
     for {
       taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
       _ <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)
       _ <- sendToDesIfValidatedAndConfigured(taxType)
+      _ <- sendStatusUpdateToPngrIfConfigured(taxType)
     } yield Ok
   }
 
   def sendCardPaymentsNotification(): Action[ChargeRefNotificationRequest] = Action.async(parse.json[ChargeRefNotificationRequest]) { implicit request =>
     logger.debug("sendCardPaymentsNotification")
-
-    val sendChargeRef = sendAllToDes || request.body.taxType.sendToDes
-    if (sendChargeRef) {
-      processChargeRefNotificationRequest(request.body)
-    } else {
-      logger.debug(s"Not sending des notification for ${request.body.taxType}, ignoreSendChargeRef was $sendChargeRef")
-      Future.successful(Ok)
-    }
-
-  }
-
-  private def processChargeRefNotificationRequest(chargeRefNotificationRequest: ChargeRefNotificationRequest) = {
-    logger.debug("processChargeRefNotificationRequest")
-    chargeRefService
-      .sendCardPaymentsNotificationSync(chargeRefNotificationRequest)
-      .map(_ => Ok)
-      .recoverWith {
-        case e: UpstreamErrorResponse if e.statusCode == 400 =>
-          Future.failed(new BadRequestException(e.getMessage()))
-        case e: UpstreamErrorResponse if e.statusCode == 404 =>
-          Future.failed(new BadGatewayException(e.message))
-        case e: UpstreamErrorResponse if e.statusCode == 409 =>
-          Future.failed(e)
-        case e =>
-          if (queueConfig.queueEnabled) {
-            logger.debug("Queue enabled")
-            chargeRefService
-              .sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest)
-              .map(
-                res => res.status match {
-                  case ToDo => Ok
-                  case _ =>
-                    logger.error("Could not add message to work item repo")
-                    InternalServerError
-                }
-              )
-          } else {
-            logger.warn("Queue disabled")
-            Future.failed(e)
-          }
-      }
+    sendCardPaymentsNotification(request.body)
   }
 
 }

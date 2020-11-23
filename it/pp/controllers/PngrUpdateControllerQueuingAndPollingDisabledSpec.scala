@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-import java.time.{Clock, ZoneOffset}
+package pp.controllers
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import pp.scheduling.chargeref.ChargeRefNotificationPollingService
-import pp.scheduling.pngr.PngrPollingService
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton()
-    bind(classOf[PngrPollingService]).asEagerSingleton()
+class PngrUpdateControllerQueuingAndPollingDisabledSpec extends PngrUpdateControllerSpec {
+
+
+  "the PngrUpdateController" when {
+    "polling is disabled and queuing is disabled" should {
+      behave like aSynchronousEndpointWhenThePngrStatusUpdateSucceeds()
+      behave like aSynchronousEndpointWhenThePngrStatusUpdateReturns4xx()
+    }
   }
-
-  @Provides
-  @Singleton
-  def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
 }

@@ -86,7 +86,9 @@ object TaxTypes extends Enum[TaxType] {
   /**
    * Passengers
    */
-  case object pngr extends TaxType
+  case object pngr extends TaxType {
+    override val sendToDes: Boolean = false
+  }
 
   case object `corporation-tax` extends TaxType
 

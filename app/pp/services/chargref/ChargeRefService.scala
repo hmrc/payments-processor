@@ -21,12 +21,13 @@ import java.time.{Clock, LocalDateTime, ZoneId}
 import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import play.api.Logger
+import play.api.mvc.Request
 import pp.config.ChargeRefQueueConfig
 import pp.connectors.des.DesConnector
 import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import pp.services.WorkItemService
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.workitem.{Failed, WorkItem}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +42,7 @@ class ChargeRefService @Inject() (
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  //Need to have an implementation of this.  Nuts and Bolts of getting items from the queue ... needs to satisfy interface WorkItemService
+  //Need to have an implementation of these twp.  Nuts and Bolts of getting items from the queue ... needs to satisfy interface WorkItemService
   def retrieveWorkItems: Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
 
       @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
@@ -55,13 +56,24 @@ class ChargeRefService @Inject() (
         retrieveWorkItem(count).flatMap {
           case None => Future successful sentWorkItems
           case Some(workItem) =>
-            sendNotificationMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
+            processThenMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
               sendNotificationIfFound(count + 1, workItems)
             }
         }
       }
 
     sendNotificationIfFound(0, Seq.empty)
+  }
+
+  def processThenMarkAsComplete(acc: Seq[WorkItem[ChargeRefNotificationWorkItem]], workItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
+    logger.debug("inside processThenMarkAsComplete")
+    sendWorkItemToDes(workItem)
+      .map(_ => chargeRefNotificationMongoRepo.complete(workItem.id))
+      .map(_ => acc :+ workItem)
+      .recoverWith {
+        case _ =>
+          chargeRefNotificationMongoRepo.markAs(workItem.id, Failed).map(_ => acc)
+      }
   }
 
   //These are all specific to charge reference processing
@@ -101,14 +113,4 @@ class ChargeRefService @Inject() (
 
   }
 
-  private def sendNotificationMarkAsComplete(acc: Seq[WorkItem[ChargeRefNotificationWorkItem]], workItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
-    logger.debug("inside sendNotificationMarkAsComplete")
-    sendWorkItemToDes(workItem)
-      .map(_ => chargeRefNotificationMongoRepo.complete(workItem.id))
-      .map(_ => acc :+ workItem)
-      .recoverWith {
-        case _ =>
-          chargeRefNotificationMongoRepo.markAs(workItem.id, Failed).map(_ => acc)
-      }
-  }
 }

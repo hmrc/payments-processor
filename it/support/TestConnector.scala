@@ -20,9 +20,9 @@ import javax.inject.{Inject, Singleton}
 import pp.connectors.ResponseReadsThrowingException
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
+import pp.model.pngr.PngrStatusUpdateRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,4 +44,8 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/conf/1.0/application.raml")
 
   def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/definition")
+
+  def sendStatusUpdateToPngr(pngrStatusUpdateRequest: PngrStatusUpdateRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.POST[PngrStatusUpdateRequest,HttpResponse](s"http://localhost:$port/payments-processor/pngr/send-update", pngrStatusUpdateRequest)
+
 }
