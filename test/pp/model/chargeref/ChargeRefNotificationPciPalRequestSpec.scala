@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package pp.model
+package pp.model.chargeref
 
 import play.api.libs.json.Json
-import pp.model.chargeref.ChargeRefNotificationDesRequest
-import support.PaymentsProcessData.{chargeRefNotificationDesRequest, chargeRefNotificationDesRequestJson}
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest
+import support.PaymentsProcessData.{chargeRefNotificationPciPalRequestJson, p800PcipalNotification}
 import support.UnitSpec
 
-class ChargeRefNotificationDesRequestSpec extends UnitSpec {
+class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
 
   "to json" in {
-    Json.toJson(chargeRefNotificationDesRequest) shouldBe chargeRefNotificationDesRequestJson
+    Json.toJson(p800PcipalNotification) shouldBe chargeRefNotificationPciPalRequestJson
   }
 
   "from json" in {
-    chargeRefNotificationDesRequestJson.as[ChargeRefNotificationDesRequest] shouldBe chargeRefNotificationDesRequest
+    chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe p800PcipalNotification
   }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pp.scheduling
+package pp.scheduling.chargeref
 
 import java.time.Clock
 
@@ -23,7 +23,6 @@ import play.api.libs.json.Json
 import pp.config.ChargeRefQueueConfig
 import pp.connectors.des.DesConnector
 import pp.model.chargeref.ChargeRefNotificationWorkItem
-import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import pp.services.chargref.ChargeRefService
 import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 import support.{Des, ItSpec}

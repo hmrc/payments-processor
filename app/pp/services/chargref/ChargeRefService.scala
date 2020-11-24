@@ -21,62 +21,38 @@ import java.time.{Clock, LocalDateTime, ZoneId}
 import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.mvc.Request
 import pp.config.ChargeRefQueueConfig
 import pp.connectors.des.DesConnector
 import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import pp.services.WorkItemService
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.workitem.{Failed, WorkItem}
+import uk.gov.hmrc.workitem.WorkItem
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ChargeRefService @Inject() (
-    desConnector:                   DesConnector,
-    chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
-    clock:                          Clock,
-    queueConfig:                    ChargeRefQueueConfig
-)(implicit executionContext: ExecutionContext) extends WorkItemService[ChargeRefNotificationWorkItem] {
+    desConnector:    DesConnector,
+    val repo:        ChargeRefNotificationMongoRepo,
+    val clock:       Clock,
+    val queueConfig: ChargeRefQueueConfig
+)(implicit val executionContext: ExecutionContext) extends WorkItemService[ChargeRefNotificationWorkItem] {
 
-  private val logger: Logger = Logger(this.getClass.getSimpleName)
-
-  //Need to have an implementation of these twp.  Nuts and Bolts of getting items from the queue ... needs to satisfy interface WorkItemService
-  def retrieveWorkItems: Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
-
-      @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
-      def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[ChargeRefNotificationWorkItem]]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
-
-          def retrieveWorkItem(count: Int): Future[Option[WorkItem[ChargeRefNotificationWorkItem]]] = {
-            if (count == queueConfig.pollLimit) Future successful None
-            else chargeRefNotificationMongoRepo.pullOutstanding
-          }
-
-        retrieveWorkItem(count).flatMap {
-          case None => Future successful sentWorkItems
-          case Some(workItem) =>
-            processThenMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
-              sendNotificationIfFound(count + 1, workItems)
-            }
-        }
-      }
-
-    sendNotificationIfFound(0, Seq.empty)
-  }
-
-  def processThenMarkAsComplete(acc: Seq[WorkItem[ChargeRefNotificationWorkItem]], workItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Seq[WorkItem[ChargeRefNotificationWorkItem]]] = {
-    logger.debug("inside processThenMarkAsComplete")
-    sendWorkItemToDes(workItem)
-      .map(_ => chargeRefNotificationMongoRepo.complete(workItem.id))
-      .map(_ => acc :+ workItem)
-      .recoverWith {
-        case _ =>
-          chargeRefNotificationMongoRepo.markAs(workItem.id, Failed).map(_ => acc)
-      }
-  }
+  val logger: Logger = Logger(this.getClass.getSimpleName)
 
   //These are all specific to charge reference processing
+
+  def sendWorkItem(chargeRefNotificationWorkItem: WorkItem[ChargeRefNotificationWorkItem]): Future[Unit] = {
+
+    logger.debug("inside sendWorkItemToDes")
+    val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationWorkItem.item.taxType,
+                                                       chargeRefNotificationWorkItem.item.chargeRefNumber,
+                                                       chargeRefNotificationWorkItem.item.amountPaid)
+    for {
+      _ <- desConnector.sendCardPaymentsNotification(desChargeRef)
+    } yield ()
+
+  }
 
   def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[Unit] = {
     logger.debug("inside sendCardPaymentsNotificationSync")
@@ -93,23 +69,11 @@ class ChargeRefService @Inject() (
     val time = LocalDateTime.now(clock)
 
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
-    val workItem = ChargeRefNotificationWorkItem(time, chargeRefNotificationPciPalRequest.taxType,
+    val workItem = ChargeRefNotificationWorkItem(time, availableUntil(time), warningAt(time), chargeRefNotificationPciPalRequest.taxType,
                                                  chargeRefNotificationPciPalRequest.chargeRefNumber,
                                                  chargeRefNotificationPciPalRequest.amountPaid, chargeRefNotificationPciPalRequest.origin)
 
-    chargeRefNotificationMongoRepo.pushNew(workItem, jodaLocalDateTime)
-
-  }
-
-  private def sendWorkItemToDes(chargeRefNotificationWorkItem: WorkItem[ChargeRefNotificationWorkItem]) = {
-
-    logger.debug("inside sendWorkItemToDes")
-    val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationWorkItem.item.taxType,
-                                                       chargeRefNotificationWorkItem.item.chargeRefNumber,
-                                                       chargeRefNotificationWorkItem.item.amountPaid)
-    for {
-      _ <- desConnector.sendCardPaymentsNotification(desChargeRef)
-    } yield ()
+    repo.pushNew(workItem, jodaLocalDateTime)
 
   }
 

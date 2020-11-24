@@ -28,62 +28,25 @@ import pp.model.pngr.{PngrStatusUpdateRequest, PngrWorkItem}
 import pp.model.{Origins, TaxTypes}
 import pp.scheduling.pngr.PngrMongoRepo
 import pp.services.WorkItemService
-import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
-import uk.gov.hmrc.workitem.{Failed, ToDo, WorkItem}
+import uk.gov.hmrc.workitem.WorkItem
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PngrService @Inject()(
-                             pngrMongoRepo: PngrMongoRepo,
-                             queueConfig: PngrQueueConfig,
+                             val repo: PngrMongoRepo,
+                             val queueConfig: PngrQueueConfig,
                              pngrConnector: PngrConnector,
-                             clock: Clock,
-                           )(implicit executionContext: ExecutionContext) extends WorkItemService[PngrWorkItem] with Results {
+                             val clock: Clock,
+                           )(implicit val executionContext: ExecutionContext) extends WorkItemService[PngrWorkItem] with Results {
 
-  private val logger: Logger = Logger(this.getClass.getSimpleName)
-
-  //Need to have an implementation of these twp.  Nuts and Bolts of getting items from the queue ... needs to satisfy interface WorkItemService
-
-  def retrieveWorkItems: Future[Seq[WorkItem[PngrWorkItem]]] = {
-
-    @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
-    def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[PngrWorkItem]]): Future[Seq[WorkItem[PngrWorkItem]]] = {
-
-      def retrieveWorkItem(count: Int): Future[Option[WorkItem[PngrWorkItem]]] = {
-        if (count == queueConfig.pollLimit) Future successful None
-        else pngrMongoRepo.pullOutstanding
-      }
-
-      retrieveWorkItem(count).flatMap {
-        case None => Future successful sentWorkItems
-        case Some(workItem) =>
-          processThenMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
-            sendNotificationIfFound(count + 1, workItems)
-          }
-      }
-    }
-
-    sendNotificationIfFound(0, Seq.empty)
-  }
-
-  def processThenMarkAsComplete(acc: Seq[WorkItem[PngrWorkItem]], workItem: WorkItem[PngrWorkItem]): Future[Seq[WorkItem[PngrWorkItem]]] = {
-    logger.debug("inside processThenMarkAsComplete")
-    sendWorkItemToPngr(workItem)
-      .map(_ => pngrMongoRepo.complete(workItem.id))
-      .map(_ => acc :+ workItem)
-      .recoverWith {
-        case _ =>
-          pngrMongoRepo.markAs(workItem.id, Failed).map(_ => acc)
-      }
-  }
+  val logger: Logger = Logger(this.getClass.getSimpleName)
 
   //These are all specific to pngr processing
-
-  private def sendWorkItemToPngr(pngrWorkItem: WorkItem[PngrWorkItem]) = {
+  def sendWorkItem(workItem: WorkItem[PngrWorkItem]) : Future[Unit] = {
 
     logger.debug("inside sendWorkItemToPngr")
-    val statusUpdate = PngrStatusUpdateRequest(pngrWorkItem.item.reference, pngrWorkItem.item.status)
+    val statusUpdate = PngrStatusUpdateRequest(workItem.item.reference, workItem.item.status)
     for {
       _ <- pngrConnector.updateWithStatus(statusUpdate)
     } yield ()
@@ -91,16 +54,14 @@ class PngrService @Inject()(
   }
 
 
-
    def sendPngrToWorkItemRepo(pngrStatusUpdate: PngrStatusUpdateRequest): Future[WorkItem[PngrWorkItem]] = {
     logger.debug("inside sendCardPaymentsNotificationAsync")
-    val time = LocalDateTime.now(clock)
-
+     val time = LocalDateTime.now(clock)
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
-    val workItem = PngrWorkItem(time, TaxTypes.pngr, Origins.PCI_PAL,
+    val workItem = PngrWorkItem(time, availableUntil(time), warningAt(time), TaxTypes.pngr, Origins.PCI_PAL,
       pngrStatusUpdate.reference, pngrStatusUpdate.status)
 
-    pngrMongoRepo.pushNew(workItem, jodaLocalDateTime)
+    repo.pushNew(workItem, jodaLocalDateTime)
 
   }
 

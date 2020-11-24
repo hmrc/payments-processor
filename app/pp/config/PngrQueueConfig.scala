@@ -29,6 +29,5 @@ class PngrQueueConfig @Inject() (val configuration: Configuration, servicesConfi
   //Specific to this config
   val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
 
-  private val serviceURL: String = servicesConfig.baseUrl("tps-payments-backend")
 }
 

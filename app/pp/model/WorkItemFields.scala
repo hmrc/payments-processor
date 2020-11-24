@@ -22,5 +22,6 @@ trait WorkItemFields {
   val createdOn: LocalDateTime
   val taxType: TaxType
   val origin: Origin
-
+  val availableUntil: LocalDateTime
+  val warningAt: LocalDateTime
 }
