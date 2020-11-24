@@ -24,7 +24,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json.parse
 import pp.model.Origins.OPS
 import pp.model.StatusTypes.validated
-import pp.model.TaxTypes.{mib, p800, pngr}
+import pp.model.TaxTypes.{mib, p800}
 import pp.model.{chargeref, _}
 import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
@@ -54,6 +54,7 @@ object PaymentsProcessData {
 
   val mibChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(mib, chargeReferenceNumber, 100.11, OPS)
 
+  //language=JSON
   val chargeRefNotificationDesRequestJson: JsValue = parse(
     s"""{
        "taxType" : "p800",
@@ -64,6 +65,7 @@ object PaymentsProcessData {
 
   )
 
+  //language=JSON
   val chargeRefNotificationRequestJson: JsValue = parse(
     s"""{
        "taxType" : "p800",
@@ -74,6 +76,16 @@ object PaymentsProcessData {
      """.stripMargin
 
   )
+
+  //language=JSON
+  val pngrStatusUpdateRequestJson: JsValue = parse(
+    s"""{
+       "reference" : "chargeref",
+       "status" : "Successful"
+       }
+     """.stripMargin
+  )
+
   //language=JSON
   def definition(endpointsEnabled: Boolean, status: String): JsValue = parse(s"""{
                                   "scopes":[],

@@ -50,11 +50,11 @@ trait WorkItemService[P <: WorkItemFields] {
     time.isAfter(workItem.warningAt)
   }
 
-  def availableUntil(time: LocalDateTime): LocalDateTime = time.plus(queueConfig.ttlMinusBufferError)
+  def availableUntil(time: LocalDateTime): LocalDateTime = time.plus(queueConfig.ttlMinusBufferMarkFailed)
   def warningAt(time: LocalDateTime): LocalDateTime = time.plus(queueConfig.ttlMinusBufferWarning)
 
   def markAsPermFailed(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]] = {
-    logger.error(s"payments-processor: Failed to process workitem ${workItem.item.toString}")
+    logger.warn(s"payments-processor: Failed to process workitem ${workItem.item.toString}")
     repo.markAs(workItem.id, PermanentlyFailed)
       .map(_ => acc :+ workItem)
   }
@@ -62,16 +62,16 @@ trait WorkItemService[P <: WorkItemFields] {
   def processThenMarkAsComplete(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]] = {
     logger.debug("inside processThenMarkAsComplete")
 
-    if (showWarning(workItem.item)) {
-      logger.warn("payments-processor: Nearly out if time to process workitem ${workItem.item.toString}")
-    }
-
     sendWorkItem(workItem)
       .map(_ => repo.complete(workItem.id))
       .map(_ => acc :+ workItem)
       .recoverWith {
-        case _ =>
+        case _ => {
+          if (showWarning(workItem.item)) {
+            logger.warn("payments-processor: Nearly out if time to process workitem ${workItem.item.toString}")
+          }
           repo.markAs(workItem.id, Failed).map(_ => acc)
+        }
       }
   }
 

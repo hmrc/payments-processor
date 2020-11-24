@@ -4,12 +4,17 @@
 ### What is payments processor?
 
 Payments processor is a microservice which allows for asynchronous execution of requests.  It does this via [work-item-repo] (https://github.com/hmrc/work-item-repo).
-At the moment there is only one asynchronous flow available which sends a charge ref notification to ETMP via DES.  The DES endpoint is called, if there is a 5** failure 
+At the moment there two asynchronous flows available which send either a charge ref notification to ETMP via DES or a Payment Status Update to Passengers.  
+Either DES or PNGR endpoint is called, if there is a 5** failure 
 the request is placed into the underlying work-item-repo implementation collection.  From here the request will be retried according to the values in the configuration:
 
 queue.retryAfter = 120 seconds 
 
 queue.ttl = 24 hours
+
+queue.buffer.mark.failed = 600  ... if the item is not processed 10 minutes prior to the end, a warning is logged and the status set to PermanentlyFailed 
+
+queue.buffer.warning = 3600 ... if the item is not processed 60 minutes prior to the end, a warning is logged out each time the item fails procesing
 
 poller.interval = 30 seconds
 
