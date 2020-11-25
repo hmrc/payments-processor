@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package pp.scheduling
+package pp.scheduling.chargeref
 
 import org.joda.time.DateTime
 import play.api.libs.json.Json
 import pp.model.TaxTypes
 import pp.model.chargeref.ChargeRefNotificationWorkItem
-import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import reactivemongo.bson.BSONObjectID
 import support.{ItSpec, PaymentsProcessData}
 import uk.gov.hmrc.workitem._

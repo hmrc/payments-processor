@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package pp.model
+package pp.model.pngr
 
-import java.time.LocalDateTime
+import play.api.libs.json.{Json, OFormat}
 
-trait WorkItemFields {
-  val createdOn: LocalDateTime
-  val taxType: TaxType
-  val origin: Origin
-  val availableUntil: LocalDateTime
+final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusType)
+
+object PngrStatusUpdateRequest {
+  implicit val format: OFormat[PngrStatusUpdateRequest] = Json.format[PngrStatusUpdateRequest]
 }

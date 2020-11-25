@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package pp.model
+package pp.config
 
-import play.api.libs.json.Json.toJson
-import pp.model.chargeref.ChargeRefNotificationRequest
-import support.PaymentsProcessData.{chargeRefNotificationRequestJson, p800ChargeRefNotificationRequest}
-import support.UnitSpec
+import javax.inject.{Inject, Singleton}
+import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class ChargeRefNotificationRequestSpec extends UnitSpec {
+@Singleton
+class PngrQueueConfig @Inject() (val configuration: Configuration, servicesConfig: ServicesConfig) extends QueueConfig {
+  //All Configs need these
+  val prefix = "pngr"
+  val collectionName = "pngr-notifications"
 
-  "to json" in {
-    toJson(p800ChargeRefNotificationRequest) shouldBe chargeRefNotificationRequestJson
-  }
+  //Specific to this config
+  val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
 
-  "from json" in {
-    chargeRefNotificationRequestJson.as[ChargeRefNotificationRequest] shouldBe p800ChargeRefNotificationRequest
-  }
 }
 

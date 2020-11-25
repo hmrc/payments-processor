@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-//Note if you run a clean it may removed the following import which is needed !
-// import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
-
-package pp.model.chargeref
+package pp.model.pngr
 
 import java.time.LocalDateTime
 
@@ -25,20 +22,18 @@ import play.api.libs.json._
 import pp.model.{Origin, TaxType, WorkItemFields}
 import uk.gov.hmrc.workitem.WorkItem
 
-case class ChargeRefNotificationWorkItem(
-    createdOn:       LocalDateTime,
-    availableUntil:  LocalDateTime,
-    taxType:         TaxType,
-    chargeRefNumber: String,
-    amountPaid:      BigDecimal,
-    origin:          Origin) extends WorkItemFields {
+case class PngrWorkItem(
+    createdOn:      LocalDateTime,
+    availableUntil: LocalDateTime,
+    taxType:        TaxType,
+    origin:         Origin,
+    reference:      String,
+    status:         PngrStatusType) extends WorkItemFields {
 
   override def toString: String =
-    s"ChargeRefNotificationWorkItem for chargeReference $chargeRefNumber ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, chargeRefNumber: $chargeRefNumber}"
-
+    s"PngrWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference, status: $status}"
 }
 
-object ChargeRefNotificationWorkItem {
-  implicit val format: OFormat[ChargeRefNotificationWorkItem] = Json.format[ChargeRefNotificationWorkItem]
+object PngrWorkItem {
+  implicit val format: OFormat[PngrWorkItem] = Json.format[PngrWorkItem]
 }
-

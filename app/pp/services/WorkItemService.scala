@@ -16,13 +16,81 @@
 
 package pp.services
 
-import pp.model.WorkItemFields
-import uk.gov.hmrc.workitem.WorkItem
+import java.time.{Clock, LocalDateTime}
 
-import scala.concurrent.Future
+import play.api.Logger
+import pp.config.QueueConfig
+import pp.model.WorkItemFields
+import pp.scheduling.NotificationRepo
+import uk.gov.hmrc.workitem.{Failed, PermanentlyFailed, WorkItem}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait WorkItemService[P <: WorkItemFields] {
 
-  def retrieveWorkItems: Future[Seq[WorkItem[P]]]
+  val clock: Clock
+
+  val repo: NotificationRepo[P]
+
+  implicit val executionContext: ExecutionContext
+
+  val logger: Logger
+
+  val queueConfig: QueueConfig
+
+  def sendWorkItem(workItem: WorkItem[P]): Future[Unit]
+
+  def isAvailable(workItem: WorkItemFields): Boolean = {
+    val time = LocalDateTime.now(clock)
+    time.isBefore(workItem.availableUntil)
+  }
+
+  def availableUntil(time: LocalDateTime): LocalDateTime = time.plus(queueConfig.queueAvailableFor)
+
+  def markAsPermFailed(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]] = {
+    logger.warn(s"payments-processor: Failed to process workitem ${workItem.item.toString}")
+    repo.markAs(workItem.id, PermanentlyFailed)
+      .map(_ => acc :+ workItem)
+  }
+
+  def processThenMarkAsComplete(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]] = {
+    logger.debug("inside processThenMarkAsComplete")
+
+    sendWorkItem(workItem)
+      .map(_ => repo.complete(workItem.id))
+      .map(_ => acc :+ workItem)
+      .recoverWith {
+        case _ =>
+          repo.markAs(workItem.id, Failed).map(_ => acc)
+      }
+  }
+
+  def retrieveWorkItems: Future[Seq[WorkItem[P]]] = {
+
+      @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
+      def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[P]]): Future[Seq[WorkItem[P]]] = {
+
+          def retrieveWorkItem(count: Int): Future[Option[WorkItem[P]]] = {
+            if (count == queueConfig.pollLimit) Future successful None
+            else repo.pullOutstanding
+          }
+
+        retrieveWorkItem(count).flatMap {
+          case None => Future successful sentWorkItems
+          case Some(workItem) =>
+            if (isAvailable(workItem.item)) {
+              processThenMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
+                sendNotificationIfFound(count + 1, workItems)
+              }
+            } else {
+              markAsPermFailed(sentWorkItems, workItem).flatMap { workItems =>
+                sendNotificationIfFound(count + 1, workItems)
+              }
+            }
+        }
+      }
+
+    sendNotificationIfFound(0, Seq.empty)
+  }
 }
 

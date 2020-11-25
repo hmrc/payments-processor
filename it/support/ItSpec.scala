@@ -85,8 +85,14 @@ trait ItSpec
     "chargeref.queue.retryAfter" -> "1 seconds",
     "chargeref.poller.initialDelay" -> "0 seconds",
     "chargeref.poller.interval" -> "1 seconds",
+    "pngr.queue.enabled" -> false,
+    "pngr.poller.enabled" -> false,
+    "pngr.queue.retryAfter" -> "1 seconds",
+    "pngr.poller.initialDelay" -> "0 seconds",
+    "pngr.poller.interval" -> "1 seconds",
     "microservice.services.tps-payments-backend.port" -> WireMockSupport.port,
-    "sendAllToDes" -> true
+    "sendAllToDes" -> true,
+    "microservice.services.bc-passengers-declarations.port" -> WireMockSupport.port,
   )
 
   def injector: Injector = fakeApplication().injector

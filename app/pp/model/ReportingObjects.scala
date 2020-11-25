@@ -18,9 +18,13 @@ package pp.model
 
 import java.time.LocalDateTime
 
-trait WorkItemFields {
-  val createdOn: LocalDateTime
-  val taxType: TaxType
-  val origin: Origin
-  val availableUntil: LocalDateTime
+import play.api.libs.json.{Json, OFormat}
+
+case class Item(createdOn: LocalDateTime, reference: String, failureCount: Int, status: String)
+
+object Item {
+  implicit val itemFormat: OFormat[Item] = {
+    Json.format[Item]
+  }
 }
+

@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package pp.model
+package pp.model.chargeref
 
-import java.time.LocalDateTime
+import play.api.libs.json.Json
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest
+import support.PaymentsProcessData.{chargeRefNotificationPciPalRequestJson, p800PcipalNotification}
+import support.UnitSpec
 
-trait WorkItemFields {
-  val createdOn: LocalDateTime
-  val taxType: TaxType
-  val origin: Origin
-  val availableUntil: LocalDateTime
+class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
+
+  "to json" in {
+    Json.toJson(p800PcipalNotification) shouldBe chargeRefNotificationPciPalRequestJson
+  }
+
+  "from json" in {
+    chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe p800PcipalNotification
+  }
 }

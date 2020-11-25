@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package pp.model
+package pp.model.chargeref
 
-import java.time.LocalDateTime
+import play.api.libs.json.Json
+import support.PaymentsProcessData.{chargeRefNotificationDesRequest, chargeRefNotificationDesRequestJson}
+import support.UnitSpec
 
-trait WorkItemFields {
-  val createdOn: LocalDateTime
-  val taxType: TaxType
-  val origin: Origin
-  val availableUntil: LocalDateTime
+class ChargeRefNotificationDesRequestSpec extends UnitSpec {
+
+  "to json" in {
+    Json.toJson(chargeRefNotificationDesRequest) shouldBe chargeRefNotificationDesRequestJson
+  }
+
+  "from json" in {
+    chargeRefNotificationDesRequestJson.as[ChargeRefNotificationDesRequest] shouldBe chargeRefNotificationDesRequest
+  }
 }

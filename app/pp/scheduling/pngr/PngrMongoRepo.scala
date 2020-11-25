@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package pp.config
+package pp.scheduling.pngr
+
+import java.time.Clock
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import play.modules.reactivemongo.ReactiveMongoComponent
+import pp.config.PngrQueueConfig
+import pp.model.pngr.PngrWorkItem
+import pp.scheduling.NotificationRepo
+
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class ChargeRefQueueConfig @Inject() (val configuration: Configuration) extends QueueConfig {
-  //All Configs need these
-  val prefix = "chargeref"
-  val collectionName = "chargeref-notifications"
-
-  //Specific to this config
-  val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
-}
+class PngrMongoRepo @Inject() (
+    reactiveMongoComponent: ReactiveMongoComponent,
+    configuration:          Configuration,
+    clock:                  Clock,
+    queueConfig:            PngrQueueConfig)(implicit ec: ExecutionContext)
+  extends NotificationRepo[PngrWorkItem](reactiveMongoComponent, configuration, clock, queueConfig)
 

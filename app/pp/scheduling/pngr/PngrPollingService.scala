@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package pp.config
+package pp.scheduling.pngr
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+import akka.actor.ActorSystem
+import com.google.inject.{Inject, Singleton}
+import pp.config.PngrQueueConfig
+import pp.model.pngr.PngrWorkItem
+import pp.scheduling.PollingService
+import pp.services.pngr.PngrService
+
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class ChargeRefQueueConfig @Inject() (val configuration: Configuration) extends QueueConfig {
-  //All Configs need these
-  val prefix = "chargeref"
-  val collectionName = "chargeref-notifications"
+class PngrPollingService @Inject() (actorSystem: ActorSystem,
+                                    queueConfig: PngrQueueConfig, workItemService: PngrService)(
+    implicit
+    ec: ExecutionContext) extends PollingService[PngrWorkItem](actorSystem, queueConfig, workItemService) {
 
-  //Specific to this config
-  val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
+  override def name: String = "PngrPollingService"
+
 }
-

@@ -28,6 +28,7 @@ import pp.model.TaxTypes.{mib, p800}
 import pp.model.{chargeref, _}
 import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
+import pp.model.pngr.{PngrStatusTypes, PngrStatusUpdateRequest}
 
 object PaymentsProcessData {
 
@@ -38,11 +39,14 @@ object PaymentsProcessData {
   val p800PaymentItemId: PaymentItemId = PaymentItemId("p800-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val mibPaymentItemId: PaymentItemId = PaymentItemId("mib-48c978bb-64b6-4a00-a1f1-51e267d84f91")
 
+  val pngrPaymentItemId: PaymentItemId = PaymentItemId("pngr-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+  val pngrStatusUpdateRequest: PngrStatusUpdateRequest = PngrStatusUpdateRequest("chargeref", PngrStatusTypes.Successful)
+
   private val pciPalSessionId = PcipalSessionId("48c978bb")
 
   val reference = "JE231111B"
 
-  val chargeRefNotificationWorkItem: ChargeRefNotificationWorkItem = chargeref.ChargeRefNotificationWorkItem(now(clock), p800, chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem: ChargeRefNotificationWorkItem = chargeref.ChargeRefNotificationWorkItem(now(clock), now(clock).minusSeconds(100), p800, chargeReferenceNumber, 100.12, OPS)
 
   val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = chargeref.ChargeRefNotificationDesRequest(p800, chargeReferenceNumber, 100.11)
 
@@ -50,6 +54,7 @@ object PaymentsProcessData {
 
   val mibChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(mib, chargeReferenceNumber, 100.11, OPS)
 
+  //language=JSON
   val chargeRefNotificationDesRequestJson: JsValue = parse(
     s"""{
        "taxType" : "p800",
@@ -60,6 +65,7 @@ object PaymentsProcessData {
 
   )
 
+  //language=JSON
   val chargeRefNotificationRequestJson: JsValue = parse(
     s"""{
        "taxType" : "p800",
@@ -70,6 +76,16 @@ object PaymentsProcessData {
      """.stripMargin
 
   )
+
+  //language=JSON
+  val pngrStatusUpdateRequestJson: JsValue = parse(
+    s"""{
+       "reference" : "chargeref",
+       "status" : "Successful"
+       }
+     """.stripMargin
+  )
+
   //language=JSON
   def definition(endpointsEnabled: Boolean, status: String): JsValue = parse(s"""{
                                   "scopes":[],
@@ -96,6 +112,8 @@ object PaymentsProcessData {
   val p800PcipalNotification: ChargeRefNotificationPcipalRequest = chargeRefNotificationPciPalRequest(p800PaymentItemId)
 
   val mibPcipalNotification: ChargeRefNotificationPcipalRequest = chargeRefNotificationPciPalRequest(mibPaymentItemId)
+
+  val pngrPcipalNotification: ChargeRefNotificationPcipalRequest = chargeRefNotificationPciPalRequest(pngrPaymentItemId)
 
   private def chargeRefNotificationPciPalRequest(paymentItemId: PaymentItemId) = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,

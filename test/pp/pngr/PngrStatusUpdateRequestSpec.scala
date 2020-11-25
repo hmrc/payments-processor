@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package pp.model
+package pp.pngr
 
-import java.time.LocalDateTime
+import play.api.libs.json.Json
+import pp.model.pngr.PngrStatusUpdateRequest
+import support.PaymentsProcessData.{pngrStatusUpdateRequest, pngrStatusUpdateRequestJson}
+import support.UnitSpec
 
-trait WorkItemFields {
-  val createdOn: LocalDateTime
-  val taxType: TaxType
-  val origin: Origin
-  val availableUntil: LocalDateTime
+class PngrStatusUpdateRequestSpec extends UnitSpec {
+
+  "to json" in {
+    Json.toJson(pngrStatusUpdateRequest) shouldBe pngrStatusUpdateRequestJson
+  }
+
+  "from json" in {
+    pngrStatusUpdateRequestJson.as[PngrStatusUpdateRequest] shouldBe pngrStatusUpdateRequest
+  }
 }

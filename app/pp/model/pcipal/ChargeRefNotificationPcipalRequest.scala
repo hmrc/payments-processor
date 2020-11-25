@@ -18,8 +18,10 @@ package pp.model.pcipal
 
 import play.api.libs.json.{Json, OFormat}
 import pp.model.Origins.PCI_PAL
+import pp.model.StatusTypes.validated
 import pp.model.{chargeref, _}
 import pp.model.chargeref.ChargeRefNotificationRequest
+import pp.model.pngr.{PngrStatusTypes, PngrStatusUpdateRequest}
 
 final case class ChargeRefNotificationPcipalRequest(
     HoD:                  HeadOfDutyIndicator,
@@ -41,4 +43,10 @@ object ChargeRefNotificationPcipalRequest {
     chargeref.ChargeRefNotificationRequest(
       taxType, chargeRefNotificationPciPalRequest.ChargeReference, chargeRefNotificationPciPalRequest.Amount, PCI_PAL)
   }
+
+  def toPngrStatusUpdateRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): PngrStatusUpdateRequest = {
+    PngrStatusUpdateRequest(chargeRefNotificationPciPalRequest.ChargeReference,
+      if (chargeRefNotificationPciPalRequest.Status == validated) PngrStatusTypes.Successful else PngrStatusTypes.Failed)
+  }
+
 }

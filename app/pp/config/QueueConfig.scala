@@ -46,4 +46,6 @@ trait QueueConfig {
 
   lazy val ttl: Duration = configuration.underlying.getDuration(s"$prefix.queue.ttl")
 
+  lazy val queueAvailableFor: Duration = configuration.underlying.getDuration(s"$prefix.queue.available.for")
+
 }
