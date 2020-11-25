@@ -18,6 +18,7 @@ package support
 
 import javax.inject.{Inject, Singleton}
 import pp.connectors.ResponseReadsThrowingException
+import pp.model.{ProcessingStatusOps, TaxType}
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pngr.PngrStatusUpdateRequest
@@ -44,6 +45,12 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/conf/1.0/application.raml")
 
   def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/definition")
+
+  def count(taxType: TaxType, processingStatusOps: ProcessingStatusOps)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/count/$taxType/$processingStatusOps")
+
+  def getAll(taxType: TaxType)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/$taxType")
 
   def sendStatusUpdateToPngr(pngrStatusUpdateRequest: PngrStatusUpdateRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[PngrStatusUpdateRequest,HttpResponse](s"http://localhost:$port/payments-processor/pngr/send-update", pngrStatusUpdateRequest)

@@ -1,3 +1,6 @@
 # microservice specific routes
 POST        /send-card-payments-notification                               pp.controllers.ChargeRefController.sendCardPaymentsNotification()
 POST        /pngr/send-update                                              pp.controllers.PngrUpdateController.sendStatusUpdateToPngr()
+
+GET         /reporting/count/:taxType/:processingState                     pp.controllers.ReportingController.count(taxType: TaxType, processingState: ProcessingStatusOps)
+GET         /reporting/:taxType                                            pp.controllers.ReportingController.getAll(taxType: TaxType)

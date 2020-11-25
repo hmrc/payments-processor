@@ -69,7 +69,7 @@ class ChargeRefService @Inject() (
     val time = LocalDateTime.now(clock)
 
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
-    val workItem = ChargeRefNotificationWorkItem(time, availableUntil(time), warningAt(time), chargeRefNotificationPciPalRequest.taxType,
+    val workItem = ChargeRefNotificationWorkItem(time, availableUntil(time), chargeRefNotificationPciPalRequest.taxType,
                                                  chargeRefNotificationPciPalRequest.chargeRefNumber,
                                                  chargeRefNotificationPciPalRequest.amountPaid, chargeRefNotificationPciPalRequest.origin)
 

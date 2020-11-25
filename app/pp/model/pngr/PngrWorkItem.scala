@@ -20,21 +20,20 @@ import java.time.LocalDateTime
 
 import play.api.libs.json._
 import pp.model.{Origin, TaxType, WorkItemFields}
+import uk.gov.hmrc.workitem.WorkItem
 
 case class PngrWorkItem(
     createdOn:      LocalDateTime,
     availableUntil: LocalDateTime,
-    warningAt:      LocalDateTime,
     taxType:        TaxType,
     origin:         Origin,
     reference:      String,
     status:         PngrStatusType) extends WorkItemFields {
 
   override def toString: String =
-    s"PngrWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, warningAt: $warningAt, taxType: $taxType, origin: $origin, reference: $reference, status: $status}"
+    s"PngrWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference, status: $status}"
 }
 
 object PngrWorkItem {
   implicit val format: OFormat[PngrWorkItem] = Json.format[PngrWorkItem]
 }
-

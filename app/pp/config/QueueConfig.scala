@@ -46,10 +46,6 @@ trait QueueConfig {
 
   lazy val ttl: Duration = configuration.underlying.getDuration(s"$prefix.queue.ttl")
 
-  lazy val queueBufferMarkFailed: Int = configuration.underlying.getInt(s"$prefix.queue.buffer.mark.failed")
-  lazy val queueBufferWarning: Int = configuration.underlying.getInt(s"$prefix.queue.buffer.warning")
+  lazy val queueAvailableFor: Duration = configuration.underlying.getDuration(s"$prefix.queue.available.for")
 
-  lazy val ttlMinusBufferMarkFailed: Duration = ttl.minusSeconds(queueBufferMarkFailed)
-
-  lazy val ttlMinusBufferWarning: Duration = ttl.minusSeconds(queueBufferWarning)
 }

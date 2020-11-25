@@ -16,11 +16,10 @@
 
 package pp.model
 
-import java.time.LocalDateTime
+import play.api.mvc.PathBindable
+import pp.controllers.ValueClassBinder.valueClassBinder
+import uk.gov.hmrc.workitem.ProcessingStatus
 
-trait WorkItemFields {
-  val createdOn: LocalDateTime
-  val taxType: TaxType
-  val origin: Origin
-  val availableUntil: LocalDateTime
+object ProcessingStatusBinder {
+  implicit val binder: PathBindable[ProcessingStatus] = valueClassBinder(_.toString)
 }

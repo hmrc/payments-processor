@@ -19,13 +19,16 @@ class PngrServiceSpec extends ItSpec {
   private lazy val pngrConnector = injector.instanceOf[PngrConnector]
   private lazy val queueConfig = injector.instanceOf[PngrQueueConfig]
   private lazy val pngrService = new PngrService(repo, queueConfig, pngrConnector, Clock.systemDefaultZone())
-  val time = LocalDateTime.now
-  val timeWarning = time.minus(queueConfig.ttlMinusBufferWarning)
-  val timeOk = time.plusSeconds(60)
-  val workItem: PngrWorkItem = PngrWorkItem(timeWarning, time, time, TaxTypes.pngr, Origins.OPS, "reference", PngrStatusTypes.Successful)
+  val time: LocalDateTime = LocalDateTime.now
+  val created: LocalDateTime = time
+  val availableUntilInPast: LocalDateTime = time.minusSeconds(60)
+  val availUntilInFuture: LocalDateTime = time.plusSeconds(60)
 
-  override def configMap: Map[String, Any] = super.configMap
-    .updated("pngr.queue.ttl", "30 seconds")
+  val workItem: PngrWorkItem = PngrWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference", PngrStatusTypes.Successful)
+
+  override def configMap: Map[String, Any] =
+    super.configMap
+            .updated("pngr.queue.available.for", "1 seconds")
 
   override def beforeEach(): Unit = {
     val _ = repo.removeAll().futureValue
@@ -34,20 +37,13 @@ class PngrServiceSpec extends ItSpec {
   }
 
   protected def numberOfQueuedNotifications: Integer = repo.count(Json.obj()).futureValue
-  "check warning mechanism, show warning" in {
-    pngrService.showWarning(workItem) shouldBe true
-  }
 
   "check error mechanism, not available" in {
     pngrService.isAvailable(workItem) shouldBe false
   }
 
   "check error mechanism, available" in {
-    pngrService.isAvailable(workItem.copy(createdOn = time, availableUntil = timeOk, warningAt = timeOk)) shouldBe true
-  }
-
-  "check warning mechanism, no warning" in {
-    pngrService.showWarning(workItem.copy(createdOn = time, availableUntil = timeOk, warningAt = timeOk)) shouldBe false
+    pngrService.isAvailable(workItem.copy(createdOn = time, availableUntil = availUntilInFuture)) shouldBe true
   }
 
 
@@ -74,13 +70,14 @@ class PngrServiceSpec extends ItSpec {
 
         numberOfQueuedNotifications shouldBe 0
         val workItem = pngrService.sendPngrToWorkItemRepo(pngrStatusUpdateRequest).futureValue
-        workItem.item.availableUntil.isBefore(workItem.item.createdOn) shouldBe true
-        workItem.item.warningAt.isBefore(workItem.item.createdOn) shouldBe true
+        workItem.item.availableUntil.isAfter(workItem.item.createdOn) shouldBe true
         numberOfQueuedNotifications shouldBe 1
-        pngrService.retrieveWorkItems.futureValue.isEmpty shouldBe false
-        numberOfQueuedNotifications shouldBe 1
-        val sentItems: Seq[WorkItem[PngrWorkItem]] = pngrService.retrieveWorkItems.futureValue
-        sentItems.size shouldBe 0
+        eventually {
+          pngrService.retrieveWorkItems.futureValue.isEmpty shouldBe false
+          numberOfQueuedNotifications shouldBe 1
+          val sentItems: Seq[WorkItem[PngrWorkItem]] = pngrService.retrieveWorkItems.futureValue
+          sentItems.size shouldBe 0
+        }
       }
     }
   }

@@ -58,12 +58,12 @@ class PngrService @Inject()(
     logger.debug("inside sendCardPaymentsNotificationAsync")
      val time = LocalDateTime.now(clock)
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
-    val workItem = PngrWorkItem(time, availableUntil(time), warningAt(time), TaxTypes.pngr, Origins.PCI_PAL,
+    val workItem = PngrWorkItem(time, availableUntil(time), TaxTypes.pngr, Origins.PCI_PAL,
       pngrStatusUpdate.reference, pngrStatusUpdate.status)
-
     repo.pushNew(workItem, jodaLocalDateTime)
 
   }
+
 
 
 }

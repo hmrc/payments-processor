@@ -18,7 +18,7 @@ package pp.model
 
 import enumeratum._
 import play.api.libs.json.Format
-import play.api.mvc.QueryStringBindable
+import play.api.mvc.{PathBindable, QueryStringBindable}
 import pp.controllers.ValueClassBinder._
 import pp.jsonext.EnumFormat
 
@@ -32,6 +32,7 @@ sealed abstract class TaxType extends EnumEntry {
 object TaxType {
   implicit val format: Format[TaxType] = EnumFormat(TaxTypes)
   implicit val pathBinder: QueryStringBindable[TaxType] = bindableA(_.toString)
+  implicit val taxTypeBinder: PathBindable[TaxType] = valueClassBinder(_.toString)
 
 }
 

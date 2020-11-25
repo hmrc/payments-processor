@@ -23,18 +23,18 @@ import java.time.LocalDateTime
 
 import play.api.libs.json._
 import pp.model.{Origin, TaxType, WorkItemFields}
+import uk.gov.hmrc.workitem.WorkItem
 
 case class ChargeRefNotificationWorkItem(
     createdOn:       LocalDateTime,
     availableUntil:  LocalDateTime,
-    warningAt:       LocalDateTime,
     taxType:         TaxType,
     chargeRefNumber: String,
     amountPaid:      BigDecimal,
     origin:          Origin) extends WorkItemFields {
 
   override def toString: String =
-    s"ChargeRefNotificationWorkItem for chargeReference $chargeRefNumber ... {createdOn: $createdOn, availableUntil: $availableUntil, warningAt: $warningAt, taxType: $taxType, origin: $origin, chargeRefNumber: $chargeRefNumber}"
+    s"ChargeRefNotificationWorkItem for chargeReference $chargeRefNumber ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, chargeRefNumber: $chargeRefNumber}"
 
 }
 
