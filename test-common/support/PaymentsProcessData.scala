@@ -143,4 +143,5 @@ object PaymentsProcessData {
             "ChargeReference": "chargeRef"
       }""".stripMargin)
 
+  val mibReference = "reference"
 }

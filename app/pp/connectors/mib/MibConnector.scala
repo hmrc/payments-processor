@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package pp.connectors.pngr
+package pp.connectors.mib
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import pp.connectors.ResponseReadsThrowingException
-import pp.model.pngr.PngrStatusUpdateRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -28,17 +27,16 @@ import ResponseReadsThrowingException.readResponse
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PngrConnector @Inject() (httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
+class MibConnector @Inject() (httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
 
-  private val serviceURL: String = s"${servicesConfig.baseUrl("bc-passengers-declarations")}/bc-passengers-declarations"
+  private def serviceURL(reference: String): String = s"${servicesConfig.baseUrl("merchandise-in-baggage")}/declare-commercial-goods/payment-callback/$reference"
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def updateWithStatus(statusUpdate: PngrStatusUpdateRequest): Future[HttpResponse] = {
-    val url: String = s"$serviceURL/update-payment"
-    logger.debug(s"""c $url""")
+  def paymentCallback(reference: String): Future[HttpResponse] = {
+    logger.debug("paymentCallback")
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    httpClient.POST[PngrStatusUpdateRequest, HttpResponse](url, statusUpdate)
+    httpClient.GET[HttpResponse](serviceURL(reference))
   }
 
 }
