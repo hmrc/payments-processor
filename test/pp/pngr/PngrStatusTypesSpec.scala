@@ -17,7 +17,7 @@
 package pp.pngr
 
 import play.api.libs.json.{JsString, Json}
-import pp.model.pngr.{PngrStatusType, PngrStatusTypes}
+import pp.model.pngrs.{PngrStatusType, PngrStatusTypes}
 import support.{RichMatchers, UnitSpec}
 
 class PngrStatusTypesSpec extends UnitSpec with RichMatchers {

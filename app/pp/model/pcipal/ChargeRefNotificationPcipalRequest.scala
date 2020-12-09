@@ -21,7 +21,7 @@ import pp.model.Origins.PCI_PAL
 import pp.model.StatusTypes.validated
 import pp.model.{chargeref, _}
 import pp.model.chargeref.ChargeRefNotificationRequest
-import pp.model.pngr.{PngrStatusTypes, PngrStatusUpdateRequest}
+import pp.model.pngrs.{PngrStatusTypes, PngrStatusUpdateRequest}
 
 final case class ChargeRefNotificationPcipalRequest(
     HoD:                  HeadOfDutyIndicator,

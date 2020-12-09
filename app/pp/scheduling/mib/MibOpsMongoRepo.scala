@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package pp.scheduling.chargeref
+package pp.scheduling.mib
 
 import java.time.Clock
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.modules.reactivemongo.ReactiveMongoComponent
-import pp.config.ChargeRefQueueConfig
-import pp.model.wokitems.ChargeRefNotificationWorkItem
+import pp.config.MibOpsQueueConfig
+import pp.model.wokitems.MibOpsWorkItem
 import pp.scheduling.NotificationRepo
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ChargeRefNotificationMongoRepo @Inject() (
+class MibOpsMongoRepo @Inject() (
     reactiveMongoComponent: ReactiveMongoComponent,
     configuration:          Configuration,
     clock:                  Clock,
-    queueConfig:            ChargeRefQueueConfig)(implicit ec: ExecutionContext)
-  extends NotificationRepo[ChargeRefNotificationWorkItem](reactiveMongoComponent, configuration, clock, queueConfig)
+    queueConfig:            MibOpsQueueConfig)(implicit ec: ExecutionContext)
+  extends NotificationRepo[MibOpsWorkItem](reactiveMongoComponent, configuration, clock, queueConfig)
 

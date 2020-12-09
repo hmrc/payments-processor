@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package pp.pngr
+package pp.model.pngrs
 
-import play.api.libs.json.Json
-import pp.model.pngrs.PngrStatusUpdateRequest
-import support.PaymentsProcessData.{pngrStatusUpdateRequest, pngrStatusUpdateRequestJson}
-import support.UnitSpec
+import play.api.libs.json.{Json, OFormat}
 
-class PngrStatusUpdateRequestSpec extends UnitSpec {
+final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusType)
 
-  "to json" in {
-    Json.toJson(pngrStatusUpdateRequest) shouldBe pngrStatusUpdateRequestJson
-  }
-
-  "from json" in {
-    pngrStatusUpdateRequestJson.as[PngrStatusUpdateRequest] shouldBe pngrStatusUpdateRequest
-  }
+object PngrStatusUpdateRequest {
+  implicit val format: OFormat[PngrStatusUpdateRequest] = Json.format[PngrStatusUpdateRequest]
 }

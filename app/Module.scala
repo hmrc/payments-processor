@@ -18,12 +18,14 @@ import java.time.{Clock, ZoneOffset}
 
 import com.google.inject.{AbstractModule, Provides, Singleton}
 import pp.scheduling.chargeref.ChargeRefNotificationPollingService
-import pp.scheduling.pngr.PngrPollingService
+import pp.scheduling.mib.MibOpsPollingService
+import pp.scheduling.pngrs.PngrPollingService
 
 class Module() extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton()
     bind(classOf[PngrPollingService]).asEagerSingleton()
+    bind(classOf[MibOpsPollingService]).asEagerSingleton()
   }
 
   @Provides

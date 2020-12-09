@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package pp.scheduling.chargeref
+package pp.scheduling.mib
 
 import akka.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
-import pp.config.ChargeRefQueueConfig
-import pp.model.wokitems.ChargeRefNotificationWorkItem
+import pp.config.MibOpsQueueConfig
+import pp.model.wokitems.MibOpsWorkItem
 import pp.scheduling.PollingService
-import pp.services.ChargeRefService
+import pp.services.MibOpsService
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ChargeRefNotificationPollingService @Inject() (actorSystem: ActorSystem,
-                                                     queueConfig: ChargeRefQueueConfig, workItemService: ChargeRefService)(
+class MibOpsPollingService @Inject() (actorSystem: ActorSystem,
+                                      queueConfig: MibOpsQueueConfig, workItemService: MibOpsService)(
     implicit
-    ec: ExecutionContext) extends PollingService[ChargeRefNotificationWorkItem](actorSystem, queueConfig, workItemService) {
+    ec: ExecutionContext) extends PollingService[MibOpsWorkItem](actorSystem, queueConfig, workItemService) {
 
-  override def name: String = "ChargeRefNotificationPollingService"
+  override def name: String = "MibOpsPollingService"
 
 }

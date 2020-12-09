@@ -21,7 +21,7 @@ import pp.connectors.ResponseReadsThrowingException
 import pp.model.{ProcessingStatusOps, TaxType}
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
-import pp.model.pngr.PngrStatusUpdateRequest
+import pp.model.pngrs.PngrStatusUpdateRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -55,4 +55,7 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def sendStatusUpdateToPngr(pngrStatusUpdateRequest: PngrStatusUpdateRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[PngrStatusUpdateRequest,HttpResponse](s"http://localhost:$port/payments-processor/pngr/send-update", pngrStatusUpdateRequest)
 
+
+  def mibPaymentCallBack(reference: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/mib/payment-callback/$reference")
 }

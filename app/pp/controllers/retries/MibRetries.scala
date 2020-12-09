@@ -18,28 +18,27 @@ package pp.controllers.retries
 
 import play.api.Logger
 import play.api.mvc.Results
-import pp.config.PngrsQueueConfig
-import pp.connectors.PngrConnector
-import pp.model.pngrs.PngrStatusUpdateRequest
-import pp.services.PngrService
+import pp.config.MibOpsQueueConfig
+import pp.connectors.MibConnector
+import pp.services.MibOpsService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
 import uk.gov.hmrc.workitem.ToDo
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait PngrRetries extends Results {
+trait MibRetries extends Results {
 
   val logger: Logger
-  val pngrQueueConfig: PngrsQueueConfig
-  val pngrConnector: PngrConnector
-  val pngrService: PngrService
+  val mibOpsQueueConfig: MibOpsQueueConfig
+  val mibConnector: MibConnector
+  val mibOpsService: MibOpsService
 
   implicit val executionContext: ExecutionContext
 
-  def sendStatusUpdateToPngr(pngrStatusUpdate: PngrStatusUpdateRequest): Future[Status] = {
-    logger.debug("sendToPngr")
-    pngrConnector
-      .updateWithStatus(pngrStatusUpdate)
+  def sendPaymentUpdateToMib(reference: String): Future[Status] = {
+    logger.debug("sendPaymentUpdateToMib")
+    mibConnector
+      .paymentCallback(reference)
       .map(_ => Ok)
       .recoverWith {
         case e: UpstreamErrorResponse if e.statusCode == 400 =>
@@ -47,9 +46,9 @@ trait PngrRetries extends Results {
         case e: UpstreamErrorResponse if e.statusCode == 404 =>
           Future.failed(new BadGatewayException(e.message))
         case e =>
-          if (pngrQueueConfig.queueEnabled) {
+          if (mibOpsQueueConfig.queueEnabled) {
             logger.debug("Queue enabled")
-            pngrService.sendPngrToWorkItemRepo(pngrStatusUpdate)
+            mibOpsService.sendMibOpsToWorkItemRepo(reference)
               .map(
                 res => res.status match {
                   case ToDo => Ok

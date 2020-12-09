@@ -16,34 +16,32 @@
 
 package pp.controllers
 
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, ControllerComponents}
+import javax.inject.Inject
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.api.{Configuration, Logger}
-import pp.config.PngrsQueueConfig
-import pp.connectors.PngrConnector
-import pp.controllers.retries.PngrRetries
-import pp.model.pngrs.PngrStatusUpdateRequest
-import pp.services.PngrService
+import pp.config.MibOpsQueueConfig
+import pp.connectors.MibConnector
+import pp.controllers.retries.MibRetries
+import pp.services.MibOpsService
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
-@Singleton
-class PngrUpdateController @Inject() (
-    cc:                  ControllerComponents,
-    val pngrQueueConfig: PngrsQueueConfig,
-    val configuration:   Configuration,
-    val pngrService:     PngrService,
-    val pngrConnector:   PngrConnector
+class MibController @Inject() (
+    cc:                    ControllerComponents,
+    val mibOpsQueueConfig: MibOpsQueueConfig,
+    val configuration:     Configuration,
+    val mibOpsService:     MibOpsService,
+    val mibConnector:      MibConnector
 
 )
-  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator with PngrRetries {
+  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with MibRetries {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def sendStatusUpdateToPngr(): Action[PngrStatusUpdateRequest] = Action.async(parse.json[PngrStatusUpdateRequest]) { implicit request =>
+  def paymentCallBack(reference: String): Action[AnyContent] = Action.async { implicit request =>
     logger.debug("sendStatusUpdateToPngr")
-    sendStatusUpdateToPngr(request.body)
+    sendPaymentUpdateToMib(reference)
   }
 }
 

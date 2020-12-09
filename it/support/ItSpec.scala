@@ -90,9 +90,15 @@ trait ItSpec
     "pngr.queue.retryAfter" -> "1 seconds",
     "pngr.poller.initialDelay" -> "0 seconds",
     "pngr.poller.interval" -> "1 seconds",
+    "mibops.queue.enabled" -> false,
+    "mibops.poller.enabled" -> false,
+    "mibops.queue.retryAfter" -> "1 seconds",
+    "mibops.poller.initialDelay" -> "0 seconds",
+    "mibops.poller.interval" -> "1 seconds",
     "microservice.services.tps-payments-backend.port" -> WireMockSupport.port,
+    "microservice.services.merchandise-in-baggage.port" -> WireMockSupport.port,
     "sendAllToDes" -> true,
-    "microservice.services.bc-passengers-declarations.port" -> WireMockSupport.port,
+    "microservice.services.bc-passengers-declarations.port" -> WireMockSupport.port
   )
 
   def injector: Injector = fakeApplication().injector

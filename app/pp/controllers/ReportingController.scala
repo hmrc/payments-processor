@@ -22,7 +22,8 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import pp.model.{Item, ProcessingStatusOps, TaxType, TaxTypes}
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
-import pp.scheduling.pngr.PngrMongoRepo
+import pp.scheduling.mib.MibOpsMongoRepo
+import pp.scheduling.pngrs.PngrMongoRepo
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
@@ -30,7 +31,8 @@ import scala.concurrent.ExecutionContext
 class ReportingController @Inject() (
     cc:                             ControllerComponents,
     pngrMongoRepo:                  PngrMongoRepo,
-    chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo
+    chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
+    mibOpsMongoRepo:                MibOpsMongoRepo
 )
   (implicit val executionContext: ExecutionContext) extends BackendController(cc) {
 
@@ -44,6 +46,8 @@ class ReportingController @Inject() (
         pngrMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case TaxTypes.p800 =>
         chargeRefNotificationMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
+      case TaxTypes.mib =>
+        mibOpsMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case _ => throw new RuntimeException(s"taxType $taxType not supported, processingState $processingState not supported")
     }
   }
@@ -60,6 +64,11 @@ class ReportingController @Inject() (
         for {
           m <- chargeRefNotificationMongoRepo.findAll()
           i = m.map(m2 => Item(m2.item.createdOn, m2.item.chargeRefNumber, m2.failureCount, m2.status.toString))
+        } yield Ok(Json.toJson(i))
+      case TaxTypes.mib =>
+        for {
+          m <- mibOpsMongoRepo.findAll()
+          i = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
         } yield Ok(Json.toJson(i))
       case _ => throw new RuntimeException(s"taxType $taxType not supported")
     }

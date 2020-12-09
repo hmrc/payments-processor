@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package pp.scheduling.chargeref
+package pp.scheduling.pngrs
 
 import akka.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
-import pp.config.ChargeRefQueueConfig
-import pp.model.wokitems.ChargeRefNotificationWorkItem
+import pp.config.PngrsQueueConfig
+import pp.model.wokitems.PngrWorkItem
 import pp.scheduling.PollingService
-import pp.services.ChargeRefService
+import pp.services.PngrService
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ChargeRefNotificationPollingService @Inject() (actorSystem: ActorSystem,
-                                                     queueConfig: ChargeRefQueueConfig, workItemService: ChargeRefService)(
+class PngrPollingService @Inject() (actorSystem: ActorSystem,
+                                    queueConfig: PngrsQueueConfig, workItemService: PngrService)(
     implicit
-    ec: ExecutionContext) extends PollingService[ChargeRefNotificationWorkItem](actorSystem, queueConfig, workItemService) {
+    ec: ExecutionContext) extends PollingService[PngrWorkItem](actorSystem, queueConfig, workItemService) {
 
-  override def name: String = "ChargeRefNotificationPollingService"
+  override def name: String = "PngrPollingService"
 
 }
