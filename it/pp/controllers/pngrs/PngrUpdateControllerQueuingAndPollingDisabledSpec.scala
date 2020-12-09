@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package pp.pngr
+package pp.controllers.pngrs
 
-import play.api.libs.json.Json
-import pp.model.pngrs.PngrStatusUpdateRequest
-import support.PaymentsProcessData.{pngrStatusUpdateRequest, pngrStatusUpdateRequestJson}
-import support.UnitSpec
+class PngrUpdateControllerQueuingAndPollingDisabledSpec extends PngrUpdateControllerSpec {
 
-class PngrStatusUpdateRequestSpec extends UnitSpec {
 
-  "to json" in {
-    Json.toJson(pngrStatusUpdateRequest) shouldBe pngrStatusUpdateRequestJson
-  }
-
-  "from json" in {
-    pngrStatusUpdateRequestJson.as[PngrStatusUpdateRequest] shouldBe pngrStatusUpdateRequest
+  "the PngrUpdateController" when {
+    "polling is disabled and queuing is disabled" should {
+      behave like aSynchronousEndpointWhenThePngrStatusUpdateSucceeds()
+      behave like aSynchronousEndpointWhenThePngrStatusUpdateReturns4xx()
+    }
   }
 }

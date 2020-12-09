@@ -19,11 +19,11 @@ package pp.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, ControllerComponents}
 import play.api.{Configuration, Logger}
-import pp.config.PngrQueueConfig
-import pp.connectors.pngr.PngrConnector
+import pp.config.PngrsQueueConfig
+import pp.connectors.PngrConnector
 import pp.controllers.retries.PngrRetries
-import pp.model.pngr.PngrStatusUpdateRequest
-import pp.services.pngr.PngrService
+import pp.model.pngrs.PngrStatusUpdateRequest
+import pp.services.PngrService
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
@@ -31,7 +31,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class PngrUpdateController @Inject() (
     cc:                  ControllerComponents,
-    val pngrQueueConfig: PngrQueueConfig,
+    val pngrQueueConfig: PngrsQueueConfig,
     val configuration:   Configuration,
     val pngrService:     PngrService,
     val pngrConnector:   PngrConnector

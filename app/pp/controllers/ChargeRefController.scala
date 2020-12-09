@@ -19,18 +19,15 @@ package pp.controllers
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, ControllerComponents}
 import play.api.{Configuration, Logger}
-import pp.config.{ChargeRefQueueConfig, PngrQueueConfig}
-import pp.connectors.pngr.PngrConnector
-import pp.connectors.tps.TpsPaymentsBackendConnector
+import pp.config.{ChargeRefQueueConfig, PngrsQueueConfig}
+import pp.connectors.{PngrConnector, TpsPaymentsBackendConnector}
 import pp.controllers.retries.{ChargeRefDesRetries, PngrRetries}
 import pp.model.StatusTypes.validated
-import pp.model.pcipal.ChargeRefNotificationPcipalRequest
-import pp.model.pcipal.ChargeRefNotificationPcipalRequest.toChargeRefNotificationRequest
-import pp.model.pcipal.ChargeRefNotificationPcipalRequest.toPngrStatusUpdateRequest
-import pp.model.{TaxType, TaxTypes}
 import pp.model.chargeref.ChargeRefNotificationRequest
-import pp.services.chargref.ChargeRefService
-import pp.services.pngr.PngrService
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest.{toChargeRefNotificationRequest, toPngrStatusUpdateRequest}
+import pp.model.{TaxType, TaxTypes}
+import pp.services.{ChargeRefService, PngrService}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +37,7 @@ class ChargeRefController @Inject() (
     cc:                          ControllerComponents,
     val chargeRefService:        ChargeRefService,
     val chargeRefQueueConfig:    ChargeRefQueueConfig,
-    val pngrQueueConfig:         PngrQueueConfig,
+    val pngrQueueConfig:         PngrsQueueConfig,
     tpsPaymentsBackendConnector: TpsPaymentsBackendConnector,
     val configuration:           Configuration,
     val pngrService:             PngrService,

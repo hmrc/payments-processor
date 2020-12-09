@@ -21,9 +21,9 @@ import java.time.Clock
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
 import pp.config.ChargeRefQueueConfig
-import pp.connectors.des.DesConnector
-import pp.model.chargeref.ChargeRefNotificationWorkItem
-import pp.services.chargref.ChargeRefService
+import pp.connectors.DesConnector
+import pp.model.wokitems.ChargeRefNotificationWorkItem
+import pp.services.ChargeRefService
 import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 import support.{Des, ItSpec}
 import uk.gov.hmrc.workitem.{InProgress, ToDo, WorkItem}

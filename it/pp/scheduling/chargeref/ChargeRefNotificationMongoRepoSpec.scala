@@ -19,7 +19,7 @@ package pp.scheduling.chargeref
 import org.joda.time.DateTime
 import play.api.libs.json.Json
 import pp.model.TaxTypes
-import pp.model.chargeref.ChargeRefNotificationWorkItem
+import pp.model.wokitems.ChargeRefNotificationWorkItem
 import reactivemongo.bson.BSONObjectID
 import support.{ItSpec, PaymentsProcessData}
 import uk.gov.hmrc.workitem._

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package pp.pngr
+package pp.controllers.chargeref
 
-import play.api.libs.json.Json
-import pp.model.pngrs.PngrStatusUpdateRequest
-import support.PaymentsProcessData.{pngrStatusUpdateRequest, pngrStatusUpdateRequestJson}
-import support.UnitSpec
+class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec {
 
-class PngrStatusUpdateRequestSpec extends UnitSpec {
-
-  "to json" in {
-    Json.toJson(pngrStatusUpdateRequest) shouldBe pngrStatusUpdateRequestJson
+  "the ChargeRefController card payments endpoints" when {
+    "queuing is disabled" should {
+      behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()
+      behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
+      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithAnInternalError()
+      behave like aSynchronousEndpointWhenTheTpsUodateFailsWithAnInternalError()
+      behave like aSynchronousEndpointWhenTpsGetTaxTypeFailsWith404()
+    }
   }
 
-  "from json" in {
-    pngrStatusUpdateRequestJson.as[PngrStatusUpdateRequest] shouldBe pngrStatusUpdateRequest
-  }
+
 }

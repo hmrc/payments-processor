@@ -5,10 +5,10 @@ import java.time.{Clock, LocalDateTime}
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
 import pp.config.MibOpsQueueConfig
-import pp.connectors.mib.MibConnector
-import pp.model.mib.MibOpsWorkItem
+import pp.connectors.MibConnector
+import pp.model.wokitems.MibOpsWorkItem
 import pp.model.{Origins, TaxTypes}
-import pp.services.mib.MibOpsService
+import pp.services.MibOpsService
 import support.PaymentsProcessData.mibReference
 import support.{ItSpec, Mib, PaymentsProcessData}
 import uk.gov.hmrc.workitem.{ToDo, WorkItem}

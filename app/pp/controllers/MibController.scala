@@ -20,9 +20,9 @@ import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.api.{Configuration, Logger}
 import pp.config.MibOpsQueueConfig
-import pp.connectors.mib.MibConnector
+import pp.connectors.MibConnector
 import pp.controllers.retries.MibRetries
-import pp.services.mib.MibOpsService
+import pp.services.MibOpsService
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext

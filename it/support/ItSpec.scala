@@ -98,7 +98,7 @@ trait ItSpec
     "microservice.services.tps-payments-backend.port" -> WireMockSupport.port,
     "microservice.services.merchandise-in-baggage.port" -> WireMockSupport.port,
     "sendAllToDes" -> true,
-    "microservice.services.bc-passengers-declarations.port" -> WireMockSupport.port,
+    "microservice.services.bc-passengers-declarations.port" -> WireMockSupport.port
   )
 
   def injector: Injector = fakeApplication().injector

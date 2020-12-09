@@ -26,9 +26,10 @@ import pp.model.Origins.OPS
 import pp.model.StatusTypes.validated
 import pp.model.TaxTypes.{mib, p800}
 import pp.model.{chargeref, _}
-import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest, ChargeRefNotificationWorkItem}
+import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest}
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
-import pp.model.pngr.{PngrStatusTypes, PngrStatusUpdateRequest}
+import pp.model.pngrs.{PngrStatusTypes, PngrStatusUpdateRequest}
+import pp.model.wokitems.ChargeRefNotificationWorkItem
 
 object PaymentsProcessData {
 
@@ -46,7 +47,7 @@ object PaymentsProcessData {
 
   val reference = "JE231111B"
 
-  val chargeRefNotificationWorkItem: ChargeRefNotificationWorkItem = chargeref.ChargeRefNotificationWorkItem(now(clock), now(clock).minusSeconds(100), p800, chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem: ChargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(now(clock), now(clock).minusSeconds(100), p800, chargeReferenceNumber, 100.12, OPS)
 
   val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = chargeref.ChargeRefNotificationDesRequest(p800, chargeReferenceNumber, 100.11)
 

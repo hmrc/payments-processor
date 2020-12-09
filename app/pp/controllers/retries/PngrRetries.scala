@@ -18,10 +18,10 @@ package pp.controllers.retries
 
 import play.api.Logger
 import play.api.mvc.Results
-import pp.config.PngrQueueConfig
-import pp.connectors.pngr.PngrConnector
-import pp.model.pngr.PngrStatusUpdateRequest
-import pp.services.pngr.PngrService
+import pp.config.PngrsQueueConfig
+import pp.connectors.PngrConnector
+import pp.model.pngrs.PngrStatusUpdateRequest
+import pp.services.PngrService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
 import uk.gov.hmrc.workitem.ToDo
 
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait PngrRetries extends Results {
 
   val logger: Logger
-  val pngrQueueConfig: PngrQueueConfig
+  val pngrQueueConfig: PngrsQueueConfig
   val pngrConnector: PngrConnector
   val pngrService: PngrService
 

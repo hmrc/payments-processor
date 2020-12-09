@@ -19,8 +19,8 @@ package pp.controllers.retries
 import play.api.Logger
 import play.api.mvc.Results
 import pp.config.MibOpsQueueConfig
-import pp.connectors.mib.MibConnector
-import pp.services.mib.MibOpsService
+import pp.connectors.MibConnector
+import pp.services.MibOpsService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
 import uk.gov.hmrc.workitem.ToDo
 

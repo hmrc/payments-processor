@@ -20,7 +20,7 @@ object Mib {
 
   def statusUpdateRespondsWith(status: Int, responseBody: String, delayMillis: Int = 0, sequence: Int = 0,reference: String): StubMapping = {
     stubFor(
-      post(urlEqualTo(endpoint(reference)))
+      get(urlEqualTo(endpoint(reference)))
         .inScenario("mib")
         .whenScenarioStateIs(WireMockStub.state(sequence))
         .willReturn(aResponse()

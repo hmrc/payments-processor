@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package pp.scheduling.mib
-
-import java.time.Clock
+package pp.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.modules.reactivemongo.ReactiveMongoComponent
-import pp.config.MibOpsQueueConfig
-import pp.model.wokitems.MibOpsWorkItem
-import pp.scheduling.NotificationRepo
-
-import scala.concurrent.ExecutionContext
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class MibOpsMongoRepo @Inject() (
-    reactiveMongoComponent: ReactiveMongoComponent,
-    configuration:          Configuration,
-    clock:                  Clock,
-    queueConfig:            MibOpsQueueConfig)(implicit ec: ExecutionContext)
-  extends NotificationRepo[MibOpsWorkItem](reactiveMongoComponent, configuration, clock, queueConfig)
+class PngrsQueueConfig @Inject() (val configuration: Configuration, servicesConfig: ServicesConfig) extends QueueConfig {
+  //All Configs need these
+  val prefix = "pngr"
+  val collectionName = "pngr-notifications"
+
+  //Specific to this config
+  val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
+
+}
 

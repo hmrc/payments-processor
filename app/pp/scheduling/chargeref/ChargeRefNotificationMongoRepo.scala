@@ -22,7 +22,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.modules.reactivemongo.ReactiveMongoComponent
 import pp.config.ChargeRefQueueConfig
-import pp.model.chargeref.ChargeRefNotificationWorkItem
+import pp.model.wokitems.ChargeRefNotificationWorkItem
 import pp.scheduling.NotificationRepo
 
 import scala.concurrent.ExecutionContext
