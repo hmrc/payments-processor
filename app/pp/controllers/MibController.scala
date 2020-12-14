@@ -40,7 +40,7 @@ class MibController @Inject() (
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def paymentCallBack(reference: String): Action[AnyContent] = Action.async { implicit request =>
-    logger.debug("sendStatusUpdateToPngr")
+    logger.debug("sendStatusUpdateToMib")
     sendPaymentUpdateToMib(reference)
   }
 }

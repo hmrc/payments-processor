@@ -29,7 +29,7 @@ case class MibOpsWorkItem(
     reference:      String) extends WorkItemFields {
 
   override def toString: String =
-    s"PngrWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference}"
+    s"MibWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference}"
 }
 
 object MibOpsWorkItem {
