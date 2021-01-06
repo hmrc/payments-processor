@@ -1,9 +1,11 @@
 package pp.controllers.chargeref
 
-import com.github.tomakehurst.wiremock.client.WireMock.{patchRequestedFor, postRequestedFor, urlEqualTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{patchRequestedFor, postRequestedFor, urlEqualTo, verify, getRequestedFor}
+import play.api.Logger
+import pp.model.TaxTypes
 import pp.model.TaxTypes.{mib, p800, pngr}
 import support.PaymentsProcessData._
-import support.{Des, Pngr, TpsPaymentsBackend}
+import support.{Des, Mib, Pngr, TpsPaymentsBackend}
 import uk.gov.hmrc.http.HttpResponse
 
 class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
@@ -16,23 +18,28 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
       .updated("chargeref.poller.enabled", "true")
       .updated("pngr.queue.enabled", "true")
       .updated("pngr.poller.enabled", "true")
+      .updated("mib.queue.enabled", "true")
+      .updated("mib.poller.enabled", "true")
       .updated("sendAllToDes", "false")
 
 
   private def verifySuccess(response: HttpResponse,
                             checkTpsBackend: Boolean = false,
                             backendCount: Int = 1,
-                            checkPngr: Boolean = false
+                            checkPngr: Boolean = false,
+                            checkMib: Boolean = false
                            ): Unit = {
     response.status shouldBe 200
     verify(0, postRequestedFor(urlEqualTo(Des.endpoint)))
     if (checkPngr)verify(1, postRequestedFor(urlEqualTo(Pngr.endpoint)))
+    if (checkMib)verify(1, getRequestedFor(urlEqualTo(Mib.endpoint("JE231111B"))))
     if (checkTpsBackend) verify(backendCount, patchRequestedFor(urlEqualTo(TpsPaymentsBackend.updateEndpoint)))
   }
 
   Seq(
     (p800PaymentItemId, p800, p800PcipalNotification, p800ChargeRefNotificationRequest),
     (mibPaymentItemId, mib, mibPcipalNotification, mibChargeRefNotificationRequest),
+    (pngrPaymentItemId, pngr, pngrPcipalNotification, pngrChargeRefNotificationRequest),
      ).foreach { fixture =>
     val paymentItemId = fixture._1
     val taxType = fixture._2
@@ -44,7 +51,17 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
       s"status=complete, taxType = $taxType" in {
         TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
         TpsPaymentsBackend.tpsUpdateOk
-        verifySuccess(testConnector.sendCardPayments(pcipalNotification).futureValue, checkTpsBackend = true)
+        taxType match {
+          case TaxTypes.pngr => Pngr.statusUpdateSucceeds()
+          case TaxTypes.mib => Mib.statusUpdateSucceeds(reference = "JE231111B")
+          case _ => Logger.debug("Not needed")
+        }
+        taxType match {
+          case TaxTypes.mib => verifySuccess(testConnector.sendCardPayments(pcipalNotification).futureValue, checkTpsBackend = true, checkMib = true)
+          case TaxTypes.pngr => verifySuccess(testConnector.sendCardPayments(pcipalNotification).futureValue, checkTpsBackend = true, checkPngr = true)
+          case _ => verifySuccess(testConnector.sendCardPayments(pcipalNotification).futureValue, checkTpsBackend = true)
+        }
+
       }
     }
 
@@ -52,18 +69,11 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
     "return Ok for a POST to the synchronous api with no call to des" when {
       s"status=complete, taxType = $taxType" in {
         TpsPaymentsBackend.tpsUpdateOk
+        TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
         verifySuccess(
           response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue,
           backendCount = 0)
       }
-    }
-  }
-  "return Ok for a POST to the public api /send-card-payments with no call to des" when {
-    s"status=complete, taxType = pngr" in {
-      TpsPaymentsBackend.getTaxTypeOk(pngrPaymentItemId, pngr)
-      TpsPaymentsBackend.tpsUpdateOk
-      Pngr.statusUpdateSucceeds()
-      verifySuccess(testConnector.sendCardPayments(pngrPcipalNotification).futureValue, checkTpsBackend = true, checkPngr= true)
     }
   }
 
