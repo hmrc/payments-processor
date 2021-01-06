@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json.parse
 import pp.model.Origins.OPS
 import pp.model.StatusTypes.validated
-import pp.model.TaxTypes.{mib, p800}
+import pp.model.TaxTypes.{mib, p800, pngr}
 import pp.model.{chargeref, _}
 import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest}
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
@@ -54,6 +54,8 @@ object PaymentsProcessData {
   val p800ChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(p800, chargeReferenceNumber, 100.11, OPS)
 
   val mibChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(mib, chargeReferenceNumber, 100.11, OPS)
+
+  val pngrChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(pngr, chargeReferenceNumber, 100.11, OPS)
 
   //language=JSON
   val chargeRefNotificationDesRequestJson: JsValue = parse(
