@@ -2,7 +2,6 @@ package pp.controllers.cdsops
 
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import play.api.http.Status
-import play.api.libs.json.Json.toJson
 import support.Cds
 import support.PaymentsProcessData.cdsStatusUpdateRequest
 
