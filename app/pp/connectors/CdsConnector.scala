@@ -37,8 +37,7 @@ class CdsConnector @Inject() (httpClient: HttpClient, servicesConfig: ServicesCo
   def paymentCallback(notificationCds: NotificationCds): Future[HttpResponse] = {
     val url: String = s"$serviceURL"
     logger.debug(s"""sending cds notification: $url""")
-    //    implicit val desHc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(s"Bearer $authorizationToken")))
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val desHc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(s"Bearer $authorizationToken")))
     httpClient.POST[NotificationCds, HttpResponse](url, notificationCds)
   }
 }

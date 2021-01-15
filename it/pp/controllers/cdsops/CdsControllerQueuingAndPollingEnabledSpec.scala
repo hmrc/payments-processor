@@ -12,7 +12,7 @@ class CdsControllerQueuingAndPollingEnabledSpec extends CdsControllerSpec {
     .updated("cds.poller.enabled", "true")
     .updated("cds.queue.enabled", "true")
 
-  "the PngrUpdateController" when {
+  "the CdsController" when {
     "polling is enabled and queuing is enabled" should {
       behave like aSynchronousEndpointWhenTheCdsPaymentUpdateSucceeds()
       behave like aSynchronousEndpointWhenTheCdsPaymentUpdateReturns4xx()
