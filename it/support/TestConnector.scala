@@ -18,6 +18,7 @@ package support
 
 import javax.inject.{Inject, Singleton}
 import pp.connectors.ResponseReadsThrowingException
+import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest}
 import pp.model.{ProcessingStatusOps, TaxType}
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
@@ -53,8 +54,10 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
     httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/$taxType")
 
   def sendStatusUpdateToPngr(pngrStatusUpdateRequest: PngrStatusUpdateRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST[PngrStatusUpdateRequest,HttpResponse](s"http://localhost:$port/payments-processor/pngr/send-update", pngrStatusUpdateRequest)
+    httpClient.POST[PngrStatusUpdateRequest, HttpResponse](s"http://localhost:$port/payments-processor/pngr/send-update", pngrStatusUpdateRequest)
 
+  def sendStatusUpdateToCds(notificationCds: NotificationCds)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.POST[NotificationCds, HttpResponse](s"http://localhost:$port/payments-processor/cds/send-notification", notificationCds)
 
   def mibPaymentCallBack(reference: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/mib/payment-callback/$reference")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import java.time.{Clock, ZoneOffset}
 
 import com.google.inject.{AbstractModule, Provides, Singleton}
+import pp.scheduling.cds.CdsOpsPollingService
 import pp.scheduling.chargeref.ChargeRefNotificationPollingService
 import pp.scheduling.mib.MibOpsPollingService
 import pp.scheduling.pngrs.PngrPollingService
@@ -26,6 +27,7 @@ class Module() extends AbstractModule {
     bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton()
     bind(classOf[PngrPollingService]).asEagerSingleton()
     bind(classOf[MibOpsPollingService]).asEagerSingleton()
+    bind(classOf[CdsOpsPollingService]).asEagerSingleton()
   }
 
   @Provides

@@ -1,10 +1,26 @@
+/*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package pp.controllers.retries
 
 import play.api.Logger
 import play.api.mvc.Results
 import pp.config.CdsOpsQueueConfig
 import pp.connectors.CdsConnector
-import pp.model.cds.NotifyImmediatePaymentRequest
+import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest}
 import pp.services.CdsOpsService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
 import uk.gov.hmrc.workitem.ToDo
@@ -20,10 +36,10 @@ trait CdsRetries extends Results {
 
   implicit val executionContext: ExecutionContext
 
-  def sendPaymentUpdateToCds(notifyImmediatePaymentRequest: NotifyImmediatePaymentRequest): Future[Status] = {
+  def sendPaymentUpdateToCds(notification: NotificationCds): Future[Status] = {
     logger.debug("sendPaymentUpdateToCds")
     cdsConnector
-      .paymentCallback(notifyImmediatePaymentRequest)
+      .paymentCallback(notification)
       .map(_ => Ok)
       .recoverWith {
         case e: UpstreamErrorResponse if e.statusCode == 400 =>
@@ -33,7 +49,7 @@ trait CdsRetries extends Results {
         case e =>
           if (cdsOpsQueueConfig.queueEnabled) {
             logger.debug("Queue enabled")
-            cdsOpsService.sendCdsOpsToWorkItemRepo(notifyImmediatePaymentRequest)
+            cdsOpsService.sendCdsOpsToWorkItemRepo(notification)
               .map(
                 res => res.status match {
                   case ToDo => Ok

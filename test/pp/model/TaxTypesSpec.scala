@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,8 @@ class TaxTypesSpec extends UnitSpec with RichMatchers {
       "beerDuty" -> TaxTypes.`beerDuty`,
       "landfillTax" -> TaxTypes.`landfillTax`,
       "aggregatesLevy" -> TaxTypes.aggregatesLevy,
-      "climateChangeLevy" -> TaxTypes.`climateChangeLevy`
+      "climateChangeLevy" -> TaxTypes.`climateChangeLevy`,
+      "cds" -> TaxTypes.cds
     )
 
     TaxTypes.values.toSet shouldBe taxTypes.map(tt => tt._2).toSet

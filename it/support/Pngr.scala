@@ -1,10 +1,8 @@
 package support
 
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
-
 
 object Pngr {
 

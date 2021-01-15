@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import pp.model.{Item, ProcessingStatusOps, TaxType, TaxTypes}
+import pp.scheduling.cds.CdsOpsMongoRepo
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import pp.scheduling.mib.MibOpsMongoRepo
 import pp.scheduling.pngrs.PngrMongoRepo
@@ -32,7 +33,8 @@ class ReportingController @Inject() (
     cc:                             ControllerComponents,
     pngrMongoRepo:                  PngrMongoRepo,
     chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
-    mibOpsMongoRepo:                MibOpsMongoRepo
+    mibOpsMongoRepo:                MibOpsMongoRepo,
+    cdsOpsMongoRepo:                CdsOpsMongoRepo
 )
   (implicit val executionContext: ExecutionContext) extends BackendController(cc) {
 
@@ -48,6 +50,8 @@ class ReportingController @Inject() (
         chargeRefNotificationMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case TaxTypes.mib =>
         mibOpsMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
+      case TaxTypes.cds =>
+        cdsOpsMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case _ => throw new RuntimeException(s"taxType $taxType not supported, processingState $processingState not supported")
     }
   }
@@ -70,6 +74,11 @@ class ReportingController @Inject() (
           m <- mibOpsMongoRepo.findAll()
           i = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
         } yield Ok(Json.toJson(i))
+      case TaxTypes.cds =>
+        for {
+          allRecords <- cdsOpsMongoRepo.findAll()
+          allRecordsAsItems = allRecords.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
+        } yield Ok(Json.toJson(allRecordsAsItems))
       case _ => throw new RuntimeException(s"taxType $taxType not supported")
     }
   }
