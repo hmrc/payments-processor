@@ -1,6 +1,6 @@
 package pp.controllers.cdsops
 
-import com.github.tomakehurst.wiremock.client.WireMock.{getRequestedFor, urlEqualTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import pp.services.CdsOpsService
 import support.Cds
 import support.PaymentsProcessData.cdsStatusUpdateRequest
@@ -30,7 +30,7 @@ class CdsControllerPollingOnlySpec extends CdsControllerSpec {
           numberOfQueuedNotifications shouldBe 0
         }
 
-        verify(3, getRequestedFor(urlEqualTo("/accounts/notifyimmediatepayment/v1")))
+        verify(3, postRequestedFor(urlEqualTo("/accounts/notifyimmediatepayment/v1")))
       }
     }
   }

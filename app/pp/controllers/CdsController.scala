@@ -36,11 +36,11 @@ class CdsController @Inject() (
     val cdsConnector:      CdsConnector
 
 )
-  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with CdsRetries {
+  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with CdsRetries with HeaderValidator {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def ipsCallback(): Action[NotificationCds] = Action.async(parse.json[NotificationCds]) { implicit request =>
+  def sendPaymentUpdateToCds(): Action[NotificationCds] = Action.async(parse.json[NotificationCds]) { implicit request =>
     logger.debug("sendStatusUpdateToCds")
     sendPaymentUpdateToCds(request.body)
   }

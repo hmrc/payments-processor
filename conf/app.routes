@@ -6,4 +6,4 @@ GET         /reporting/count/:taxType/:processingState                     pp.co
 GET         /reporting/:taxType                                            pp.controllers.ReportingController.getAll(taxType: TaxType)
 GET         /mib/payment-callback/:reference                               pp.controllers.MibController.paymentCallBack(reference: String)
 
-POST        /cds/send-notification                                         pp.controllers.CdsController.ipsCallback()
+POST        /cds/send-notification                                         pp.controllers.CdsController.sendPaymentUpdateToCds()

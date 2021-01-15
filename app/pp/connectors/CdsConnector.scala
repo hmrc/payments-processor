@@ -31,13 +31,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class CdsConnector @Inject() (httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
-  private val serviceURL: String = s"${servicesConfig.baseUrl("cds")}"
+  private val serviceURL: String = s"${servicesConfig.baseUrl("cds")}/accounts/notifyimmediatepayment/v1"
   private val authorizationToken: String = servicesConfig.getString("cds.authToken")
 
   def paymentCallback(notificationCds: NotificationCds): Future[HttpResponse] = {
-    val url: String = s"$serviceURL/accounts/notifyimmediatepayment/v1"
+    val url: String = s"$serviceURL"
     logger.debug(s"""sending cds notification: $url""")
-    implicit val desHc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(s"Bearer $authorizationToken")))
+    //    implicit val desHc: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(s"Bearer $authorizationToken")))
+    implicit val hc: HeaderCarrier = HeaderCarrier()
     httpClient.POST[NotificationCds, HttpResponse](url, notificationCds)
   }
 }

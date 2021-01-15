@@ -53,11 +53,11 @@ class CdsOpsService @Inject()(
   }
 
 
-  def sendCdsOpsToWorkItemRepo(notifyImmediatePaymentRequest: NotificationCds): Future[WorkItem[CdsOpsWorkItem]] = {
+  def sendCdsOpsToWorkItemRepo(notificationCds: NotificationCds): Future[WorkItem[CdsOpsWorkItem]] = {
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
-    val workItem = CdsOpsWorkItem(time, availableUntil(time), TaxTypes.cds, Origins.OPS, reference = notifyImmediatePaymentRequest.notifyImmediatePaymentRequest.requestDetail.paymentReference, notifyImmediatePaymentRequest)
+    val workItem = CdsOpsWorkItem(time, availableUntil(time), TaxTypes.cds, Origins.OPS, reference = notificationCds.notifyImmediatePaymentRequest.requestDetail.paymentReference, notificationCds)
     repo.pushNew(workItem, jodaLocalDateTime)
 
   }

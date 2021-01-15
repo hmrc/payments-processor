@@ -101,6 +101,7 @@ trait ItSpec
     "cds.poller.initialDelay" -> "0 seconds",
     "cds.poller.interval" -> "1 seconds",
     "cds.authToken" -> "sometoken",
+    "microservice.services.cds.port" -> WireMockSupport.port,
     "microservice.services.tps-payments-backend.port" -> WireMockSupport.port,
     "microservice.services.merchandise-in-baggage.port" -> WireMockSupport.port,
     "sendAllToDes" -> true,

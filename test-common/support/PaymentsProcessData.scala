@@ -46,8 +46,12 @@ object PaymentsProcessData {
 
   val cdsStatusUpdateRequest: NotificationCds = NotificationCds(
     NotifyImmediatePaymentRequest(
-      requestCommon = RequestCommon(receiptDate              = "somedate", acknowledgementReference = "1234-5678-9012", regime = "CDS", originatingSystem = "OPS"),
-      requestDetail = RequestDetail(paymentReference = "CDSI1234567", amountPaid = "1000", declarationID = "1234567890", unitType = "GBP")
+      requestCommon = RequestCommon(
+        receiptDate = "somedate", acknowledgementReference = "1234-5678-9012", regime = "CDS", originatingSystem = "OPS"
+      ),
+      requestDetail = RequestDetail(
+        paymentReference = "CDSI191234567890", amountPaid = "1000", declarationID = "1234567890", unitType = "GBP"
+      )
     )
   )
 
@@ -107,7 +111,7 @@ object PaymentsProcessData {
             "originatingSystem": "OPS"
         },
         "requestDetail": {
-            "paymentReference": "CDSI1234567",
+            "paymentReference": "CDSI191234567890",
             "amountPaid": "1000",
             "declarationID": "1234567890",
             "unitType": "GBP"
@@ -118,7 +122,8 @@ object PaymentsProcessData {
   )
 
   //language=JSON
-  def definition(endpointsEnabled: Boolean, status: String): JsValue = parse(s"""{
+  def definition(endpointsEnabled: Boolean, status: String): JsValue = parse(
+    s"""{
                                   "scopes":[],
                                   "api": {
                                     "name": "Charge Ref Notification",
@@ -175,5 +180,5 @@ object PaymentsProcessData {
       }""".stripMargin)
 
   val mibReference = "reference"
-  val cdsReference = "CDSI1234567"
+  val cdsReference = "CDSI191234567890"
 }
