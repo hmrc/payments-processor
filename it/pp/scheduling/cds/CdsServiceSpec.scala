@@ -6,11 +6,11 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
 import pp.config.CdsOpsQueueConfig
 import pp.connectors.CdsConnector
-import pp.model.wokitems.{CdsOpsWorkItem, MibOpsWorkItem}
+import pp.model.wokitems.CdsOpsWorkItem
 import pp.model.{Origins, TaxTypes}
 import pp.services.CdsOpsService
-import support.PaymentsProcessData.{cdsReference, cdsStatusUpdateRequest, mibReference}
-import support.{Cds, ItSpec, Mib}
+import support.PaymentsProcessData.{cdsReference, cdsStatusUpdateRequest}
+import support.{Cds, ItSpec}
 import uk.gov.hmrc.workitem.{ToDo, WorkItem}
 
 class CdsServiceSpec extends ItSpec {
@@ -23,7 +23,7 @@ class CdsServiceSpec extends ItSpec {
   val availableUntilInPast: LocalDateTime = time.minusSeconds(60)
   val availUntilInFuture: LocalDateTime = time.plusSeconds(60)
 
-  val workItem: CdsOpsWorkItem = CdsOpsWorkItem(created, availableUntilInPast, TaxTypes.cds, Origins.OPS, "reference", cdsStatusUpdateRequest)
+  val workItem: CdsOpsWorkItem = CdsOpsWorkItem(created, availableUntilInPast, TaxTypes.cds, Origins.OPS, "CDSI1234567", cdsStatusUpdateRequest)
 
   override def configMap: Map[String, Any] =
     super.configMap

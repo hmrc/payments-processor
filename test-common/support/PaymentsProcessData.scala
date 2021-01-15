@@ -175,5 +175,5 @@ object PaymentsProcessData {
       }""".stripMargin)
 
   val mibReference = "reference"
-  val cdsReference = "CDSX123456789"
+  val cdsReference = "CDSI1234567"
 }
