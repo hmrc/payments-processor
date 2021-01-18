@@ -18,20 +18,23 @@ package pp.model.wokitems
 
 import java.time.LocalDateTime
 
-import play.api.libs.json._
+import play.api.libs.json.{Json, OFormat}
+import pp.model.cds.NotificationCds
 import pp.model.{Origin, TaxType, WorkItemFields}
 
-case class MibOpsWorkItem(
-    createdOn:      LocalDateTime,
-    availableUntil: LocalDateTime,
-    taxType:        TaxType,
-    origin:         Origin,
-    reference:      String) extends WorkItemFields {
+case class CdsOpsWorkItem(
+    createdOn:       LocalDateTime,
+    availableUntil:  LocalDateTime,
+    taxType:         TaxType,
+    origin:          Origin,
+    reference:       String,
+    notificationCds: NotificationCds) extends WorkItemFields {
 
   override def toString: String =
-    s"MibWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference}"
+    s"CdsWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference, notification: ${notificationCds.toString}"
 }
 
-object MibOpsWorkItem {
-  implicit val format: OFormat[MibOpsWorkItem] = Json.format[MibOpsWorkItem]
+object CdsOpsWorkItem {
+  implicit val format: OFormat[CdsOpsWorkItem] = Json.format[CdsOpsWorkItem]
 }
+

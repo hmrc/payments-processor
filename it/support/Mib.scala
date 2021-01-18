@@ -9,6 +9,7 @@ import play.api.http.Status
 object Mib {
 
   def endpoint(reference: String) = s"/declare-commercial-goods/payment-callback/$reference"
+
   val errorMessage = "mib failed"
   val successMessage = "ok"
 
@@ -16,9 +17,9 @@ object Mib {
     statusUpdateRespondsWith(status = Status.OK, responseBody = successMessage, delayMillis = delayMillis, sequence = sequence, reference)
 
   def statusUpdateFailsWithAnInternalServerError(delayMillis: Int = 0, sequence: Int = 0, reference: String): StubMapping =
-    statusUpdateRespondsWith(Status.INTERNAL_SERVER_ERROR, errorMessage, delayMillis, sequence,reference)
+    statusUpdateRespondsWith(Status.INTERNAL_SERVER_ERROR, errorMessage, delayMillis, sequence, reference)
 
-  def statusUpdateRespondsWith(status: Int, responseBody: String, delayMillis: Int = 0, sequence: Int = 0,reference: String): StubMapping = {
+  def statusUpdateRespondsWith(status: Int, responseBody: String, delayMillis: Int = 0, sequence: Int = 0, reference: String): StubMapping = {
     stubFor(
       get(urlEqualTo(endpoint(reference)))
         .inScenario("mib")

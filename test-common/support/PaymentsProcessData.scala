@@ -24,6 +24,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json.parse
 import pp.model.Origins.OPS
 import pp.model.StatusTypes.validated
+import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest, RequestCommon, RequestDetail}
 import pp.model.TaxTypes.{mib, p800, pngr}
 import pp.model.{chargeref, _}
 import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest}
@@ -42,6 +43,17 @@ object PaymentsProcessData {
 
   val pngrPaymentItemId: PaymentItemId = PaymentItemId("pngr-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pngrStatusUpdateRequest: PngrStatusUpdateRequest = PngrStatusUpdateRequest("chargeref", PngrStatusTypes.Successful)
+
+  val cdsStatusUpdateRequest: NotificationCds = NotificationCds(
+    NotifyImmediatePaymentRequest(
+      requestCommon = RequestCommon(
+        receiptDate = "somedate", acknowledgementReference = "1234-5678-9012", regime = "CDS", originatingSystem = "OPS"
+      ),
+      requestDetail = RequestDetail(
+        paymentReference = "CDSI191234567890", amountPaid = "1000", declarationID = "1234567890", unitType = "GBP"
+      )
+    )
+  )
 
   private val pciPalSessionId = PcipalSessionId("48c978bb")
 
@@ -90,7 +102,30 @@ object PaymentsProcessData {
   )
 
   //language=JSON
-  def definition(endpointsEnabled: Boolean, status: String): JsValue = parse(s"""{
+  val cdsStatusUpdateRequestJson: JsValue = parse(
+    s"""
+       {
+    "notifyImmediatePaymentRequest": {
+        "requestCommon": {
+            "receiptDate": "somedate",
+            "acknowledgementReference": "1234-5678-9012",
+            "regime": "CDS",
+            "originatingSystem": "OPS"
+        },
+        "requestDetail": {
+            "paymentReference": "CDSI191234567890",
+            "amountPaid": "1000",
+            "declarationID": "1234567890",
+            "unitType": "GBP"
+        }
+    }
+}
+       """.stripMargin
+  )
+
+  //language=JSON
+  def definition(endpointsEnabled: Boolean, status: String): JsValue = parse(
+    s"""{
                                   "scopes":[],
                                   "api": {
                                     "name": "Charge Ref Notification",
@@ -147,4 +182,5 @@ object PaymentsProcessData {
       }""".stripMargin)
 
   val mibReference = "reference"
+  val cdsReference = "CDSI191234567890"
 }

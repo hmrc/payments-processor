@@ -31,8 +31,6 @@ trait PngrUpdateControllerSpec extends ItSpec {
       numberOfQueuedNotifications shouldBe 0
     }
 
-
-
     s"return Ok for a POST to the internal endpoint /pngr/send-update" when {
       "the Pngr call succeeds with OK, status=Successful" in {
         Pngr.statusUpdateSucceeds()
@@ -63,6 +61,7 @@ trait PngrUpdateControllerSpec extends ItSpec {
         Pngr.statusUpdateRespondsWith(404, "")
 
         val response = testConnector.sendStatusUpdateToPngr(pngrStatusUpdateRequest).failed.futureValue
+
         response.asInstanceOf[UpstreamErrorResponse].reportAs shouldBe 502
 
         numberOfQueuedNotifications shouldBe 0

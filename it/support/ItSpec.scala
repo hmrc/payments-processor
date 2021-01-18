@@ -66,7 +66,7 @@ trait ItSpec
   lazy val baseUrl: String = s"http://localhost:${WireMockSupport.port}"
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(3, Seconds)),
+    timeout  = scaled(Span(10, Seconds)),
     interval = scaled(Span(300, Millis)))
 
   implicit val emptyHC: HeaderCarrier = HeaderCarrier()
@@ -95,6 +95,13 @@ trait ItSpec
     "mibops.queue.retryAfter" -> "1 seconds",
     "mibops.poller.initialDelay" -> "0 seconds",
     "mibops.poller.interval" -> "1 seconds",
+    "cds.queue.enabled" -> false,
+    "cds.poller.enabled" -> false,
+    "cds.queue.retryAfter" -> "1 seconds",
+    "cds.poller.initialDelay" -> "0 seconds",
+    "cds.poller.interval" -> "1 seconds",
+    "cds.authToken" -> "sometoken",
+    "microservice.services.cds.port" -> WireMockSupport.port,
     "microservice.services.tps-payments-backend.port" -> WireMockSupport.port,
     "microservice.services.merchandise-in-baggage.port" -> WireMockSupport.port,
     "sendAllToDes" -> true,

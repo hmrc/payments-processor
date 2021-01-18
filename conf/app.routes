@@ -5,3 +5,5 @@ POST        /pngr/send-update                                              pp.co
 GET         /reporting/count/:taxType/:processingState                     pp.controllers.ReportingController.count(taxType: TaxType, processingState: ProcessingStatusOps)
 GET         /reporting/:taxType                                            pp.controllers.ReportingController.getAll(taxType: TaxType)
 GET         /mib/payment-callback/:reference                               pp.controllers.MibController.paymentCallBack(reference: String)
+
+POST        /cds/send-notification                                         pp.controllers.CdsController.sendPaymentUpdateToCds()

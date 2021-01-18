@@ -19,29 +19,30 @@ package pp.controllers
 import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.api.{Configuration, Logger}
-import pp.config.MibOpsQueueConfig
-import pp.connectors.MibConnector
-import pp.controllers.retries.MibRetries
-import pp.services.MibOpsService
+import pp.config.CdsOpsQueueConfig
+import pp.connectors.CdsConnector
+import pp.controllers.retries.CdsRetries
+import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest}
+import pp.services.CdsOpsService
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
-class MibController @Inject() (
+class CdsController @Inject() (
     cc:                    ControllerComponents,
-    val mibOpsQueueConfig: MibOpsQueueConfig,
+    val cdsOpsQueueConfig: CdsOpsQueueConfig,
     val configuration:     Configuration,
-    val mibOpsService:     MibOpsService,
-    val mibConnector:      MibConnector
+    val cdsOpsService:     CdsOpsService,
+    val cdsConnector:      CdsConnector
 
 )
-  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with MibRetries {
+  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with CdsRetries with HeaderValidator {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def paymentCallBack(reference: String): Action[AnyContent] = Action.async { implicit request =>
-    logger.debug("sendStatusUpdateToMib")
-    sendPaymentUpdateToMib(reference)
+  def sendPaymentUpdateToCds(): Action[NotificationCds] = Action.async(parse.json[NotificationCds]) { implicit request =>
+    logger.debug("sendStatusUpdateToCds")
+    sendPaymentUpdateToCds(request.body)
   }
 }
 

@@ -4,10 +4,10 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 
-object Pngr {
+object Cds {
 
-  val endpoint = "/bc-passengers-declarations/update-payment"
-  val errorMessage = "pngr failed"
+  val endpoint = "/accounts/notifyimmediatepayment/v1"
+  val errorMessage = "cds failed"
   val successMessage = "ok"
 
   def statusUpdateSucceeds(delayMillis: Int = 0, sequence: Int = 0): StubMapping =
@@ -19,7 +19,7 @@ object Pngr {
   def statusUpdateRespondsWith(status: Int, responseBody: String, delayMillis: Int = 0, sequence: Int = 0): StubMapping = {
     stubFor(
       post(urlEqualTo(endpoint))
-        .inScenario("pngr")
+        .inScenario("cds")
         .whenScenarioStateIs(WireMockStub.state(sequence))
         .willReturn(aResponse()
           .withStatus(status)
@@ -29,5 +29,4 @@ object Pngr {
 
     )
   }
-
 }
