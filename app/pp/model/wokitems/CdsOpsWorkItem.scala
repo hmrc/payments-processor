@@ -31,7 +31,7 @@ case class CdsOpsWorkItem(
     notificationCds: NotificationCds) extends WorkItemFields {
 
   override def toString: String =
-    s"CdsWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference}"
+    s"CdsWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference, notification: ${notificationCds.toString}"
 }
 
 object CdsOpsWorkItem {
