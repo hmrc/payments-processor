@@ -31,8 +31,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class CdsConnector @Inject() (httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
-  private val serviceURL: String = s"${servicesConfig.baseUrl("microservices.services.cds")}"
-  private val authorizationToken: String = servicesConfig.getString("microservices.services.cds.authToken")
+  private val serviceURL: String = s"${servicesConfig.baseUrl("microservice.services.cds")}"
+  private val authorizationToken: String = servicesConfig.getString("microservice.services.cds.authToken")
 
   def paymentCallback(notificationCds: NotificationCds): Future[HttpResponse] = {
     val url: String = s"$serviceURL/accounts/notifyimmediatepayment/v1"
