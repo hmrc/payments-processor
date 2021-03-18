@@ -16,12 +16,12 @@
 
 package support
 
-import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest._
+import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
+import org.scalatest.matchers.must.Matchers
 
 trait RichMatchers
   extends Matchers
-  with DiagrammedAssertions
   with TryValues
   with EitherValues
   with OptionValues

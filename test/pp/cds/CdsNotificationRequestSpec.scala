@@ -16,6 +16,7 @@
 
 package pp.cds
 
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json
 import pp.model.cds.NotificationCds
 import support.PaymentsProcessData.{cdsStatusUpdateRequest, cdsStatusUpdateRequestJson}

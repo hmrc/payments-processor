@@ -16,17 +16,18 @@
 
 package pp.controllers
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.api.{Configuration, Logger}
 import pp.config.MibOpsQueueConfig
 import pp.connectors.MibConnector
 import pp.controllers.retries.MibRetries
 import pp.services.MibOpsService
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class MibController @Inject() (
     cc:                    ControllerComponents,
     val mibOpsQueueConfig: MibOpsQueueConfig,

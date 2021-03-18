@@ -24,7 +24,7 @@ import pp.connectors.PngrConnector
 import pp.controllers.retries.PngrRetries
 import pp.model.pngrs.PngrStatusUpdateRequest
 import pp.services.PngrService
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 

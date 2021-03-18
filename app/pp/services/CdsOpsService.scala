@@ -16,20 +16,19 @@
 
 package pp.services
 
-import java.time.{Clock, LocalDateTime, ZoneId}
-
-import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.mvc.Results
 import pp.config.CdsOpsQueueConfig
 import pp.connectors.CdsConnector
-import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest}
+import pp.model.cds.NotificationCds
 import pp.model.wokitems.CdsOpsWorkItem
 import pp.model.{Origins, TaxTypes}
 import pp.scheduling.cds.CdsOpsMongoRepo
 import uk.gov.hmrc.workitem.WorkItem
 
+import java.time.{Clock, LocalDateTime, ZoneId}
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

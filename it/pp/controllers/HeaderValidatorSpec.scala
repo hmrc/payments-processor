@@ -16,6 +16,7 @@
 
 package pp.controllers
 
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

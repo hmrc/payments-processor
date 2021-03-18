@@ -19,10 +19,9 @@ package pp.connectors
 import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Logger}
 import pp.model.chargeref.ChargeRefNotificationDesRequest
-import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, Authorization}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.ExecutionContext
 

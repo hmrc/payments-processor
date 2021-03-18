@@ -47,7 +47,7 @@ object PaymentsProcessData {
   val cdsStatusUpdateRequest: NotificationCds = NotificationCds(
     NotifyImmediatePaymentRequest(
       requestCommon = RequestCommon(
-        receiptDate = "somedate", acknowledgementReference = "1234-5678-9012", regime = "CDS", originatingSystem = "OPS"
+        receiptDate              = "somedate", acknowledgementReference = "1234-5678-9012", regime = "CDS", originatingSystem = "OPS"
       ),
       requestDetail = RequestDetail(
         paymentReference = "CDSI191234567890", amountPaid = "1000", declarationID = "1234567890", unitType = "GBP"

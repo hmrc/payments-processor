@@ -25,7 +25,7 @@ import pp.scheduling.cds.CdsOpsMongoRepo
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import pp.scheduling.mib.MibOpsMongoRepo
 import pp.scheduling.pngrs.PngrMongoRepo
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 @Singleton

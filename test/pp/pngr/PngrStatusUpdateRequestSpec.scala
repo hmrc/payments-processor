@@ -16,6 +16,7 @@
 
 package pp.pngr
 
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json
 import pp.model.pngrs.PngrStatusUpdateRequest
 import support.PaymentsProcessData.{pngrStatusUpdateRequest, pngrStatusUpdateRequestJson}

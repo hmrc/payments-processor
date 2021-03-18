@@ -24,7 +24,7 @@ import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.{PaymentItemId, TaxType, TaxTypes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 

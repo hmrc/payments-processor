@@ -19,9 +19,10 @@ package pp.scheduling
 import java.time.ZoneId.systemDefault
 import java.time.{Clock, Instant, ZoneId}
 import java.util.TimeZone
-
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone.forTimeZone
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+
 import pp.scheduling.DateTimeHelpers._
 import support.UnitSpec
 

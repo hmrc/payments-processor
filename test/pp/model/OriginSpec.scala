@@ -16,6 +16,7 @@
 
 package pp.model
 
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.JsString
 import play.api.libs.json.Json.toJson
 import pp.model.Origins.{OPS, PCI_PAL}

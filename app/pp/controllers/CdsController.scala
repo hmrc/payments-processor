@@ -16,18 +16,19 @@
 
 package pp.controllers
 
-import javax.inject.Inject
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.{Action, ControllerComponents}
 import play.api.{Configuration, Logger}
 import pp.config.CdsOpsQueueConfig
 import pp.connectors.CdsConnector
 import pp.controllers.retries.CdsRetries
-import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest}
+import pp.model.cds.NotificationCds
 import pp.services.CdsOpsService
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class CdsController @Inject() (
     cc:                    ControllerComponents,
     val cdsOpsQueueConfig: CdsOpsQueueConfig,

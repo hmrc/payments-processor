@@ -20,7 +20,7 @@ import play.api.Logger
 import play.api.mvc.Results
 import pp.config.CdsOpsQueueConfig
 import pp.connectors.CdsConnector
-import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest}
+import pp.model.cds.NotificationCds
 import pp.services.CdsOpsService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
 import uk.gov.hmrc.workitem.ToDo

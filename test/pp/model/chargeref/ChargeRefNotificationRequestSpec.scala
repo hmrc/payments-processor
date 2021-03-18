@@ -16,6 +16,7 @@
 
 package pp.model.chargeref
 
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json.toJson
 import support.PaymentsProcessData.{chargeRefNotificationRequestJson, p800ChargeRefNotificationRequest}
 import support.UnitSpec
