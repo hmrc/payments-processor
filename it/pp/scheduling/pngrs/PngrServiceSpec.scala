@@ -2,7 +2,6 @@ package pp.scheduling.pngrs
 
 
 import java.time.{Clock, LocalDateTime}
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
 import pp.config.PngrsQueueConfig

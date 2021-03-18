@@ -32,12 +32,12 @@ import uk.gov.hmrc.workitem.WorkItem
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class MibOpsService @Inject()(
-                               val repo: MibOpsMongoRepo,
-                               val queueConfig: MibOpsQueueConfig,
-                               mibConnector: MibConnector,
-                               val clock: Clock,
-                             )(implicit val executionContext: ExecutionContext) extends WorkItemService[MibOpsWorkItem] with Results {
+class MibOpsService @Inject() (
+    val repo:        MibOpsMongoRepo,
+    val queueConfig: MibOpsQueueConfig,
+    mibConnector:    MibConnector,
+    val clock:       Clock
+)(implicit val executionContext: ExecutionContext) extends WorkItemService[MibOpsWorkItem] with Results {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -51,16 +51,14 @@ class MibOpsService @Inject()(
 
   }
 
-
   def sendMibOpsToWorkItemRepo(reference: String): Future[WorkItem[MibOpsWorkItem]] = {
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
     val workItem = MibOpsWorkItem(time, availableUntil(time), TaxTypes.mib, Origins.OPS,
-      reference)
+                                  reference)
     repo.pushNew(workItem, jodaLocalDateTime)
 
   }
-
 
 }

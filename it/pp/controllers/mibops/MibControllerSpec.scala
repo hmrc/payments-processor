@@ -9,7 +9,7 @@ import support.PaymentsProcessData.mibReference
 import support.{ItSpec, Mib}
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
-trait MibControllerSpec extends ItSpec{
+trait MibControllerSpec extends ItSpec {
 
   private lazy val repo = injector.instanceOf[MibOpsMongoRepo]
 

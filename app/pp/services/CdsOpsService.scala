@@ -32,12 +32,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CdsOpsService @Inject()(
-                               val repo: CdsOpsMongoRepo,
-                               val queueConfig: CdsOpsQueueConfig,
-                               cdsConnector: CdsConnector,
-                               val clock: Clock,
-                             )(implicit val executionContext: ExecutionContext) extends WorkItemService[CdsOpsWorkItem] with Results {
+class CdsOpsService @Inject() (
+    val repo:        CdsOpsMongoRepo,
+    val queueConfig: CdsOpsQueueConfig,
+    cdsConnector:    CdsConnector,
+    val clock:       Clock
+)(implicit val executionContext: ExecutionContext) extends WorkItemService[CdsOpsWorkItem] with Results {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -51,7 +51,6 @@ class CdsOpsService @Inject()(
 
   }
 
-
   def sendCdsOpsToWorkItemRepo(notificationCds: NotificationCds): Future[WorkItem[CdsOpsWorkItem]] = {
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
@@ -60,6 +59,5 @@ class CdsOpsService @Inject()(
     repo.pushNew(workItem, jodaLocalDateTime)
 
   }
-
 
 }

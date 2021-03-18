@@ -31,7 +31,7 @@ object AppDependencies {
 
   val test = Seq(
     "uk.gov.hmrc"            %% "bootstrap-backend-play-27" % "3.3.0"  % Test,
-    "org.scalatest"          %% "scalatest"                 % "3.2.1"  % Test,
+    "org.scalatest"          %% "scalatest"                 % "3.0.8"  % Test,
     "com.typesafe.play"      %% "play-test"                 % current  % Test,
     "org.pegdown"            %  "pegdown"                   % "1.6.0"  % Test,
     "org.scalatestplus.play" %% "scalatestplus-play"        % "3.1.2"  % Test,
@@ -40,7 +40,7 @@ object AppDependencies {
 
   val itTest = Seq(
     "uk.gov.hmrc"            %% "bootstrap-backend-play-27" % "3.3.0"  % "it",
-    "org.scalatest"          %% "scalatest"                 % "3.2.1"  % "it",
+    "org.scalatest"          %% "scalatest"                 % "3.0.8"  % "it",
     "com.typesafe.play"      %% "play-test"                 % current  % "it",
     "org.pegdown"            %  "pegdown"                   % "1.6.0"  % "it",
     "org.scalatestplus.play" %% "scalatestplus-play"        % "3.1.2"  % "it",

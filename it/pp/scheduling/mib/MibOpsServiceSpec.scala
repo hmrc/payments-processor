@@ -1,7 +1,6 @@
 package pp.scheduling.mib
 
 import java.time.{Clock, LocalDateTime}
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
 import pp.config.MibOpsQueueConfig

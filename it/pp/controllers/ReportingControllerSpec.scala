@@ -1,7 +1,6 @@
 package pp.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.http.Status
 import play.api.libs.json.Json
 import pp.model.ProcessingStatusOpsValues.Failed
@@ -14,7 +13,7 @@ import support.{Des, ItSpec, Mib, Pngr}
 import support.PaymentsProcessData.{p800ChargeRefNotificationRequest, pngrStatusUpdateRequest}
 import support.PaymentsProcessData.mibReference
 
-class ReportingControllerSpec extends ItSpec{
+class ReportingControllerSpec extends ItSpec {
   private lazy val repoPngr = injector.instanceOf[PngrMongoRepo]
   private lazy val repoChargeRef = injector.instanceOf[ChargeRefNotificationMongoRepo]
   private lazy val mibOpsRepo = injector.instanceOf[MibOpsMongoRepo]

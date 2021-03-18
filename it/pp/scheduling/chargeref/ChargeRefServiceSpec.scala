@@ -17,7 +17,6 @@
 package pp.scheduling.chargeref
 
 import java.time.Clock
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
 import pp.config.ChargeRefQueueConfig

@@ -16,16 +16,16 @@
 
 package support
 
-import javax.inject.{Inject, Singleton}
 import pp.connectors.ResponseReadsThrowingException
-import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest}
-import pp.model.{ProcessingStatusOps, TaxType}
+import pp.model.cds.NotificationCds
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pngrs.PngrStatusUpdateRequest
+import pp.model.{ProcessingStatusOps, TaxType}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
