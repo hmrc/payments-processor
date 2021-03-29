@@ -8,20 +8,19 @@ import play.api.http.Status
 
 object Mib {
 
-  def endpoint(reference: String) = s"/declare-commercial-goods/payment-callback/$reference"
-
+  val endpoint = "/declare-commercial-goods/payment-callback"
   val errorMessage = "mib failed"
   val successMessage = "ok"
 
-  def statusUpdateSucceeds(delayMillis: Int = 0, sequence: Int = 0, reference: String): StubMapping =
-    statusUpdateRespondsWith(status = Status.OK, responseBody = successMessage, delayMillis = delayMillis, sequence = sequence, reference)
+  def statusUpdateSucceeds(delayMillis: Int = 0, sequence: Int = 0): StubMapping =
+    statusUpdateRespondsWith(status = Status.OK, responseBody = successMessage, delayMillis = delayMillis, sequence = sequence)
 
-  def statusUpdateFailsWithAnInternalServerError(delayMillis: Int = 0, sequence: Int = 0, reference: String): StubMapping =
-    statusUpdateRespondsWith(Status.INTERNAL_SERVER_ERROR, errorMessage, delayMillis, sequence, reference)
+  def statusUpdateFailsWithAnInternalServerError(delayMillis: Int = 0, sequence: Int = 0): StubMapping =
+    statusUpdateRespondsWith(Status.INTERNAL_SERVER_ERROR, errorMessage, delayMillis, sequence)
 
-  def statusUpdateRespondsWith(status: Int, responseBody: String, delayMillis: Int = 0, sequence: Int = 0, reference: String): StubMapping = {
+  def statusUpdateRespondsWith(status: Int, responseBody: String, delayMillis: Int = 0, sequence: Int = 0): StubMapping = {
     stubFor(
-      get(urlEqualTo(endpoint(reference)))
+      post(urlEqualTo(endpoint))
         .inScenario("mib")
         .whenScenarioStateIs(WireMockStub.state(sequence))
         .willReturn(aResponse()

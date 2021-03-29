@@ -24,6 +24,7 @@ import pp.connectors.{MibConnector, PngrConnector, TpsPaymentsBackendConnector}
 import pp.controllers.retries.{ChargeRefDesRetries, MibRetries, PngrRetries}
 import pp.model.StatusTypes.validated
 import pp.model.chargeref.ChargeRefNotificationRequest
+import pp.model.mods.{AmendmentReference, ModsPaymentCallBackRequest}
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest.{toChargeRefNotificationRequest, toPngrStatusUpdateRequest}
 import pp.model.{TaxType, TaxTypes}
@@ -69,7 +70,13 @@ class ChargeRefController @Inject() (
 
       def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
         if (taxType == TaxTypes.mib) {
-          sendPaymentUpdateToMib(notification.TaxReference)
+          for {
+            amendmentRef <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
+            _ = Logger(this.getClass).info(s"AMENDMENTREF FFS!!: " + amendmentRef.toString)
+            modsPayload = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef)
+            statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
+            _ = Logger(this.getClass).info(s"MODSRWQUEST: ${modsPayload}")
+          } yield statusFromPaymentUpdate
         } else Future successful Ok
 
     for {
@@ -82,7 +89,7 @@ class ChargeRefController @Inject() (
   }
 
   def sendCardPaymentsNotification(): Action[ChargeRefNotificationRequest] = Action.async(parse.json[ChargeRefNotificationRequest]) { implicit request =>
-    logger.debug("sendCardPaymentsNotification")
+    logger.info("sendCardPaymentsNotification")
     sendCardPaymentsNotification(request.body)
   }
 

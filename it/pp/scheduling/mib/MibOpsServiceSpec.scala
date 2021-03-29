@@ -1,7 +1,6 @@
 package pp.scheduling.mib
 
 import java.time.{Clock, LocalDateTime}
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
 import pp.config.MibOpsQueueConfig
@@ -9,7 +8,7 @@ import pp.connectors.MibConnector
 import pp.model.wokitems.MibOpsWorkItem
 import pp.model.{Origins, TaxTypes}
 import pp.services.MibOpsService
-import support.PaymentsProcessData.mibReference
+import support.PaymentsProcessData.{mibReference}
 import support.{ItSpec, Mib, PaymentsProcessData}
 import uk.gov.hmrc.workitem.{ToDo, WorkItem}
 
@@ -23,7 +22,7 @@ class MibOpsServiceSpec extends ItSpec {
   val availableUntilInPast: LocalDateTime = time.minusSeconds(60)
   val availUntilInFuture: LocalDateTime = time.plusSeconds(60)
 
-  val workItem: MibOpsWorkItem = MibOpsWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference")
+  val workItem: MibOpsWorkItem = MibOpsWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference", PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef)
 
   override def configMap: Map[String, Any] =
     super.configMap
@@ -49,7 +48,7 @@ class MibOpsServiceSpec extends ItSpec {
   "sendMibOpsToWorkItemRepo" should {
     "add a notification to the queue" in {
       numberOfQueuedNotifications shouldBe 0
-      val workItem = mibOpsService.sendMibOpsToWorkItemRepo(PaymentsProcessData.mibReference).futureValue
+      val workItem = mibOpsService.sendMibOpsToWorkItemRepo(PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef).futureValue
       numberOfQueuedNotifications shouldBe 1
 
       workItem.item.taxType shouldBe TaxTypes.mib
@@ -63,11 +62,11 @@ class MibOpsServiceSpec extends ItSpec {
 
     "mark workitem as permanently failed" when {
       "the first mib fails and the second one fails also, when available until is before created On" in {
-        Mib.statusUpdateFailsWithAnInternalServerError(reference = mibReference)
-        Mib.statusUpdateFailsWithAnInternalServerError(2000, 1, reference = mibReference)
+        Mib.statusUpdateFailsWithAnInternalServerError()
+        Mib.statusUpdateFailsWithAnInternalServerError(2000, 1)
 
         numberOfQueuedNotifications shouldBe 0
-        val workItem = mibOpsService.sendMibOpsToWorkItemRepo(mibReference).futureValue
+        val workItem = mibOpsService.sendMibOpsToWorkItemRepo(PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef).futureValue
         workItem.item.availableUntil.isAfter(workItem.item.createdOn) shouldBe true
         numberOfQueuedNotifications shouldBe 1
         eventually {

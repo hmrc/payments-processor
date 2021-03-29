@@ -17,19 +17,22 @@
 package pp.model.wokitems
 
 import java.time.LocalDateTime
-
 import play.api.libs.json._
+import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.{Origin, TaxType, WorkItemFields}
 
 case class MibOpsWorkItem(
-    createdOn:      LocalDateTime,
-    availableUntil: LocalDateTime,
-    taxType:        TaxType,
-    origin:         Origin,
-    reference:      String) extends WorkItemFields {
+    createdOn:                  LocalDateTime,
+    availableUntil:             LocalDateTime,
+    taxType:                    TaxType,
+    origin:                     Origin,
+    reference:                  String,
+    modsPaymentCallBackRequest: ModsPaymentCallBackRequest) extends WorkItemFields {
 
   override def toString: String =
-    s"MibWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference}"
+    s"MibWorkItem for chargeReference ${modsPaymentCallBackRequest.chargeReference} ... " +
+      s"{createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, " +
+      s"reference: $reference, amendmentReference: ${modsPaymentCallBackRequest.amendmentReference}}"
 }
 
 object MibOpsWorkItem {

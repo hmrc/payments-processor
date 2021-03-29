@@ -18,8 +18,10 @@ package pp.connectors
 
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
+import play.api.libs.json.JsValue
 import play.api.mvc.Request
 import pp.connectors.ResponseReadsThrowingException.readResponse
+import pp.model.mods.AmendmentReference
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.{PaymentItemId, TaxType, TaxTypes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -48,4 +50,12 @@ class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClient, servicesCon
       .map { taxTypeUpperCase =>
         TaxTypes.forCode(taxTypeUpperCase.toLowerCase).getOrElse(throw new RuntimeException(s"Unknown tax type $taxTypeUpperCase"))
       }
+
+  def getModsAmendmentReference(paymentItemId: PaymentItemId)(implicit request: Request[_], hc: HeaderCarrier): Future[Option[Int]] = {
+    val url: String = s"$serviceURL/payment-items/${paymentItemId.value}/mods-amendment-ref"
+    logger.info(s"""calling tps-payments-modsAmendmentRef with url $url""")
+    httpClient.GET[HttpResponse](url).map(_.json)
+      .map(_.asOpt[Int])
+  }
+
 }

@@ -19,6 +19,7 @@ package support
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.Json.toJson
+import pp.model.mods.{AmendmentReference, ModsPaymentCallBackRequest}
 import pp.model.{PaymentItemId, TaxType}
 
 object TpsPaymentsBackend {
@@ -31,6 +32,7 @@ object TpsPaymentsBackend {
   val successMessage = "ok"
 
   def getTaxTypeEndpoint(paymentItemId: PaymentItemId) = s"$basePath/payment-items/${paymentItemId.value}/tax-type"
+  def getModsAmendmentRefEndpoint(paymentItemId: PaymentItemId) = s"$basePath/payment-items/${paymentItemId.value}/mods-amendment-ref"
 
   def tpsUpdateOk: StubMapping = updateTps(200, successMessage)
 
@@ -50,4 +52,13 @@ object TpsPaymentsBackend {
 
   def getTaxTypeNotFound(paymentItemId: PaymentItemId): StubMapping =
     stubFor(get(urlEqualTo(getTaxTypeEndpoint(paymentItemId))).willReturn(aResponse().withStatus(404)))
+
+  def getAmendmentRefOk(paymentItemId: PaymentItemId, modsPaymentCallBackRequest: ModsPaymentCallBackRequest): StubMapping = stubFor(
+    get(urlEqualTo(getModsAmendmentRefEndpoint(paymentItemId)))
+      .willReturn(aResponse()
+        .withStatus(200)
+        .withBody(toJson(modsPaymentCallBackRequest).toString())))
+
+  def getAmendmentRefNotFound(paymentItemId: PaymentItemId): StubMapping =
+    stubFor(get(urlEqualTo(getModsAmendmentRefEndpoint(paymentItemId))).willReturn(aResponse().withStatus(404)))
 }

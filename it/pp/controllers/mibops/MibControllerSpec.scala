@@ -1,11 +1,11 @@
 package pp.controllers.mibops
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{getRequestedFor, urlEqualTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import org.scalatest.Assertion
 import play.api.libs.json.Json
 import pp.scheduling.mib.MibOpsMongoRepo
-import support.PaymentsProcessData.mibReference
+import support.PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef
 import support.{ItSpec, Mib}
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
@@ -26,7 +26,7 @@ trait MibControllerSpec extends ItSpec{
     def verifySuccess(response: HttpResponse
                      ): Assertion = {
       response.status shouldBe 200
-      verify(1, getRequestedFor(urlEqualTo(Mib.endpoint(mibReference))))
+      verify(1, postRequestedFor(urlEqualTo(Mib.endpoint)))
       numberOfQueuedNotifications shouldBe 0
     }
 
@@ -34,27 +34,27 @@ trait MibControllerSpec extends ItSpec{
 
     s"return Ok for a POST to the internal endpoint /mib/payment-callback/:reference" when {
       "the Mib call succeeds with OK, status=Successful" in {
-        Mib.statusUpdateSucceeds(reference = mibReference)
-        verifySuccess(testConnector.mibPaymentCallBack(mibReference).futureValue)
+        Mib.statusUpdateSucceeds()
+        verifySuccess(testConnector.mibPaymentCallBack(modsPaymentCallBackRequestWithAmendmentRef).futureValue)
       }
     }
   }
 
   def aSynchronousEndpointWhenTheMibPaymentUpdateReturns4xx(): Unit = {
-    "fail without persisting to the queue for a POST to the internal endpoint /mib/payment-callback/:reference" when {
+    "fail without persisting to the queue for a POST to the internal endpoint /mib/payment-callback" when {
       "the Mib call returns 400" in {
-        Mib.statusUpdateRespondsWith(400, "", reference = mibReference)
+        Mib.statusUpdateRespondsWith(400, "")
 
-        val response = testConnector.mibPaymentCallBack(mibReference).failed.futureValue
+        val response = testConnector.mibPaymentCallBack(modsPaymentCallBackRequestWithAmendmentRef).failed.futureValue
         response.isInstanceOf[UpstreamErrorResponse] shouldBe true
 
         numberOfQueuedNotifications shouldBe 0
       }
 
       "the Mib returns 404" in {
-        Mib.statusUpdateRespondsWith(404, "",reference = mibReference)
+        Mib.statusUpdateRespondsWith(404, "")
 
-        val response = testConnector.mibPaymentCallBack(mibReference).failed.futureValue
+        val response = testConnector.mibPaymentCallBack(modsPaymentCallBackRequestWithAmendmentRef).failed.futureValue
 
         response.asInstanceOf[UpstreamErrorResponse].reportAs shouldBe 502
 

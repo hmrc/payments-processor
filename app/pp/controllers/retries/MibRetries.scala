@@ -20,6 +20,7 @@ import play.api.Logger
 import play.api.mvc.Results
 import pp.config.MibOpsQueueConfig
 import pp.connectors.MibConnector
+import pp.model.mods.ModsPaymentCallBackRequest
 import pp.services.MibOpsService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
 import uk.gov.hmrc.workitem.ToDo
@@ -35,10 +36,10 @@ trait MibRetries extends Results {
 
   implicit val executionContext: ExecutionContext
 
-  def sendPaymentUpdateToMib(reference: String): Future[Status] = {
+  def sendPaymentUpdateToMib(modsPaymentCallBackRequest: ModsPaymentCallBackRequest): Future[Status] = {
     logger.debug("sendPaymentUpdateToMib")
     mibConnector
-      .paymentCallback(reference)
+      .paymentCallback(modsPaymentCallBackRequest)
       .map(_ => Ok)
       .recoverWith {
         case e: UpstreamErrorResponse if e.statusCode == 400 =>
@@ -48,7 +49,7 @@ trait MibRetries extends Results {
         case e =>
           if (mibOpsQueueConfig.queueEnabled) {
             logger.debug("Queue enabled")
-            mibOpsService.sendMibOpsToWorkItemRepo(reference)
+            mibOpsService.sendMibOpsToWorkItemRepo(modsPaymentCallBackRequest)
               .map(
                 res => res.status match {
                   case ToDo => Ok
