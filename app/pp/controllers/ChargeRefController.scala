@@ -16,7 +16,6 @@
 
 package pp.controllers
 
-import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, ControllerComponents}
 import play.api.{Configuration, Logger}
 import pp.config.{ChargeRefQueueConfig, MibOpsQueueConfig, PngrsQueueConfig}
@@ -24,12 +23,14 @@ import pp.connectors.{MibConnector, PngrConnector, TpsPaymentsBackendConnector}
 import pp.controllers.retries.{ChargeRefDesRetries, MibRetries, PngrRetries}
 import pp.model.StatusTypes.validated
 import pp.model.chargeref.ChargeRefNotificationRequest
+import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest.{toChargeRefNotificationRequest, toPngrStatusUpdateRequest}
 import pp.model.{TaxType, TaxTypes}
 import pp.services.{ChargeRefService, MibOpsService, PngrService}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -69,7 +70,11 @@ class ChargeRefController @Inject() (
 
       def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
         if (taxType == TaxTypes.mib) {
-          sendPaymentUpdateToMib(notification.TaxReference)
+          for {
+            amendmentRef <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
+            modsPayload = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef)
+            statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
+          } yield statusFromPaymentUpdate
         } else Future successful Ok
 
     for {

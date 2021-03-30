@@ -19,6 +19,7 @@ package pp.connectors
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import pp.connectors.ResponseReadsThrowingException.readResponse
+import pp.model.mods.ModsPaymentCallBackRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -28,14 +29,14 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class MibConnector @Inject() (httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
 
-  private def serviceURL(reference: String): String = s"${servicesConfig.baseUrl("merchandise-in-baggage")}/declare-commercial-goods/payment-callback/$reference"
+  private def serviceURL: String = s"${servicesConfig.baseUrl("merchandise-in-baggage")}/declare-commercial-goods/payment-callback"
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def paymentCallback(reference: String): Future[HttpResponse] = {
-    logger.debug(s"paymentCallback with url ${serviceURL(reference)}")
+  def paymentCallback(modsPaymentCallBackRequest: ModsPaymentCallBackRequest): Future[HttpResponse] = {
+    logger.debug(s"paymentCallback with url $serviceURL")
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    httpClient.GET[HttpResponse](serviceURL(reference))
+    httpClient.POST[ModsPaymentCallBackRequest, HttpResponse](serviceURL, modsPaymentCallBackRequest)
   }
 
 }

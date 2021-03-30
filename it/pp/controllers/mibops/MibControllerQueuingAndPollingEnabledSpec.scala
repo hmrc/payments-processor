@@ -1,9 +1,9 @@
 package pp.controllers.mibops
 
-import com.github.tomakehurst.wiremock.client.WireMock.{getRequestedFor, urlEqualTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import play.api.http.Status
 import support.Mib
-import support.PaymentsProcessData.mibReference
+import support.PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef
 
 class MibControllerQueuingAndPollingEnabledSpec extends MibControllerSpec {
 
@@ -20,13 +20,13 @@ class MibControllerQueuingAndPollingEnabledSpec extends MibControllerSpec {
         "the Mib call fails with an internal server error" in {
           val delayInMilliSeconds = 10
 
-          Mib.statusUpdateFailsWithAnInternalServerError(delayInMilliSeconds, reference = mibReference)
-          Mib.statusUpdateFailsWithAnInternalServerError(delayInMilliSeconds, 1, reference = mibReference)
-          Mib.statusUpdateSucceeds(delayInMilliSeconds, 2, reference = mibReference)
+          Mib.statusUpdateFailsWithAnInternalServerError(delayInMilliSeconds)
+          Mib.statusUpdateFailsWithAnInternalServerError(delayInMilliSeconds, 1)
+          Mib.statusUpdateSucceeds(delayInMilliSeconds, 2)
 
           numberOfQueuedNotifications shouldBe 0
 
-          val response = testConnector.mibPaymentCallBack(mibReference).futureValue
+          val response = testConnector.mibPaymentCallBack(modsPaymentCallBackRequestWithAmendmentRef).futureValue
           response.status shouldBe Status.OK
           numberOfQueuedNotifications shouldBe 1
 
@@ -34,7 +34,7 @@ class MibControllerQueuingAndPollingEnabledSpec extends MibControllerSpec {
             numberOfQueuedNotifications shouldBe 0
           }
 
-          verify(3, getRequestedFor(urlEqualTo(s"/declare-commercial-goods/payment-callback/$mibReference")))
+          verify(3, postRequestedFor(urlEqualTo("/declare-commercial-goods/payment-callback")))
         }
       }
     }

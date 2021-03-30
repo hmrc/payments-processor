@@ -1,6 +1,6 @@
 package pp.controllers.chargeref
 
-import com.github.tomakehurst.wiremock.client.WireMock.{patchRequestedFor, postRequestedFor, urlEqualTo, verify, getRequestedFor}
+import com.github.tomakehurst.wiremock.client.WireMock.{patchRequestedFor, postRequestedFor, urlEqualTo, verify}
 import play.api.Logger
 import pp.model.TaxTypes
 import pp.model.TaxTypes.{mib, p800, pngr}
@@ -18,8 +18,8 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
       .updated("chargeref.poller.enabled", "true")
       .updated("pngr.queue.enabled", "true")
       .updated("pngr.poller.enabled", "true")
-      .updated("mib.queue.enabled", "true")
-      .updated("mib.poller.enabled", "true")
+      .updated("mibops.queue.enabled", "true")
+      .updated("mibops.poller.enabled", "true")
       .updated("sendAllToDes", "false")
 
 
@@ -31,8 +31,8 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
                            ): Unit = {
     response.status shouldBe 200
     verify(0, postRequestedFor(urlEqualTo(Des.endpoint)))
-    if (checkPngr)verify(1, postRequestedFor(urlEqualTo(Pngr.endpoint)))
-    if (checkMib)verify(1, getRequestedFor(urlEqualTo(Mib.endpoint("JE231111B"))))
+    if (checkPngr) verify(1, postRequestedFor(urlEqualTo(Pngr.endpoint)))
+    if (checkMib) verify(1, postRequestedFor(urlEqualTo(Mib.endpoint)))
     if (checkTpsBackend) verify(backendCount, patchRequestedFor(urlEqualTo(TpsPaymentsBackend.updateEndpoint)))
   }
 
@@ -51,9 +51,10 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
       s"status=complete, taxType = $taxType" in {
         TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
         TpsPaymentsBackend.tpsUpdateOk
+        if (taxType == TaxTypes.mib) TpsPaymentsBackend.getAmendmentRefOk(paymentItemId, modsPaymentCallBackRequestWithAmendmentRef)
         taxType match {
           case TaxTypes.pngr => Pngr.statusUpdateSucceeds()
-          case TaxTypes.mib => Mib.statusUpdateSucceeds(reference = "JE231111B")
+          case TaxTypes.mib => Mib.statusUpdateSucceeds()
           case _ => Logger.debug("Not needed")
         }
         taxType match {

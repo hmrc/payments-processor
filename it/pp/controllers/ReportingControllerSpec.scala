@@ -3,15 +3,14 @@ package pp.controllers
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.http.Status
 import play.api.libs.json.Json
-import pp.model.ProcessingStatusOpsValues.Failed
 import pp.model.Item
+import pp.model.ProcessingStatusOpsValues.Failed
 import pp.model.TaxTypes.{mib, p800, pngr}
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import pp.scheduling.mib.MibOpsMongoRepo
 import pp.scheduling.pngrs.PngrMongoRepo
-import support.{Des, ItSpec, Pngr, Mib}
-import support.PaymentsProcessData.{p800ChargeRefNotificationRequest, pngrStatusUpdateRequest}
-import support.PaymentsProcessData.mibReference
+import support.PaymentsProcessData.{modsPaymentCallBackRequestWithAmendmentRef, p800ChargeRefNotificationRequest, pngrStatusUpdateRequest}
+import support.{Des, ItSpec, Mib, Pngr}
 
 class ReportingControllerSpec extends ItSpec{
   private lazy val repoPngr = injector.instanceOf[PngrMongoRepo]
@@ -84,10 +83,10 @@ class ReportingControllerSpec extends ItSpec{
 
   "test mib reporting" in {
 
-    Mib.statusUpdateFailsWithAnInternalServerError(reference = mibReference)
+    Mib.statusUpdateFailsWithAnInternalServerError()
     numberOfQueuedNotificationsMibOps shouldBe 0
 
-    val response = testConnector.mibPaymentCallBack(mibReference).futureValue
+    val response = testConnector.mibPaymentCallBack(modsPaymentCallBackRequestWithAmendmentRef).futureValue
     response.status shouldBe Status.OK
     numberOfQueuedNotificationsMibOps shouldBe 1
     eventually {

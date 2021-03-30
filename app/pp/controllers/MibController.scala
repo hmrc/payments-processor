@@ -22,6 +22,7 @@ import play.api.{Configuration, Logger}
 import pp.config.MibOpsQueueConfig
 import pp.connectors.MibConnector
 import pp.controllers.retries.MibRetries
+import pp.model.mods.ModsPaymentCallBackRequest
 import pp.services.MibOpsService
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
@@ -39,9 +40,9 @@ class MibController @Inject() (
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def paymentCallBack(reference: String): Action[AnyContent] = Action.async { implicit request =>
+  def paymentCallBack(): Action[ModsPaymentCallBackRequest] = Action.async(parse.json[ModsPaymentCallBackRequest]) { implicit request =>
     logger.debug("sendStatusUpdateToMib")
-    sendPaymentUpdateToMib(reference)
+    sendPaymentUpdateToMib(request.body)
   }
 }
 

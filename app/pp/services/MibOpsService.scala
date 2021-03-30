@@ -17,13 +17,13 @@
 package pp.services
 
 import java.time.{Clock, LocalDateTime, ZoneId}
-
 import javax.inject.{Inject, Singleton}
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.mvc.Results
 import pp.config.MibOpsQueueConfig
 import pp.connectors.MibConnector
+import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.wokitems.MibOpsWorkItem
 import pp.model.{Origins, TaxTypes}
 import pp.scheduling.mib.MibOpsMongoRepo
@@ -41,23 +41,29 @@ class MibOpsService @Inject()(
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  //These are all specific to pngr processing
+  //These are all specific to mods processing
   def sendWorkItem(workItem: WorkItem[MibOpsWorkItem]): Future[Unit] = {
 
     logger.debug("inside sendWorkItemToMibOps")
     for {
-      _ <- mibConnector.paymentCallback(workItem.item.reference)
+      _ <- mibConnector.paymentCallback(workItem.item.modsPaymentCallBackRequest)
     } yield ()
 
   }
 
 
-  def sendMibOpsToWorkItemRepo(reference: String): Future[WorkItem[MibOpsWorkItem]] = {
+  def sendMibOpsToWorkItemRepo(modsPaymentCallBackRequest: ModsPaymentCallBackRequest): Future[WorkItem[MibOpsWorkItem]] = {
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
-    val workItem = MibOpsWorkItem(time, availableUntil(time), TaxTypes.mib, Origins.OPS,
-      reference)
+    val workItem: MibOpsWorkItem = MibOpsWorkItem(
+      createdOn = time,
+      availableUntil = availableUntil(time),
+      taxType = TaxTypes.mib,
+      origin = Origins.OPS,
+      reference = modsPaymentCallBackRequest.chargeReference,
+      modsPaymentCallBackRequest = modsPaymentCallBackRequest
+    )
     repo.pushNew(workItem, jodaLocalDateTime)
 
   }
