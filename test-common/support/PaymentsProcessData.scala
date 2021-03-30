@@ -16,21 +16,22 @@
 
 package support
 
-import java.time.Clock
-import java.time.Clock.systemUTC
-import java.time.LocalDateTime.now
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json.parse
 import pp.model.Origins.OPS
 import pp.model.StatusTypes.validated
-import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest, RequestCommon, RequestDetail}
 import pp.model.TaxTypes.{mib, p800, pngr}
-import pp.model.{chargeref, _}
+import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest, RequestCommon, RequestDetail}
 import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest}
-import pp.model.mods.{AmendmentReference, ModsPaymentCallBackRequest}
+import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import pp.model.pngrs.{PngrStatusTypes, PngrStatusUpdateRequest}
 import pp.model.wokitems.ChargeRefNotificationWorkItem
+import pp.model.{chargeref, _}
+
+import java.time.Clock
+import java.time.Clock.systemUTC
+import java.time.LocalDateTime.now
 
 object PaymentsProcessData {
 
@@ -40,8 +41,6 @@ object PaymentsProcessData {
   val chargeReferenceNumber = "XQ002610015768"
   val mibReference = "reference"
   val cdsReference = "CDSI191234567890"
-
-  val modsAmendmentRef: AmendmentReference = AmendmentReference(1)
 
   val p800PaymentItemId: PaymentItemId = PaymentItemId("p800-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val mibPaymentItemId: PaymentItemId = PaymentItemId("mib-48c978bb-64b6-4a00-a1f1-51e267d84f91")
@@ -62,7 +61,7 @@ object PaymentsProcessData {
 
   val modsPaymentCallBackRequestWithAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest(
     chargeReference    = mibReference,
-    amendmentReference = Some(modsAmendmentRef.value)
+    amendmentReference = Some(1)
   )
 
   val modsPaymentCallBackRequestWithoutAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest(

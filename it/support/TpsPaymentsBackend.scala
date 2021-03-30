@@ -19,7 +19,7 @@ package support
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.Json.toJson
-import pp.model.mods.{AmendmentReference, ModsPaymentCallBackRequest}
+import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.{PaymentItemId, TaxType}
 
 object TpsPaymentsBackend {
