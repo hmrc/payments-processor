@@ -19,6 +19,7 @@ package pp.connectors
 import play.api.Logger
 import play.api.mvc.Request
 import pp.connectors.ResponseReadsThrowingException.readResponse
+import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.{PaymentItemId, TaxType, TaxTypes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -49,11 +50,11 @@ class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClient, servicesCon
         TaxTypes.forCode(taxTypeUpperCase.toLowerCase).getOrElse(throw new RuntimeException(s"Unknown tax type $taxTypeUpperCase"))
       }
 
-  def getModsAmendmentReference(paymentItemId: PaymentItemId)(implicit request: Request[_], hc: HeaderCarrier): Future[Option[Int]] = {
+  def getModsAmendmentReference(paymentItemId: PaymentItemId)(implicit request: Request[_], hc: HeaderCarrier): Future[ModsPaymentCallBackRequest] = {
     val url: String = s"$serviceURL/payment-items/${paymentItemId.value}/mods-amendment-ref"
     logger.debug(s"""calling tps-payments-modsAmendmentRef with url $url""")
-    httpClient.GET[HttpResponse](url).map(_.json)
-      .map(_.asOpt[Int])
+    httpClient.GET[HttpResponse](url)
+      .map(_.json.as[ModsPaymentCallBackRequest])
   }
 
 }
