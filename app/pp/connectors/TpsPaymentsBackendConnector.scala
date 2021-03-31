@@ -19,7 +19,6 @@ package pp.connectors
 import play.api.Logger
 import play.api.mvc.Request
 import pp.connectors.ResponseReadsThrowingException.readResponse
-import uk.gov.hmrc.http.HttpReads.Implicits
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.{PaymentItemId, TaxType, TaxTypes}
