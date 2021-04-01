@@ -38,7 +38,7 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
 
   Seq(
     (p800PaymentItemId, p800, p800PcipalNotification, p800ChargeRefNotificationRequest),
-    (mibPaymentItemId, mib, mibPcipalNotification, mibChargeRefNotificationRequest),
+//    (mibPaymentItemId, mib, mibPcipalNotification, mibChargeRefNotificationRequest),
     (pngrPaymentItemId, pngr, pngrPcipalNotification, pngrChargeRefNotificationRequest),
      ).foreach { fixture =>
     val paymentItemId = fixture._1
