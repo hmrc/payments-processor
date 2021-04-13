@@ -32,7 +32,7 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
     response.status shouldBe 200
     verify(0, postRequestedFor(urlEqualTo(Des.endpoint)))
     if (checkPngr) verify(1, postRequestedFor(urlEqualTo(Pngr.endpoint)))
-    if (checkMib) verify(1, postRequestedFor(urlEqualTo(Mib.endpoint)))
+    if (checkMib) verify(postRequestedFor(urlEqualTo(Mib.endpoint)))
     if (checkTpsBackend) verify(backendCount, patchRequestedFor(urlEqualTo(TpsPaymentsBackend.updateEndpoint)))
   }
 
