@@ -84,7 +84,7 @@ abstract class NotificationRepo[A](
 
   def complete(id: BSONObjectID)(implicit ec: ExecutionContext): Future[Boolean] = {
     val selector = JsObject(
-      Seq("_id" -> Json.toJson(id)(ReactiveMongoFormats.objectIdFormats), "status" -> Json.toJson(InProgress)))
+      Seq("_id" -> Json.toJson(id)(ReactiveMongoFormats.objectIdFormats), "status" -> Json.toJson(InProgress.toString)))
     collection.delete().one(selector).map(_.n > 0)
   }
 

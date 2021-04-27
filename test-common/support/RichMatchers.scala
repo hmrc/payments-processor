@@ -21,7 +21,6 @@ import org.scalatest._
 
 trait RichMatchers
   extends Matchers
-  with DiagrammedAssertions
   with TryValues
   with EitherValues
   with OptionValues

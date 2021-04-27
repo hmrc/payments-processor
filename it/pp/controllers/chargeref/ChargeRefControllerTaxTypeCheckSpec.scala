@@ -39,8 +39,8 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
   Seq(
     (p800PaymentItemId, p800, p800PcipalNotification, p800ChargeRefNotificationRequest),
     (mibPaymentItemId, mib, mibPcipalNotification, mibChargeRefNotificationRequest),
-    (pngrPaymentItemId, pngr, pngrPcipalNotification, pngrChargeRefNotificationRequest),
-     ).foreach { fixture =>
+    (pngrPaymentItemId, pngr, pngrPcipalNotification, pngrChargeRefNotificationRequest)
+  ).foreach { fixture =>
     val paymentItemId = fixture._1
     val taxType = fixture._2
     val pcipalNotification = fixture._3
@@ -55,7 +55,7 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
         taxType match {
           case TaxTypes.pngr => Pngr.statusUpdateSucceeds()
           case TaxTypes.mib => Mib.statusUpdateSucceeds()
-          case _ => Logger.debug("Not needed")
+          case _ => Logger(this.getClass).debug("Not needed")
         }
         taxType match {
           case TaxTypes.mib => verifySuccess(testConnector.sendCardPayments(pcipalNotification).futureValue, checkTpsBackend = true, checkMib = true)

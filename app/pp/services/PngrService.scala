@@ -33,17 +33,17 @@ import uk.gov.hmrc.workitem.WorkItem
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PngrService @Inject()(
-                             val repo: PngrMongoRepo,
-                             val queueConfig: PngrsQueueConfig,
-                             pngrConnector: PngrConnector,
-                             val clock: Clock,
-                           )(implicit val executionContext: ExecutionContext) extends WorkItemService[PngrWorkItem] with Results {
+class PngrService @Inject() (
+    val repo:        PngrMongoRepo,
+    val queueConfig: PngrsQueueConfig,
+    pngrConnector:   PngrConnector,
+    val clock:       Clock
+)(implicit val executionContext: ExecutionContext) extends WorkItemService[PngrWorkItem] with Results {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   //These are all specific to pngr processing
-  def sendWorkItem(workItem: WorkItem[PngrWorkItem]) : Future[Unit] = {
+  def sendWorkItem(workItem: WorkItem[PngrWorkItem]): Future[Unit] = {
 
     logger.debug("inside sendWorkItemToPngr")
     val statusUpdate = PngrStatusUpdateRequest(workItem.item.reference, workItem.item.status)
@@ -53,17 +53,14 @@ class PngrService @Inject()(
 
   }
 
-
-   def sendPngrToWorkItemRepo(pngrStatusUpdate: PngrStatusUpdateRequest): Future[WorkItem[PngrWorkItem]] = {
+  def sendPngrToWorkItemRepo(pngrStatusUpdate: PngrStatusUpdateRequest): Future[WorkItem[PngrWorkItem]] = {
     logger.debug("inside sendCardPaymentsNotificationAsync")
-     val time = LocalDateTime.now(clock)
+    val time = LocalDateTime.now(clock)
     val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
     val workItem = wokitems.PngrWorkItem(time, availableUntil(time), TaxTypes.pngr, Origins.PCI_PAL,
-      pngrStatusUpdate.reference, pngrStatusUpdate.status)
+                                         pngrStatusUpdate.reference, pngrStatusUpdate.status)
     repo.pushNew(workItem, jodaLocalDateTime)
 
   }
-
-
 
 }

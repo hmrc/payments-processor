@@ -1,6 +1,8 @@
 import sbt.Compile
 import sbt.Keys.compile
-import wartremover.{Wart, wartremoverErrors, wartremoverWarnings}
+import wartremover.Wart
+import wartremover.WartRemover.autoImport.wartremoverErrors
+import wartremover.WartRemover.autoImport.wartremoverWarnings
 
 object  WartRemoverSettings {
 

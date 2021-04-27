@@ -19,7 +19,7 @@ package pp.controllers
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
+import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex

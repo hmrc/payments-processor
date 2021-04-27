@@ -25,7 +25,7 @@ import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pngrs.PngrStatusUpdateRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
