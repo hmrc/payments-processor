@@ -19,12 +19,11 @@ package pp.connectors
 import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Logger}
 import pp.model.chargeref.ChargeRefNotificationDesRequest
-import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpReads}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DesConnector @Inject() (
@@ -45,7 +44,7 @@ class DesConnector @Inject() (
   private val desHeaderCarrier: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(s"Bearer $authorizationToken")))
     .withExtraHeaders("Environment" -> serviceEnvironment, "OriginatorID" -> "MDTP")
 
-  def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest) = {
+  def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[Unit] = {
     logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
     implicit val hc: HeaderCarrier = desHeaderCarrier
     val sendChargeRefUrl: String = s"$serviceURL$chargeref"
