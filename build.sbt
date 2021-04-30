@@ -67,3 +67,4 @@ lazy val microservice = Project(appName, file("."))
       "-Ypartial-unification" //required by cats
     )
   )
+  .settings(scalacOptions in Compile -= "utf8")
