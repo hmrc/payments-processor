@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import pp.model.{Item, ProcessingStatusOps, TaxType, TaxTypes}
+import pp.model.{Item, ProcessingStatusOps, TaxType}
 import pp.scheduling.cds.CdsOpsMongoRepo
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import pp.scheduling.mib.MibOpsMongoRepo
@@ -44,13 +44,13 @@ class ReportingController @Inject() (
     logger.debug("count")
     taxType match {
 
-      case TaxTypes.pngr =>
+      case TaxType.pngr =>
         pngrMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
-      case TaxTypes.p800 =>
+      case TaxType.p800 =>
         chargeRefNotificationMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
-      case TaxTypes.mib =>
+      case TaxType.mib =>
         mibOpsMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
-      case TaxTypes.cds =>
+      case TaxType.cds =>
         cdsOpsMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case _ => throw new RuntimeException(s"taxType $taxType not supported, processingState $processingState not supported")
     }
@@ -59,22 +59,22 @@ class ReportingController @Inject() (
   def getAll(taxType: TaxType): Action[AnyContent] = Action.async { implicit request =>
     logger.debug("count")
     taxType match {
-      case TaxTypes.pngr =>
+      case TaxType.pngr =>
         for {
           m <- pngrMongoRepo.findAll()
           i = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
         } yield Ok(Json.toJson(i))
-      case TaxTypes.p800 =>
+      case TaxType.p800 =>
         for {
           m <- chargeRefNotificationMongoRepo.findAll()
           i = m.map(m2 => Item(m2.item.createdOn, m2.item.chargeRefNumber, m2.failureCount, m2.status.toString))
         } yield Ok(Json.toJson(i))
-      case TaxTypes.mib =>
+      case TaxType.mib =>
         for {
           m <- mibOpsMongoRepo.findAll()
           i = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
         } yield Ok(Json.toJson(i))
-      case TaxTypes.cds =>
+      case TaxType.cds =>
         for {
           allRecords <- cdsOpsMongoRepo.findAll()
           allRecordsAsItems = allRecords.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
