@@ -21,12 +21,12 @@ import play.api.{Configuration, Logger}
 import pp.config.{ChargeRefQueueConfig, MibOpsQueueConfig, PngrsQueueConfig}
 import pp.connectors.{MibConnector, PngrConnector, TpsPaymentsBackendConnector}
 import pp.controllers.retries.{ChargeRefDesRetries, MibRetries, PngrRetries}
-import pp.model.StatusTypes.validated
+import pp.model.StatusType.validated
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest.{toChargeRefNotificationRequest, toPngrStatusUpdateRequest}
-import pp.model.{TaxType, TaxTypes}
+import pp.model.TaxType
 import pp.services.{ChargeRefService, MibOpsService, PngrService}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -64,12 +64,12 @@ class ChargeRefController @Inject() (
       }
 
       def sendStatusUpdateToPngrIfConfigured(taxType: TaxType): Future[Status] =
-        if (taxType == TaxTypes.pngr) {
+        if (taxType == TaxType.pngr) {
           sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
         } else Future successful Ok
 
       def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
-        if (taxType == TaxTypes.mib && notification.Status == validated) {
+        if (taxType == TaxType.mib && notification.Status == validated) {
           for {
             amendmentRef: ModsPaymentCallBackRequest <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
             modsPayload = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef.amendmentReference)
