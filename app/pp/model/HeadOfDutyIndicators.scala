@@ -16,23 +16,13 @@
 
 package pp.model
 
-import enumeratum._
-import play.api.libs.json.Format
-import play.api.mvc.{PathBindable, QueryStringBindable}
-import pp.controllers.ValueClassBinder._
-import pp.jsonext.EnumFormat
+import enumeratum.{PlayJsonEnum, Enum, EnumEntry}
 
 import scala.collection.immutable
 
-object HeadOfDutyIndicator {
-  implicit val format: Format[HeadOfDutyIndicator] = EnumFormat(HeadOfDutyIndicators)
-  implicit val pathBinder: QueryStringBindable[HeadOfDutyIndicator] = bindableA(_.toString)
-  implicit val headOfDutyBinder: PathBindable[HeadOfDutyIndicator] = valueClassBinder(_.toString)
-}
-
 sealed trait HeadOfDutyIndicator extends EnumEntry
 
-object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
+object HeadOfDutyIndicator extends Enum[HeadOfDutyIndicator] with PlayJsonEnum[HeadOfDutyIndicator] {
   def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString == code)
 
   case object B extends HeadOfDutyIndicator
