@@ -34,7 +34,9 @@ package support
 
 import com.google.inject.AbstractModule
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.inject.Injector
@@ -50,7 +52,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
  */
 
 trait ItSpec
-  extends WordSpec
+  extends AnyWordSpec
   with RichMatchers
   with BeforeAndAfterEach
   with GuiceOneServerPerSuite
