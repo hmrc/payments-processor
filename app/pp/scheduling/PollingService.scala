@@ -45,13 +45,13 @@ abstract class PollingService[P <: WorkItemFields](val actorSystem:     ActorSys
     workItemService.retrieveWorkItems.map(items => Result(s"$name: Processed ${items.size} items"))
 
   def callExecutor(name: String)(implicit ec: ExecutionContext): Cancellable = {
-    actorSystem.scheduler.schedule(initialDelay, interval) {
+    actorSystem.scheduler.scheduleWithFixedDelay(initialDelay, interval) (() => {
       if (queueConfig.pollerEnabled) {
         executor(name)
       } else {
         logger.warn(s"$name: Poller enabled is false")
       }
-    }
+    })
   }
 
   def executor(name: String)(implicit ec: ExecutionContext): Unit = {
