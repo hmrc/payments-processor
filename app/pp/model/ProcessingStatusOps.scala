@@ -17,25 +17,18 @@
 package pp.model
 
 import enumeratum._
-import play.api.libs.json.Format
 import play.api.mvc.{PathBindable, QueryStringBindable}
 import pp.controllers.ValueClassBinder._
-import pp.jsonext.EnumFormat
 
 import scala.collection.immutable
-
-object ProcessingStatusOps {
-  implicit val format: Format[ProcessingStatusOps] = EnumFormat(ProcessingStatusOpsValues)
-  implicit val pathBinder: QueryStringBindable[ProcessingStatusOps] = bindableA(_.toString)
-  implicit val statusBinder: PathBindable[ProcessingStatusOps] = valueClassBinder(_.toString)
-
-}
 
 sealed abstract class ProcessingStatusOps extends EnumEntry {
   val processingStatus: uk.gov.hmrc.workitem.ProcessingStatus
 }
 
-object ProcessingStatusOpsValues extends Enum[ProcessingStatusOps] {
+object ProcessingStatusOps extends Enum[ProcessingStatusOps] with PlayJsonEnum[ProcessingStatusOps] {
+  implicit val pathBinder: QueryStringBindable[ProcessingStatusOps] = bindableA(_.toString)
+  implicit val statusBinder: PathBindable[ProcessingStatusOps] = valueClassBinder(_.toString)
 
   def forCode(code: String): Option[ProcessingStatusOps] = values.find(_.toString == code)
 
