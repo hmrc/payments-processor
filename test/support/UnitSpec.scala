@@ -16,7 +16,7 @@
 
 package support
 
-import org.scalatest.AnyFreeSpecLike
+import org.scalatest.freespec.AnyFreeSpecLike
 
 /**
  * This is common spec for every test case which brings all of useful routines we want to use in our scenarios.
