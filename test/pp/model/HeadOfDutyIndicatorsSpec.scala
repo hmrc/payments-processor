@@ -30,7 +30,7 @@ class HeadOfDutyIndicatorsSpec extends UnitSpec with RichMatchers {
     HeadOfDutyIndicators.values.toSet shouldBe headOfDutyIndicators.map(o => o._2).toSet
 
     headOfDutyIndicators.foreach { headOfDutyIndicator =>
-      val jsValue = toJson(headOfDutyIndicator._2)
+      val jsValue = toJson(headOfDutyIndicator._2: HeadOfDutyIndicator)
       jsValue shouldBe JsString(headOfDutyIndicator._1) withClue s"serialize $headOfDutyIndicator"
       jsValue.as[HeadOfDutyIndicator] shouldBe headOfDutyIndicator._2 withClue s"deserialize $headOfDutyIndicator"
     }
