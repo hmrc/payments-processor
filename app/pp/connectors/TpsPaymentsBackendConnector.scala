@@ -21,7 +21,7 @@ import play.api.mvc.Request
 import pp.connectors.ResponseReadsThrowingException.readResponse
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
-import pp.model.{PaymentItemId, TaxType, TaxTypes}
+import pp.model.{PaymentItemId, TaxType}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.http.HttpClient
@@ -47,7 +47,7 @@ class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClient, servicesCon
     httpClient.GET[HttpResponse](s"$serviceURL/payment-items/${paymentItemId.value}/tax-type")
       .map(_.json.as[String])
       .map { taxTypeUpperCase =>
-        TaxTypes.forCode(taxTypeUpperCase.toLowerCase).getOrElse(throw new RuntimeException(s"Unknown tax type $taxTypeUpperCase"))
+        TaxType.forCode(taxTypeUpperCase.toLowerCase).getOrElse(throw new RuntimeException(s"Unknown tax type $taxTypeUpperCase"))
       }
 
   def getModsAmendmentReference(paymentItemId: PaymentItemId)(implicit request: Request[_], hc: HeaderCarrier): Future[ModsPaymentCallBackRequest] = {
