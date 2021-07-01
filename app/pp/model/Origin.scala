@@ -16,29 +16,16 @@
 
 package pp.model
 
-import enumeratum._
-import play.api.libs.json.Format
-import play.api.mvc.QueryStringBindable
-import pp.controllers.ValueClassBinder._
-import pp.jsonext.EnumFormat
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 
 import scala.collection.immutable
 
-sealed abstract class Origin extends EnumEntry {
-}
+sealed abstract class Origin extends EnumEntry
 
-object Origin {
-  implicit val format: Format[Origin] = EnumFormat(Origins)
-  implicit val pathBinder: QueryStringBindable[Origin] = bindableA(_.toString)
-}
+object Origin extends Enum[Origin] with PlayJsonEnum[Origin] {
+  case object OPS extends Origin
 
-object Origins extends Enum[Origin] {
+  case object PCI_PAL extends Origin
 
-  case object OPS extends Origin {
-  }
-
-  case object PCI_PAL extends Origin {
-  }
-
-  override def values: immutable.IndexedSeq[Origin] = findValues
+  def values: immutable.IndexedSeq[Origin] = findValues
 }
