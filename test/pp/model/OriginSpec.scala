@@ -31,7 +31,7 @@ class OriginSpec extends UnitSpec with RichMatchers {
     Origins.values.toSet shouldBe origins.map(o => o._2).toSet
 
     origins.foreach { origin =>
-      val jsValue = toJson(origin._2)
+      val jsValue = toJson(origin._2: Origin)
       jsValue shouldBe JsString(origin._1) withClue s"serialize $origin"
       jsValue.as[Origin] shouldBe origin._2 withClue s"deserialize $origin"
     }
