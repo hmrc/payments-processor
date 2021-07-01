@@ -17,32 +17,18 @@
 package pp.model
 
 import enumeratum._
-import play.api.libs.json.Format
-import pp.controllers.ValueClassBinder._
-import pp.jsonext.EnumFormat
-import play.api.mvc.{PathBindable, QueryStringBindable}
 
 import scala.collection.immutable
 
-object StatusType {
-  implicit val format: Format[StatusType] = EnumFormat(StatusTypes)
-  implicit val pathBinder: QueryStringBindable[StatusType] = bindableA(_.toString)
-  implicit val statusBinder: PathBindable[StatusType] = valueClassBinder(_.toString)
+sealed abstract class StatusType extends EnumEntry
 
-}
-
-sealed abstract class StatusType extends EnumEntry {
-}
-
-object StatusTypes extends Enum[StatusType] {
+object StatusType extends Enum[StatusType] with PlayJsonEnum[StatusType] {
 
   def forCode(code: String): Option[StatusType] = values.find(_.toString == code)
 
-  case object validated extends StatusType {
-  }
+  case object validated extends StatusType
 
-  case object failed extends StatusType {
-  }
+  case object failed extends StatusType
 
   def values: immutable.IndexedSeq[StatusType] = findValues
 }
