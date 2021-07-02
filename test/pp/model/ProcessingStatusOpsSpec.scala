@@ -32,7 +32,7 @@ class ProcessingStatusOpsSpec extends UnitSpec with RichMatchers {
     ProcessingStatusOpsValues.values.toSet shouldBe processingStatusOps.map(tt => tt._2).toSet
 
     processingStatusOps.foreach { tt =>
-      val jsValue = Json.toJson(tt._2)
+      val jsValue = Json.toJson(tt._2: ProcessingStatusOps)
       jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
       jsValue.as[ProcessingStatusOps] shouldBe tt._2 withClue s"deserialize $tt"
     }

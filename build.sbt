@@ -1,4 +1,3 @@
-import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import sbt.Tests.{Group, SubProcess}
 
@@ -12,7 +11,7 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
 scalaVersion := "2.12.12"
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
     majorVersion := 0,

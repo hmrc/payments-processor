@@ -32,7 +32,7 @@ class PngrStatusTypesSpec extends UnitSpec with RichMatchers {
     PngrStatusTypes.values.toSet shouldBe pngrStatusTypes.map(tt => tt._2).toSet
 
     pngrStatusTypes.foreach { tt =>
-      val jsValue = Json.toJson(tt._2)
+      val jsValue = Json.toJson(tt._2: PngrStatusType)
       jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
       jsValue.as[PngrStatusType] shouldBe tt._2 withClue s"deserialize $tt"
     }

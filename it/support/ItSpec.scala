@@ -34,12 +34,16 @@ package support
 
 import com.google.inject.AbstractModule
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
+import play.api.{Application, Mode}
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.Result
+import play.api.test.{DefaultTestServerFactory, RunningServer}
+import play.core.server.ServerConfig
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
@@ -50,12 +54,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
  */
 
 trait ItSpec
-  extends WordSpec
+  extends AnyWordSpec
   with RichMatchers
   with BeforeAndAfterEach
   with GuiceOneServerPerSuite
   with WireMockSupport
-  with Matchers {
+  with Matchers { self =>
+
+  val testServerPort = 19001
 
   implicit lazy val ec: ExecutionContext = global
 
@@ -111,6 +117,16 @@ trait ItSpec
   def injector: Injector = fakeApplication().injector
 
   def status(of: Result): Int = of.header.status
+
+  override implicit protected lazy val runningServer: RunningServer =
+    TestServerFactory.start(app)
+
+  object TestServerFactory extends DefaultTestServerFactory {
+    override protected def serverConfig(app: Application): ServerConfig = {
+      val sc = ServerConfig(port    = Some(testServerPort), sslPort = Some(0), mode = Mode.Test, rootDir = app.path)
+      sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
+    }
+  }
 
 }
 

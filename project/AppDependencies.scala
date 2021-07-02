@@ -21,30 +21,34 @@ object AppDependencies {
 
   val compile = Seq(
 
-    "uk.gov.hmrc"  %% "simple-reactivemongo"      % "7.31.0-play-27",
-    "uk.gov.hmrc"  %% "work-item-repo"            % "7.11.0-play-27",
-    "uk.gov.hmrc"  %% "play-hmrc-api"             % "6.2.0-play-27",
+    "uk.gov.hmrc"  %% "simple-reactivemongo"      % "8.0.0-play-28",
+    "uk.gov.hmrc"  %% "work-item-repo"            % "8.0.0-play-28",
+    "uk.gov.hmrc"  %% "play-hmrc-api"             % "6.4.0-play-28",
     "uk.gov.hmrc"  %% "play-scheduling-play-27"   % "7.10.0",
-    "uk.gov.hmrc"  %% "bootstrap-backend-play-27" % "3.3.0",
-    "com.beachape" %% "enumeratum"                % "1.5.15"
+    "uk.gov.hmrc"  %% "bootstrap-backend-play-28" % "5.4.0",
+    "com.beachape" %% "enumeratum"                % "1.7.0",
+    "com.beachape" %% "enumeratum-play-json"      % "1.7.0"
   )
 
   val test = Seq(
-    "uk.gov.hmrc"            %% "bootstrap-backend-play-27" % "3.3.0"  % Test,
-    "org.scalatest"          %% "scalatest"                 % "3.0.8"  % Test,
+    "uk.gov.hmrc"            %% "bootstrap-backend-play-28" % "5.4.0"  % Test,
+    "org.scalatest"          %% "scalatest"                 % "3.2.9"  % Test,
     "com.typesafe.play"      %% "play-test"                 % current  % Test,
     "org.pegdown"            %  "pegdown"                   % "1.6.0"  % Test,
-    "org.scalatestplus.play" %% "scalatestplus-play"        % "3.1.2"  % Test,
-    "com.github.tomakehurst" %  "wiremock-jre8"             % "2.27.2" % Test
+    "org.scalatestplus.play" %% "scalatestplus-play"        % "5.1.0"  % Test,
+    "com.github.tomakehurst" %  "wiremock-jre8"             % "2.27.2" % Test,
+    "com.vladsch.flexmark"   %  "flexmark-all"              % "0.36.8" % Test //required by scalatest, see: https://github.com/scalatest/scalatest/issues/1736
   )
 
   val itTest = Seq(
-    "uk.gov.hmrc"            %% "bootstrap-backend-play-27" % "4.3.0"  % "it",
-    "org.scalatest"          %% "scalatest"                 % "3.0.8"  % "it",
+    "uk.gov.hmrc"            %% "bootstrap-backend-play-28" % "5.4.0"  % "it",
+    "org.scalatest"          %% "scalatest"                 % "3.2.9"  % "it",
     "com.typesafe.play"      %% "play-test"                 % current  % "it",
     "org.pegdown"            %  "pegdown"                   % "1.6.0"  % "it",
     "org.scalatestplus.play" %% "scalatestplus-play"        % "3.1.2"  % "it",
-    "com.github.tomakehurst" %  "wiremock-jre8"             % "2.27.2" % "it"
+    "com.github.tomakehurst" %  "wiremock-jre8"             % "2.27.2" % "it",
+    "com.vladsch.flexmark"   %  "flexmark-all"              % "0.36.8" % "it" //required by scalatest, see: https://github.com/scalatest/scalatest/issues/1736
   )
 
 }
+
