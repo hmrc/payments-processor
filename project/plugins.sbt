@@ -5,7 +5,6 @@ resolvers += "HMRC Releases" at "https://dl.bintray.com/hmrc/releases"
 resolvers += Resolver.typesafeRepo("releases")
 resolvers += "hmrc-releases" at "https://artefacts.tax.services.gov.uk/artifactory/hmrc-releases/"
 
-addSbtPlugin("uk.gov.hmrc"       %  "sbt-artifactory"        % "1.13.0")
 addSbtPlugin("uk.gov.hmrc"       %  "sbt-git-versioning"     % "2.2.0")
 addSbtPlugin("uk.gov.hmrc"       %  "sbt-auto-build"         % "2.15.0")
 addSbtPlugin("uk.gov.hmrc"       %  "sbt-distributables"     % "2.1.0")

@@ -37,7 +37,7 @@ object AppDependencies {
     "org.pegdown"            %  "pegdown"                   % "1.6.0"  % Test,
     "org.scalatestplus.play" %% "scalatestplus-play"        % "5.1.0"  % Test,
     "com.github.tomakehurst" %  "wiremock-jre8"             % "2.27.2" % Test,
-    "com.vladsch.flexmark"    %  "flexmark-all"             % "0.36.8" % Test, //required by scalatest, see: https://github.com/scalatest/scalatest/issues/1736
+    "com.vladsch.flexmark"   %  "flexmark-all"              % "0.36.8" % Test //required by scalatest, see: https://github.com/scalatest/scalatest/issues/1736
   )
 
   val itTest = Seq(
@@ -46,7 +46,8 @@ object AppDependencies {
     "com.typesafe.play"      %% "play-test"                 % current  % "it",
     "org.pegdown"            %  "pegdown"                   % "1.6.0"  % "it",
     "org.scalatestplus.play" %% "scalatestplus-play"        % "3.1.2"  % "it",
-    "com.github.tomakehurst" %  "wiremock-jre8"             % "2.27.2" % "it"
+    "com.github.tomakehurst" %  "wiremock-jre8"             % "2.27.2" % "it",
+    "com.vladsch.flexmark"   %  "flexmark-all"              % "0.36.8" % "it" //required by scalatest, see: https://github.com/scalatest/scalatest/issues/1736
   )
 
 }
