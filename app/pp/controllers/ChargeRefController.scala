@@ -53,7 +53,7 @@ class ChargeRefController @Inject() (
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
-    logger.debug("sendCardPaymentsNotificationPciPal")
+    logger.info("sendCardPaymentsNotificationPciPal")
 
     val notification = request.body
 
@@ -76,7 +76,7 @@ class ChargeRefController @Inject() (
             statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
           } yield statusFromPaymentUpdate
         } else Future successful Ok
-
+logger.info("got here")
     for {
       taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
       _ <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)
