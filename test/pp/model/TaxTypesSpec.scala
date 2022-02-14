@@ -50,7 +50,14 @@ class TaxTypesSpec extends UnitSpec with RichMatchers {
       "aggregatesLevy" -> TaxTypes.aggregatesLevy,
       "climateChangeLevy" -> TaxTypes.`climateChangeLevy`,
       "cds" -> TaxTypes.cds,
-      "childbenefitsrepayments" -> TaxTypes.childbenefitsrepayments
+      "childbenefitsrepayments" -> TaxTypes.childbenefitsrepayments,
+      "sa" -> TaxTypes.sa,
+      "sdlt" -> TaxTypes.sdlt,
+      "safe" -> TaxTypes.safe,
+      "cotax" -> TaxTypes.cotax,
+      "ntc" -> TaxTypes.ntc,
+      "paye" -> TaxTypes.paye,
+      "nps" -> TaxTypes.nps
     )
 
     TaxTypes.values.toSet shouldBe taxTypes.map(tt => tt._2).toSet
