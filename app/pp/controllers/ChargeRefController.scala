@@ -76,11 +76,9 @@ class ChargeRefController @Inject() (
             statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
           } yield statusFromPaymentUpdate
         } else Future successful Ok
-
+logger.info("got here")
     for {
-        _ = logger.info("got here")
       taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
-       _ = logger.info("got further")
       _ <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)
       _ <- sendToDesIfValidatedAndConfigured(taxType)
       _ <- sendStatusUpdateToPngrIfConfigured(taxType)
