@@ -78,9 +78,9 @@ class ChargeRefController @Inject() (
         } else Future successful Ok
 
     for {
-        logger.info("got here")
+        _ = logger.info("got here")
       taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
-        logger.info("got further")
+       _ = logger.info("got further")
       _ <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)
       _ <- sendToDesIfValidatedAndConfigured(taxType)
       _ <- sendStatusUpdateToPngrIfConfigured(taxType)
