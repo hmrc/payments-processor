@@ -52,17 +52,10 @@ class ChargeRefController @Inject() (
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async { implicit request =>
+  def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
     logger.info("sendCardPaymentsNotificationPciPal")
 
-    val notification: ChargeRefNotificationPcipalRequest = Try {
-      request.body.asJson.map(_.as[ChargeRefNotificationPcipalRequest])
-    } match {
-      case Success(x) => x
-      case Failure(e) =>
-        logger.error(s"Received notification from PciPal but could not read body.", e)
-        throw (e)
-    }
+    val notification = request.body
 
       def sendToDesIfValidatedAndConfigured(taxType: TaxType): Future[Status] = {
         if (notification.Status == validated && (sendAllToDes || taxType.sendToDes)) {
@@ -99,4 +92,3 @@ logger.info("got here")
   }
 
 }
-
