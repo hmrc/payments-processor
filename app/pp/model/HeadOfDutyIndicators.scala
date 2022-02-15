@@ -35,7 +35,50 @@ sealed trait HeadOfDutyIndicator extends EnumEntry
 object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
   def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString == code)
 
+  /**
+   * Hod for P800 and Child Benefits
+   */
   case object B extends HeadOfDutyIndicator
+
+  /**
+   * Hod for COTAX
+   */
+  case object A extends HeadOfDutyIndicator
+
+  /**
+   * Hod for NTC
+   */
+  case object N extends HeadOfDutyIndicator
+
+  /**
+   * Hod for SDLT
+   */
+  case object M extends HeadOfDutyIndicator
+
+  /**
+   * Hod for NPS
+   */
+  case object J extends HeadOfDutyIndicator
+
+  /**
+   * Hod for PAYE
+   */
+  case object P extends HeadOfDutyIndicator
+
+  /**
+   * Hod for VAT
+   */
+  case object V extends HeadOfDutyIndicator
+
+  /**
+   * Hod for Safe
+   */
+  case object X extends HeadOfDutyIndicator
+
+  /**
+   * Hod for Self Assesment (Cesa)
+   */
+  case object K extends HeadOfDutyIndicator
 
   def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
 }

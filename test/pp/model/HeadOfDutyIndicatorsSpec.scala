@@ -18,13 +18,21 @@ package pp.model
 
 import play.api.libs.json.JsString
 import play.api.libs.json.Json.toJson
-import pp.model.HeadOfDutyIndicators.B
+import pp.model.HeadOfDutyIndicators._
 import support.{RichMatchers, UnitSpec}
 
 class HeadOfDutyIndicatorsSpec extends UnitSpec with RichMatchers {
   "HeadOfDutyIndicators should de/serialize" in {
     val headOfDutyIndicators = List(
-      "B" -> B
+      "B" -> B,
+      "A" -> A,
+      "N" -> N,
+      "M" -> M,
+      "J" -> J,
+      "P" -> P,
+      "V" -> V,
+      "X" -> X,
+      "K" -> K
     )
 
     HeadOfDutyIndicators.values.toSet shouldBe headOfDutyIndicators.map(o => o._2).toSet
