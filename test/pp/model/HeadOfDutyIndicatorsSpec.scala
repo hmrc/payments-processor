@@ -18,7 +18,7 @@ package pp.model
 
 import play.api.libs.json.JsString
 import play.api.libs.json.Json.toJson
-import pp.model.HeadOfDutyIndicators.B
+import pp.model.HeadOfDutyIndicators._
 import support.{RichMatchers, UnitSpec}
 
 class HeadOfDutyIndicatorsSpec extends UnitSpec with RichMatchers {
