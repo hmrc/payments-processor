@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,6 +99,19 @@ object PaymentsProcessData {
        "chargeRefNumber" : "XQ002610015768",
        "amountPaid" : 100.11,
        "origin" : "OPS"
+       }
+     """.stripMargin
+
+  )
+
+  //language=JSON
+  val wrongFormatChargeRefNotificationRequestJson: JsValue = parse(
+    s"""{
+       "taxType" : "p800",
+       "chargeRefNumber" : "XQ002610015768",
+       "amountPaid" : 100.11,
+       "origin" : "OPS",
+       "extraField" : "Extar Value"
        }
      """.stripMargin
 

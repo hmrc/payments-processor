@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package pp.controllers
 
-import play.api.mvc.{Action, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.api.{Configuration, Logger}
 import pp.config.{ChargeRefQueueConfig, MibOpsQueueConfig, PngrsQueueConfig}
 import pp.connectors.{MibConnector, PngrConnector, TpsPaymentsBackendConnector}
@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class ChargeRefController @Inject() (
@@ -52,10 +53,21 @@ class ChargeRefController @Inject() (
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def sendCardPaymentsNotificationPciPal(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
-    logger.info("sendCardPaymentsNotificationPciPal")
+  def sendCardPaymentsNotificationPciPal(): Action[AnyContent] = Action.async { implicit request =>
 
-    val notification = request.body
+    val notification = Try {
+      request.body.asJson.map(_.as[ChargeRefNotificationPcipalRequest])
+    } match {
+      case Success(Some(value)) =>
+        logger.debug(s"sendCardPaymentsNotificationPciPal for ${value}")
+        value
+      case Success(None) =>
+        logger.error(s"Received notification from PciPal but could not parse as json ${request.body.asText}")
+        throw new RuntimeException(s"Received notification from PciPal but could not parse as json ${request.body.asText}")
+      case Failure(exception) =>
+        logger.error(s"Received notification from PciPal but could not read body. Exception ${exception}")
+        throw new RuntimeException("Received notification from PciPal but could not read body ", exception)
+    }
 
       def sendToDesIfValidatedAndConfigured(taxType: TaxType): Future[Status] = {
         if (notification.Status == validated && (sendAllToDes || taxType.sendToDes)) {
@@ -76,7 +88,7 @@ class ChargeRefController @Inject() (
             statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
           } yield statusFromPaymentUpdate
         } else Future successful Ok
-logger.info("got here")
+
     for {
       taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
       _ <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)

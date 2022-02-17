@@ -7,9 +7,9 @@ import play.api.libs.json.Json
 import pp.model.StatusTypes.failed
 import pp.model.TaxTypes.p800
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
-import support.PaymentsProcessData.{p800ChargeRefNotificationRequest, p800PaymentItemId, p800PcipalNotification}
+import support.PaymentsProcessData.{p800ChargeRefNotificationRequest, p800PaymentItemId, p800PcipalNotification, wrongFormatChargeRefNotificationRequestJson}
 import support.{Des, ItSpec, TpsPaymentsBackend}
-import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HttpResponse, Upstream5xxResponse, UpstreamErrorResponse}
 
 trait ChargeRefControllerSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
@@ -147,6 +147,21 @@ trait ChargeRefControllerSpec extends ItSpec {
 
         verify(0, postRequestedFor(urlEqualTo("/cross-regime/payments/card/notification")))
         verify(0, patchRequestedFor(urlEqualTo(TpsPaymentsBackend.updateEndpoint)))
+      }
+    }
+  }
+
+  def aSynchronousEndpointWhenTheDesNotificationFailsWithIncorrectJsonCall(): Unit = {
+    "fail without persisting to the queue" when {
+      "PciPal send incorrect Json on endpoint /send-card-payments-notification" in {
+
+//          TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, p800)
+
+          val response = testConnector.sendCardPaymentsWrongFormatRequest(wrongFormatChargeRefNotificationRequestJson).failed.futureValue
+          println(s"Wojciech!!!! ${response}")
+          response.asInstanceOf[UpstreamErrorResponse].reportAs shouldBe 502
+          numberOfQueuedNotifications shouldBe 0
+
       }
     }
   }

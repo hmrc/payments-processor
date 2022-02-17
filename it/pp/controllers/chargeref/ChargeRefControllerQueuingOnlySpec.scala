@@ -33,6 +33,7 @@ class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
       behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
       behave like aSynchronousEndpointWhenTheTpsUodateFailsWithAnInternalError()
       behave like aSynchronousEndpointWhenTpsGetTaxTypeFailsWith404()
+      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithIncorrectJsonCall()
 
       "return OK and persist to the queue but not process asynchronously" when {
         "the Des call fails with an internal server error" in {

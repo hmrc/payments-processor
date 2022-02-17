@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,19 +132,19 @@ object TaxTypes extends Enum[TaxType] {
   case object cds extends TaxType
 
   case object childbenefitsrepayments extends TaxType
-  
+
   case object sa extends TaxType
 
   case object sdlt extends TaxType
-  
+
   case object safe extends TaxType
-  
+
   case object cotax extends TaxType
-  
+
   case object ntc extends TaxType
-  
+
   case object paye extends TaxType
-  
+
   case object nps extends TaxType
 
   override def values: immutable.IndexedSeq[TaxType] = findValues
