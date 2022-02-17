@@ -16,6 +16,8 @@
 
 package support
 
+import play.api.libs.json.JsValue
+
 import javax.inject.{Inject, Singleton}
 import pp.connectors.ResponseReadsThrowingException
 import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest}
@@ -43,6 +45,9 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
 
   def sendCardPayments(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[ChargeRefNotificationPcipalRequest,HttpResponse](s"http://localhost:$port/send-card-payments", chargeRefNotificationPciPalRequest, headers)
+
+  def sendCardPaymentsWrongFormatRequest(wrongFormatRequest: JsValue)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.POST[JsValue,HttpResponse](s"http://localhost:$port/send-card-payments", wrongFormatRequest, headers)
 
   def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/conf/1.0/application.raml")
 

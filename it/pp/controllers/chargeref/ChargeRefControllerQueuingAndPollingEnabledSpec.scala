@@ -35,6 +35,7 @@ class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControlle
       behave like aSynchronousEndpointWhenTheDesNotificationReturns4xx()
       behave like aSynchronousEndpointWhenTheTpsUodateFailsWithAnInternalError()
       behave like aSynchronousEndpointWhenTpsGetTaxTypeFailsWith404()
+      behave like aSynchronousEndpointWhenTheDesNotificationFailsWithIncorrectJsonCall()
 
       "return Ok and then asynchronously process the notification" when {
         "the Des call fails with an internal server error" in {
