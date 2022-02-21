@@ -174,7 +174,7 @@ object PaymentsProcessData {
             "Status": "${validated.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "${chargeReferenceNumber}",
-            "PaymentItemId": "${p800PaymentItemId.value}",
+            "paymentItemId": "${p800PaymentItemId.value}",
             "ChargeReference": "chargeRef",
             "ReferenceNumber": "3000000000",
             "CardLast4": "1234"

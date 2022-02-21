@@ -32,7 +32,7 @@ final case class ChargeRefNotificationPcipalRequest(
     Status:               StatusType,
     PCIPalSessionId:      PcipalSessionId,
     TransactionReference: String,
-    PaymentItemId:        PaymentItemId,
+    paymentItemId:        PaymentItemId,
     ChargeReference:      String              = "",
     ReferenceNumber:      String,
     CardLast4:            String
