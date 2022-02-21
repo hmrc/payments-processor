@@ -174,8 +174,10 @@ object PaymentsProcessData {
             "Status": "${validated.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "${chargeReferenceNumber}",
-            "paymentItemId": "${p800PaymentItemId.value}",
-            "ChargeReference": "chargeRef"
+            "PaymentItemId": "${p800PaymentItemId.value}",
+            "ChargeReference": "chargeRef",
+            "ReferenceNumber": "3000000000",
+            "CardLast4": "1234"
       }""".stripMargin)
 
   val p800PcipalNotification: ChargeRefNotificationPcipalRequest = chargeRefNotificationPciPalRequest(p800PaymentItemId)
@@ -194,7 +196,9 @@ object PaymentsProcessData {
     pciPalSessionId,
     chargeReferenceNumber,
     paymentItemId,
-    "chargeRef"
+    "chargeRef",
+    "3000000000",
+    "1234"
   )
 
   //language=JSON
