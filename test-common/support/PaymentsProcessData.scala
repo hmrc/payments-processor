@@ -197,7 +197,7 @@ object PaymentsProcessData {
     chargeReferenceNumber,
     paymentItemId,
     "chargeRef",
-    "3000000000',
+    "3000000000",
     "1234"
   )
 
