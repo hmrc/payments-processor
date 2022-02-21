@@ -85,14 +85,14 @@ class ChargeRefController @Inject() (
       def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
         if (taxType == TaxTypes.mib && notification.Status == validated) {
           for {
-            amendmentRef: ModsPaymentCallBackRequest <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.PaymentItemId)
+            amendmentRef: ModsPaymentCallBackRequest <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
             modsPayload = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef.amendmentReference)
             statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
           } yield statusFromPaymentUpdate
         } else Future successful Ok
 
     for {
-      taxType <- tpsPaymentsBackendConnector.getTaxType(notification.PaymentItemId)
+      taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
       _ <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)
       _ <- sendToDesIfValidatedAndConfigured(taxType)
       _ <- sendStatusUpdateToPngrIfConfigured(taxType)
