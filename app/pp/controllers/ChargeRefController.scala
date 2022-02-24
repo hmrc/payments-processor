@@ -55,17 +55,17 @@ class ChargeRefController @Inject() (
 
   def sendCardPaymentsNotificationPciPal(): Action[AnyContent] = Action.async { implicit request =>
 
-    logger.info(s"sendCardPaymentsNotificationPciPal request ${request.body.asJson}")
+    logger.debug(s"sendCardPaymentsNotificationPciPal request ${request.body.asJson}")
 
     val notification = Try {
       request.body.asJson.map(_.as[ChargeRefNotificationPcipalRequest])
     } match {
       case Success(Some(value)) =>
-        logger.info(s"sendCardPaymentsNotificationPciPal for ${value}")
+        logger.debug(s"sendCardPaymentsNotificationPciPal for ${value}")
         value
       case Success(None) =>
-        logger.error(s"Received notification from PciPal but could not parse as json ${request.body.asText}")
-        throw new RuntimeException(s"Received notification from PciPal but could not parse as json ${request.body.asText}")
+        logger.error(s"Received notification from PciPal but could not parse as json")
+        throw new RuntimeException(s"Received notification from PciPal but could not parse as json")
       case Failure(exception) =>
         logger.error(s"Received notification from PciPal but could not read body. Exception ${exception}")
         throw new RuntimeException("Received notification from PciPal but could not read body ", exception)
