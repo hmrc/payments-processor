@@ -133,19 +133,31 @@ object TaxTypes extends Enum[TaxType] {
 
   case object childbenefitsrepayments extends TaxType
 
-  case object sa extends TaxType
+  case object sa extends TaxType {
+    override val sendToDes: Boolean = false
+  }
 
   case object sdlt extends TaxType
 
-  case object safe extends TaxType
+  case object safe extends TaxType {
+    override val sendToDes: Boolean = false
+  }
 
-  case object cotax extends TaxType
+  case object cotax extends TaxType {
+    override val sendToDes: Boolean = false
+  }
 
-  case object ntc extends TaxType
+  case object ntc extends TaxType {
+    override val sendToDes: Boolean = false
+  }
 
-  case object paye extends TaxType
+  case object paye extends TaxType {
+    override val sendToDes: Boolean = false
+  }
 
-  case object nps extends TaxType
+  case object nps extends TaxType {
+    override val sendToDes: Boolean = false
+  }
 
   override def values: immutable.IndexedSeq[TaxType] = findValues
 }
