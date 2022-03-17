@@ -54,7 +54,9 @@ object TaxTypes extends Enum[TaxType] {
 
   case object `self-assessment` extends TaxType
 
-  case object vat extends TaxType
+  case object vat extends TaxType {
+    override val sendToDes: Boolean = false
+  }
 
   case object epaye extends TaxType
 
