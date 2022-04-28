@@ -57,7 +57,8 @@ class TaxTypesSpec extends UnitSpec with RichMatchers {
       "cotax" -> TaxTypes.cotax,
       "ntc" -> TaxTypes.ntc,
       "paye" -> TaxTypes.paye,
-      "nps" -> TaxTypes.nps
+      "nps" -> TaxTypes.nps,
+      "ppt" -> TaxTypes.ppt
     )
 
     TaxTypes.values.toSet shouldBe taxTypes.map(tt => tt._2).toSet
