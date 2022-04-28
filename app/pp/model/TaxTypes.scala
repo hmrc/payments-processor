@@ -135,6 +135,8 @@ object TaxTypes extends Enum[TaxType] {
 
   case object childbenefitsrepayments extends TaxType
 
+  case object ppt extends TaxType
+
   case object sa extends TaxType {
     override val sendToDes: Boolean = false
   }

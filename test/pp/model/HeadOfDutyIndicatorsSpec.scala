@@ -32,7 +32,8 @@ class HeadOfDutyIndicatorsSpec extends UnitSpec with RichMatchers {
       "P" -> P,
       "V" -> V,
       "X" -> X,
-      "K" -> K
+      "K" -> K,
+      "C" -> C
     )
 
     HeadOfDutyIndicators.values.toSet shouldBe headOfDutyIndicators.map(o => o._2).toSet
