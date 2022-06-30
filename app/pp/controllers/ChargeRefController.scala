@@ -57,7 +57,7 @@ class ChargeRefController @Inject() (
 
     logger.debug(s"sendCardPaymentsNotificationPciPal request ${request.body.asJson}")
 
-    val notification = Try {
+    val notification: ChargeRefNotificationPcipalRequest = Try {
       request.body.asJson.map(_.as[ChargeRefNotificationPcipalRequest])
     } match {
       case Success(Some(value)) =>
@@ -92,7 +92,7 @@ class ChargeRefController @Inject() (
         } else Future successful Ok
 
     for {
-      taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
+      taxType: TaxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
       _ <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)
       _ <- sendToDesIfValidatedAndConfigured(taxType)
       _ <- sendStatusUpdateToPngrIfConfigured(taxType)

@@ -43,7 +43,11 @@ object ChargeRefNotificationPcipalRequest {
 
   def toChargeRefNotificationRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest, taxType: TaxType): ChargeRefNotificationRequest = {
     chargeref.ChargeRefNotificationRequest(
-      taxType, chargeRefNotificationPciPalRequest.ChargeReference, chargeRefNotificationPciPalRequest.Amount, PCI_PAL)
+      taxType         = taxType,
+      chargeRefNumber = chargeRefNotificationPciPalRequest.ChargeReference,
+      amountPaid      = chargeRefNotificationPciPalRequest.Amount,
+      origin          = PCI_PAL
+    )
   }
 
   def toPngrStatusUpdateRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): PngrStatusUpdateRequest = {

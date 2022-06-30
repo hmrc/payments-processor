@@ -5,4 +5,5 @@
 
 GET        /admin/metrics             com.kenshoo.play.metrics.MetricsController.metrics
 
+#used by pci-pal, external system
 POST       /send-card-payments   pp.controllers.ChargeRefController.sendCardPaymentsNotificationPciPal()

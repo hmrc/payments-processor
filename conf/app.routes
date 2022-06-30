@@ -1,9 +1,15 @@
 # microservice specific routes
+
+#not used
 POST        /send-card-payments-notification                               pp.controllers.ChargeRefController.sendCardPaymentsNotification()
+#not used
 POST        /pngr/send-update                                              pp.controllers.PngrUpdateController.sendStatusUpdateToPngr()
 
 GET         /reporting/count/:taxType/:processingState                     pp.controllers.ReportingController.count(taxType: TaxType, processingState: ProcessingStatusOps)
 GET         /reporting/:taxType                                            pp.controllers.ReportingController.getAll(taxType: TaxType)
+
+#used by pay-frontend
 POST        /mib/payment-callback                                          pp.controllers.MibController.paymentCallBack()
 
+#not used
 POST        /cds/send-notification                                         pp.controllers.CdsController.sendPaymentUpdateToCds()

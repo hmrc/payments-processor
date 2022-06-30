@@ -37,15 +37,26 @@ class ApiDocumentationController @Inject() (
     configuration: Configuration
 ) extends DocumentationController(cc, assets, errorHandler) {
 
-  override def definition(): Action[AnyContent] = Action.async {
+  override def definition(): Action[AnyContent] = Action {
 
-    val accessIn: Access = Access(whitelistedApplicationIds = appContext.whiteListedAppIds.getOrElse(Seq.empty[String]))
-    val version: Version = Version(access           = accessIn,
-                                   endpointsEnabled = configuration.underlying.getBoolean("api.enabled"), status = configuration.underlying.getString("api.status"))
-    val apiIn: Api = Api(context  = appContext.apiContext, versions = Seq(version))
+    val accessIn: Access = Access(
+      whitelistedApplicationIds = appContext.whiteListedAppIds.getOrElse(Seq.empty[String])
+    )
+
+    val version: Version = Version(
+      access           = accessIn,
+      endpointsEnabled = configuration.underlying.getBoolean("api.enabled"),
+      status           = configuration.underlying.getString("api.status")
+    )
+
+    val apiIn: Api = Api(
+      context  = appContext.apiContext,
+      versions = Seq(version)
+    )
+
     val apiDefinition: ApiDefinition = ApiDefinition(api = apiIn)
 
-    Future.successful(Ok(Json.toJson(apiDefinition)))
+    Ok(Json.toJson(apiDefinition))
   }
 
 }

@@ -165,3 +165,21 @@ object TaxTypes extends Enum[TaxType] {
 
   override def values: immutable.IndexedSeq[TaxType] = findValues
 }
+
+object ShowSendToDes extends App {
+
+  TaxTypes.values.sortBy(_.sendToDes).foreach{ t =>
+    println(s"$t - ${t.sendToDes}")
+  }
+
+  //F2F cross check:
+  //cotax - false
+  //nps - false
+  //ntc - false
+  //paye - false (byt epaye - true)
+  //sa - false
+  //sdlt/stamp-duty - true
+  //safe - false (x)
+  //vat - false (x)
+
+}
