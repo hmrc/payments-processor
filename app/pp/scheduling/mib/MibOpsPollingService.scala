@@ -19,7 +19,7 @@ package pp.scheduling.mib
 import akka.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
 import pp.config.MibOpsQueueConfig
-import pp.model.wokitems.MibOpsWorkItem
+import pp.model.wokitems.MibOpsMyWorkItem
 import pp.scheduling.PollingService
 import pp.services.MibOpsService
 
@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext
 class MibOpsPollingService @Inject() (actorSystem: ActorSystem,
                                       queueConfig: MibOpsQueueConfig, workItemService: MibOpsService)(
     implicit
-    ec: ExecutionContext) extends PollingService[MibOpsWorkItem](actorSystem, queueConfig, workItemService) {
+    ec: ExecutionContext) extends PollingService[MibOpsMyWorkItem](actorSystem, queueConfig, workItemService) {
 
   override def name: String = "MibOpsPollingService"
 

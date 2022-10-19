@@ -16,22 +16,26 @@
 
 package pp.scheduling.chargeref
 
-import java.time.Clock
-
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.modules.reactivemongo.ReactiveMongoComponent
 import pp.config.ChargeRefQueueConfig
-import pp.model.wokitems.ChargeRefNotificationWorkItem
+import pp.model.wokitems.ChargeRefNotificationMyWorkItem
 import pp.scheduling.NotificationRepo
+import uk.gov.hmrc.mongo.MongoComponent
 
+import java.time.Clock
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class ChargeRefNotificationMongoRepo @Inject() (
-    reactiveMongoComponent: ReactiveMongoComponent,
-    configuration:          Configuration,
-    clock:                  Clock,
-    queueConfig:            ChargeRefQueueConfig)(implicit ec: ExecutionContext)
-  extends NotificationRepo[ChargeRefNotificationWorkItem](reactiveMongoComponent, configuration, clock, queueConfig)
+    mongoComponent: MongoComponent,
+    configuration:  Configuration,
+    clock:          Clock,
+    queueConfig:    ChargeRefQueueConfig)
+  (implicit ec: ExecutionContext)
+  extends NotificationRepo[ChargeRefNotificationMyWorkItem](
+    mongoComponent = mongoComponent,
+    configuration  = configuration,
+    clock          = clock,
+    queueConfig    = queueConfig)
 

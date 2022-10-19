@@ -19,7 +19,7 @@ package pp.scheduling.cds
 import akka.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
 import pp.config.CdsOpsQueueConfig
-import pp.model.wokitems.CdsOpsWorkItem
+import pp.model.wokitems.CdsOpsMyWorkItem
 import pp.scheduling.PollingService
 import pp.services.CdsOpsService
 
@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext
 class CdsOpsPollingService @Inject() (actorSystem: ActorSystem,
                                       queueConfig: CdsOpsQueueConfig, workItemService: CdsOpsService)(
     implicit
-    ec: ExecutionContext) extends PollingService[CdsOpsWorkItem](actorSystem, queueConfig, workItemService) {
+    ec: ExecutionContext) extends PollingService[CdsOpsMyWorkItem](actorSystem, queueConfig, workItemService) {
 
   override def name: String = "CdsPollingService"
 }

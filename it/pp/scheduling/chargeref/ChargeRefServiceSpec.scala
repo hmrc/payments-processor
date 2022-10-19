@@ -16,17 +16,16 @@
 
 package pp.scheduling.chargeref
 
-import java.time.Clock
-
 import com.github.tomakehurst.wiremock.client.WireMock
-import play.api.libs.json.Json
 import pp.config.ChargeRefQueueConfig
 import pp.connectors.DesConnector
-import pp.model.wokitems.ChargeRefNotificationWorkItem
+import pp.model.wokitems.ChargeRefNotificationMyWorkItem
 import pp.services.ChargeRefService
 import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 import support.{Des, ItSpec}
-import uk.gov.hmrc.workitem.{InProgress, ToDo, WorkItem}
+import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
+
+import java.time.Clock
 
 class ChargeRefServiceSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
@@ -43,7 +42,7 @@ class ChargeRefServiceSpec extends ItSpec {
     super.beforeEach()
   }
 
-  protected def numberOfQueuedNotifications: Integer = repo.count(Json.obj()).futureValue
+  protected def numberOfQueuedNotifications: Long = repo.countAll().futureValue
 
   "sendCardPaymentsNotificationToWorkItemRepo" should {
     "add a notification to the queue" in {
@@ -55,7 +54,7 @@ class ChargeRefServiceSpec extends ItSpec {
       workItem.item.chargeRefNumber shouldBe p800ChargeRefNotificationRequest.chargeRefNumber
       workItem.item.amountPaid shouldBe p800ChargeRefNotificationRequest.amountPaid
       workItem.item.origin shouldBe p800ChargeRefNotificationRequest.origin
-      workItem.status shouldBe ToDo
+      workItem.status shouldBe ProcessingStatus.ToDo
     }
   }
 
@@ -68,10 +67,10 @@ class ChargeRefServiceSpec extends ItSpec {
         chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
         numberOfQueuedNotifications shouldBe 1
 
-        val sentItems: Seq[WorkItem[ChargeRefNotificationWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
+        val sentItems: Seq[WorkItem[ChargeRefNotificationMyWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
 
         sentItems.size shouldBe 1
-        sentItems.head.status shouldBe InProgress
+        sentItems.head.status shouldBe ProcessingStatus.InProgress
         numberOfQueuedNotifications shouldBe 0
       }
     }
@@ -102,10 +101,10 @@ class ChargeRefServiceSpec extends ItSpec {
         numberOfQueuedNotifications shouldBe 1
 
         eventually {
-          val sentItems: Seq[WorkItem[ChargeRefNotificationWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
+          val sentItems: Seq[WorkItem[ChargeRefNotificationMyWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
 
           sentItems.size shouldBe 1
-          sentItems.head.status shouldBe InProgress
+          sentItems.head.status shouldBe ProcessingStatus.InProgress
           numberOfQueuedNotifications shouldBe 0
         }
       }
@@ -128,10 +127,10 @@ class ChargeRefServiceSpec extends ItSpec {
       numberOfQueuedNotifications > pollLimit shouldBe true
 
       eventually {
-        val sentItems: Seq[WorkItem[ChargeRefNotificationWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
+        val sentItems: Seq[WorkItem[ChargeRefNotificationMyWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
 
         sentItems.size shouldBe pollLimit
-        sentItems.map(_.status).toSet shouldBe Set(InProgress)
+        sentItems.map(_.status).toSet shouldBe Set(ProcessingStatus.InProgress)
         numberOfQueuedNotifications shouldBe 1
       }
     }

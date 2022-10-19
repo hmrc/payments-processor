@@ -22,7 +22,7 @@ import pp.config.ChargeRefQueueConfig
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.services.ChargeRefService
 import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamErrorResponse}
-import uk.gov.hmrc.workitem.ToDo
+import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -55,7 +55,7 @@ trait ChargeRefDesRetries extends Results {
               .sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest)
               .map(
                 res => res.status match {
-                  case ToDo => Ok
+                  case ProcessingStatus.ToDo => Ok
                   case _ =>
                     logger.error("Could not add message to work item repo")
                     InternalServerError

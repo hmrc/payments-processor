@@ -19,7 +19,7 @@ package pp.scheduling
 import akka.actor.{ActorSystem, Cancellable}
 import play.api.Logger
 import pp.config.QueueConfig
-import pp.model.WorkItemFields
+import pp.model.MyWorkItemFields
 import pp.services.WorkItemService
 import uk.gov.hmrc.play.scheduling.ExclusiveScheduledJob
 
@@ -27,9 +27,9 @@ import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-abstract class PollingService[P <: WorkItemFields](val actorSystem:     ActorSystem,
-                                                   val queueConfig:     QueueConfig,
-                                                   val workItemService: WorkItemService[P])(
+abstract class PollingService[P <: MyWorkItemFields](val actorSystem:     ActorSystem,
+                                                     val queueConfig:     QueueConfig,
+                                                     val workItemService: WorkItemService[P])(
     implicit
     ec: ExecutionContext) extends ExclusiveScheduledJob {
 

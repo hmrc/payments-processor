@@ -1,17 +1,17 @@
 package pp.scheduling.cds
 
-import java.time.{Clock, LocalDateTime}
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
 import pp.config.CdsOpsQueueConfig
 import pp.connectors.CdsConnector
-import pp.model.wokitems.CdsOpsWorkItem
+import pp.model.wokitems.CdsOpsMyWorkItem
 import pp.model.{Origins, TaxTypes}
 import pp.services.CdsOpsService
 import support.PaymentsProcessData.{cdsReference, cdsStatusUpdateRequest}
 import support.{Cds, ItSpec}
-import uk.gov.hmrc.workitem.{ToDo, WorkItem}
+import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
+
+import java.time.{Clock, LocalDateTime}
 
 class CdsServiceSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[CdsOpsMongoRepo]
@@ -23,7 +23,7 @@ class CdsServiceSpec extends ItSpec {
   val availableUntilInPast: LocalDateTime = time.minusSeconds(60)
   val availUntilInFuture: LocalDateTime = time.plusSeconds(60)
 
-  val workItem: CdsOpsWorkItem = CdsOpsWorkItem(created, availableUntilInPast, TaxTypes.cds, Origins.OPS, "CDSI1234567", cdsStatusUpdateRequest)
+  val workItem: CdsOpsMyWorkItem = CdsOpsMyWorkItem(created, availableUntilInPast, TaxTypes.cds, Origins.OPS, "CDSI1234567", cdsStatusUpdateRequest)
 
   override def configMap: Map[String, Any] =
     super.configMap
@@ -35,7 +35,7 @@ class CdsServiceSpec extends ItSpec {
     super.beforeEach()
   }
 
-  protected def numberOfQueuedNotifications: Integer = repo.count(Json.obj()).futureValue
+  protected def numberOfQueuedNotifications: Long = repo.countAll().futureValue
 
   "check error mechanism, not available" in {
     cdsOpsService.isAvailable(workItem) shouldBe false
@@ -55,7 +55,7 @@ class CdsServiceSpec extends ItSpec {
       workItem.item.taxType shouldBe TaxTypes.cds
       workItem.item.reference shouldBe cdsReference
       workItem.item.origin shouldBe Origins.OPS
-      workItem.status shouldBe ToDo
+      workItem.status shouldBe ProcessingStatus.ToDo
     }
   }
 
@@ -73,7 +73,7 @@ class CdsServiceSpec extends ItSpec {
         eventually {
           cdsOpsService.retrieveWorkItems.futureValue.isEmpty shouldBe false
           numberOfQueuedNotifications shouldBe 1
-          val sentItems: Seq[WorkItem[CdsOpsWorkItem]] = cdsOpsService.retrieveWorkItems.futureValue
+          val sentItems: Seq[WorkItem[CdsOpsMyWorkItem]] = cdsOpsService.retrieveWorkItems.futureValue
           sentItems.size shouldBe 0
         }
       }

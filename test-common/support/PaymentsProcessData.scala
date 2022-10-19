@@ -26,8 +26,8 @@ import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificatio
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import pp.model.pngrs.{PngrStatusTypes, PngrStatusUpdateRequest}
-import pp.model.wokitems.ChargeRefNotificationWorkItem
-import pp.model.{chargeref, _}
+import pp.model.wokitems.ChargeRefNotificationMyWorkItem
+import pp.model._
 
 import java.time.Clock
 import java.time.Clock.systemUTC
@@ -71,7 +71,7 @@ object PaymentsProcessData {
 
   private val pciPalSessionId = PcipalSessionId("48c978bb")
 
-  val chargeRefNotificationWorkItem: ChargeRefNotificationWorkItem = ChargeRefNotificationWorkItem(now(clock), now(clock).minusSeconds(100), p800, chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem: ChargeRefNotificationMyWorkItem = ChargeRefNotificationMyWorkItem(now(clock), now(clock).minusSeconds(100), p800, chargeReferenceNumber, 100.12, OPS)
 
   val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = chargeref.ChargeRefNotificationDesRequest(p800, chargeReferenceNumber, 100.11)
 

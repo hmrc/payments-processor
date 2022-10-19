@@ -18,8 +18,9 @@ package pp.model
 
 import play.api.mvc.PathBindable
 import pp.controllers.ValueClassBinder.valueClassBinder
-import uk.gov.hmrc.workitem.ProcessingStatus
+import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
 object ProcessingStatusBinder {
+  implicit val format = ProcessingStatus.Implicits.format
   implicit val binder: PathBindable[ProcessingStatus] = valueClassBinder(_.toString)
 }
