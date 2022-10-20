@@ -47,7 +47,7 @@ abstract class NotificationRepo[A](
   override def ensureIndexes: Future[Seq[String]] = {
     val indexesPlusExpireAfterIndex = indexes ++ Seq(
       IndexModel(
-        keys         = Indexes.ascending(workItemFields.status, workItemFields.receivedAt),
+        keys         = Indexes.ascending(workItemFields.receivedAt),
         indexOptions = IndexOptions().name("receivedAtTime").expireAfter(ttlInSeconds, TimeUnit.SECONDS)
       ))
     MongoUtils.ensureIndexes(collection, indexesPlusExpireAfterIndex, true)
