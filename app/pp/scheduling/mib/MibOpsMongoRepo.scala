@@ -39,4 +39,3 @@ class MibOpsMongoRepo @Inject() (
     clock          = clock,
     queueConfig    = queueConfig)
 
-

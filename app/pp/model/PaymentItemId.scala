@@ -16,11 +16,11 @@
 
 package pp.model
 
+import org.bson.types.ObjectId
 import pp.controllers.ValueClassBinder.valueClassBinder
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.PathBindable
-import reactivemongo.bson.BSONObjectID
 
 final case class PaymentItemId(
     value: String
@@ -29,6 +29,6 @@ final case class PaymentItemId(
 object PaymentItemId {
   implicit val format: Format[PaymentItemId] = implicitly[Format[String]].inmap(PaymentItemId(_), _.value)
   implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
-  def fresh: PaymentItemId = PaymentItemId(BSONObjectID.generate.stringify)
+  def fresh: PaymentItemId = PaymentItemId(ObjectId.get().toHexString)
 }
 

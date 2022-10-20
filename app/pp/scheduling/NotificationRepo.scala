@@ -28,7 +28,6 @@ import java.time.{Clock, Duration, Instant}
 import java.util.concurrent.TimeUnit
 import scala.concurrent.{ExecutionContext, Future}
 
-
 abstract class NotificationRepo[A](
     mongoComponent: MongoComponent,
     configuration:  Configuration,
