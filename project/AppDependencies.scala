@@ -24,7 +24,7 @@ object AppDependencies {
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"                 % "0.73.0",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-work-item-repo-play-28"  % "0.73.0",
     "uk.gov.hmrc"       %% "play-hmrc-api"                      % "6.4.0-play-28",
-    "uk.gov.hmrc"       %% "play-scheduling-play-27"            % "7.10.0",
+    "uk.gov.hmrc"       %% "play-scheduling-play-27"            % "8.0.0",
     "uk.gov.hmrc"       %% "bootstrap-backend-play-28"          % "5.4.0",
     "com.beachape"      %% "enumeratum"                         % "1.7.0",
     "com.beachape"      %% "enumeratum-play-json"               % "1.7.0"
