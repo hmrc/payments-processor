@@ -37,9 +37,9 @@ class ReportingControllerSpec extends ItSpec{
 
 
 
-  protected def numberOfQueuedNotificationsPngr: Integer = repoPngr.count(Json.obj()).futureValue
-  protected def numberOfQueuedNotificationsChargeRef: Integer = repoChargeRef.count(Json.obj()).futureValue
-  protected def numberOfQueuedNotificationsMibOps: Integer = mibOpsRepo.count(Json.obj()).futureValue
+  protected def numberOfQueuedNotificationsPngr: Long = repoPngr.countAll().futureValue
+  protected def numberOfQueuedNotificationsChargeRef: Long = repoChargeRef.countAll().futureValue
+  protected def numberOfQueuedNotificationsMibOps: Long = mibOpsRepo.countAll().futureValue
 
   "test pngr reporting" in {
 

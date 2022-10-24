@@ -18,7 +18,7 @@ package pp.model
 
 import java.time.LocalDateTime
 
-trait WorkItemFields {
+trait MyWorkItemFields {
   val createdOn: LocalDateTime
   val taxType: TaxType
   val origin: Origin

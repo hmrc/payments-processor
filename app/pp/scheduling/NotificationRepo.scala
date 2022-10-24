@@ -16,83 +16,69 @@
 
 package pp.scheduling
 
-/*
- * Copyright 2020 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import java.time.Clock
-
-import org.joda.time.{DateTime, Duration}
+import org.bson.types.ObjectId
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import play.api.Configuration
-import play.api.libs.json.{JsObject, Json, OFormat}
-import play.modules.reactivemongo.ReactiveMongoComponent
+import play.api.libs.json.OFormat
 import pp.config.QueueConfig
-import pp.scheduling.DateTimeHelpers._
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.{BSONDocument, BSONObjectID}
-import reactivemongo.play.json.ImplicitBSONHandlers._
-import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
-import uk.gov.hmrc.workitem._
+import uk.gov.hmrc.mongo.{MongoComponent, MongoUtils}
+import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem, WorkItemFields, WorkItemRepository}
 
+import java.time.{Clock, Duration, Instant}
+import java.util.concurrent.TimeUnit
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class NotificationRepo[A](
-    reactiveMongoComponent: ReactiveMongoComponent,
-    configuration:          Configuration,
-    clock:                  Clock,
-    queueConfig:            QueueConfig)
+    mongoComponent: MongoComponent,
+    configuration:  Configuration,
+    clock:          Clock,
+    queueConfig:    QueueConfig)
   (implicit ec: ExecutionContext, format: OFormat[A], mfItem: Manifest[A])
-  extends WorkItemRepository[A, BSONObjectID](
+  extends WorkItemRepository[A](
     collectionName = queueConfig.collectionName,
-    mongo          = reactiveMongoComponent.mongoConnector.db,
-    itemFormat     = WorkItem.workItemMongoFormat[A],
-    configuration.underlying) {
+    mongoComponent = mongoComponent,
+    itemFormat     = format,
+    workItemFields = WorkItemFields.default.copy(availableAt = "availableAt")) {
 
-  lazy val retryIntervalMillis: Long = configuration.getMillis(inProgressRetryAfterProperty)
-  override lazy val inProgressRetryAfter: Duration = Duration.millis(retryIntervalMillis)
   private lazy val ttlInSeconds = {
     queueConfig.ttl.getSeconds
   }
-  override val inProgressRetryAfterProperty: String = queueConfig.retryAfterProperty
 
-  override def indexes: Seq[Index] = super.indexes ++ Seq(
-    Index(key     = Seq("receivedAt" -> IndexType.Ascending), name = Some("receivedAtTime"), options = BSONDocument("expireAfterSeconds" -> ttlInSeconds)))
-
-  def workItemFields: WorkItemFieldNames = new WorkItemFieldNames {
-    val receivedAt = "receivedAt"
-    val updatedAt = "updatedAt"
-    val availableAt = "availableAt"
-    val status = "status"
-    val id = "_id"
-    val failureCount = "failureCount"
+  override def ensureIndexes: Future[Seq[String]] = {
+    val indexesPlusExpireAfterIndex = indexes ++ Seq(
+      IndexModel(
+        keys         = Indexes.ascending(workItemFields.receivedAt),
+        indexOptions = IndexOptions().name("receivedAtTime").expireAfter(ttlInSeconds, TimeUnit.SECONDS)
+      ))
+    MongoUtils.ensureIndexes(collection, indexesPlusExpireAfterIndex, true)
   }
+
+  lazy val retryIntervalMillis: Long = configuration.getMillis(queueConfig.retryAfterProperty)
+  override lazy val inProgressRetryAfter: Duration = Duration.ofMillis(retryIntervalMillis)
 
   def pullOutstanding(implicit ec: ExecutionContext): Future[Option[WorkItem[A]]] =
     super.pullOutstanding(now.minusMillis(retryIntervalMillis.toInt), now)
 
-  def complete(id: BSONObjectID)(implicit ec: ExecutionContext): Future[Boolean] = {
-    val selector = JsObject(
-      Seq("_id" -> Json.toJson(id)(ReactiveMongoFormats.objectIdFormats), "status" -> Json.toJson(InProgress: ProcessingStatus)))
-    collection.delete().one(selector).map(_.n > 0)
+  def failed(id: ObjectId)(implicit ec: ExecutionContext): Future[Boolean] = {
+    markAs(id, ProcessingStatus.Failed)
   }
 
-  def failed(id: BSONObjectID)(implicit ec: ExecutionContext): Future[Boolean] = {
-    markAs(id, Failed, Some(now.plusMillis(retryIntervalMillis.toInt)))
-  }
+  override def now(): Instant =
+    Instant.now()
 
-  override def now: DateTime = clock.nowAsJoda
+  def findAll(): Future[List[WorkItem[A]]] =
+    collection.find()
+      .toFuture()
+      .map(_.toList)
+
+  def removeAll() = collection
+    .drop()
+    .toFuture()
+    .map(_ => ())
+
+  def countAll(): Future[Long] = collection
+    .countDocuments()
+    .toFuture()
 
 }
 

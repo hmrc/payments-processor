@@ -16,22 +16,26 @@
 
 package pp.scheduling.mib
 
-import java.time.Clock
-
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.modules.reactivemongo.ReactiveMongoComponent
 import pp.config.MibOpsQueueConfig
-import pp.model.wokitems.MibOpsWorkItem
+import pp.model.wokitems.MibOpsMyWorkItem
 import pp.scheduling.NotificationRepo
+import uk.gov.hmrc.mongo.MongoComponent
 
+import java.time.Clock
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class MibOpsMongoRepo @Inject() (
-    reactiveMongoComponent: ReactiveMongoComponent,
-    configuration:          Configuration,
-    clock:                  Clock,
-    queueConfig:            MibOpsQueueConfig)(implicit ec: ExecutionContext)
-  extends NotificationRepo[MibOpsWorkItem](reactiveMongoComponent, configuration, clock, queueConfig)
+    mongoComponent: MongoComponent,
+    configuration:  Configuration,
+    clock:          Clock,
+    queueConfig:    MibOpsQueueConfig)
+  (implicit ec: ExecutionContext)
+  extends NotificationRepo[MibOpsMyWorkItem](
+    mongoComponent = mongoComponent,
+    configuration  = configuration,
+    clock          = clock,
+    queueConfig    = queueConfig)
 

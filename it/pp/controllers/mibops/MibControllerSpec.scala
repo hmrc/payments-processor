@@ -19,7 +19,7 @@ trait MibControllerSpec extends ItSpec{
     super.beforeEach()
   }
 
-  protected def numberOfQueuedNotifications: Integer = repo.count(Json.obj()).futureValue
+  protected def numberOfQueuedNotifications: Long = repo.countAll().futureValue
 
 
   def aSynchronousEndpointWhenTheMibPaymentUpdateSucceeds(): Unit = {

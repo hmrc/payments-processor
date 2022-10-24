@@ -14,30 +14,27 @@
  * limitations under the License.
  */
 
-//Note if you run a clean it may removed the following import which is needed !
-// import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
-
 package pp.model.wokitems
 
 import java.time.LocalDateTime
 
 import play.api.libs.json._
-import pp.model.{Origin, TaxType, WorkItemFields}
+import pp.model.{Origin, TaxType, MyWorkItemFields}
 
-case class ChargeRefNotificationWorkItem(
+case class ChargeRefNotificationMyWorkItem(
     createdOn:       LocalDateTime,
     availableUntil:  LocalDateTime,
     taxType:         TaxType,
     chargeRefNumber: String,
     amountPaid:      BigDecimal,
-    origin:          Origin) extends WorkItemFields {
+    origin:          Origin) extends MyWorkItemFields {
 
   override def toString: String =
     s"ChargeRefNotificationWorkItem for chargeReference $chargeRefNumber ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, chargeRefNumber: $chargeRefNumber}"
 
 }
 
-object ChargeRefNotificationWorkItem {
-  implicit val format: OFormat[ChargeRefNotificationWorkItem] = Json.format[ChargeRefNotificationWorkItem]
+object ChargeRefNotificationMyWorkItem {
+  implicit val format: OFormat[ChargeRefNotificationMyWorkItem] = Json.format[ChargeRefNotificationMyWorkItem]
 }
 

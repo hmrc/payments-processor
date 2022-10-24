@@ -20,21 +20,21 @@ import java.time.LocalDateTime
 
 import play.api.libs.json.{Json, OFormat}
 import pp.model.cds.NotificationCds
-import pp.model.{Origin, TaxType, WorkItemFields}
+import pp.model.{Origin, TaxType, MyWorkItemFields}
 
-case class CdsOpsWorkItem(
+case class CdsOpsMyWorkItem(
     createdOn:       LocalDateTime,
     availableUntil:  LocalDateTime,
     taxType:         TaxType,
     origin:          Origin,
     reference:       String,
-    notificationCds: NotificationCds) extends WorkItemFields {
+    notificationCds: NotificationCds) extends MyWorkItemFields {
 
   override def toString: String =
     s"CdsWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference, notification: ${notificationCds.toString}"
 }
 
-object CdsOpsWorkItem {
-  implicit val format: OFormat[CdsOpsWorkItem] = Json.format[CdsOpsWorkItem]
+object CdsOpsMyWorkItem {
+  implicit val format: OFormat[CdsOpsMyWorkItem] = Json.format[CdsOpsMyWorkItem]
 }
 

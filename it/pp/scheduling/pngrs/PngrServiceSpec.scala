@@ -1,19 +1,18 @@
 package pp.scheduling.pngrs
 
 
-import java.time.{Clock, LocalDateTime}
-
 import com.github.tomakehurst.wiremock.client.WireMock
-import play.api.libs.json.Json
 import pp.config.PngrsQueueConfig
 import pp.connectors.PngrConnector
 import pp.model.pngrs.PngrStatusTypes
-import pp.model.wokitems.PngrWorkItem
+import pp.model.wokitems.PngrMyWorkItem
 import pp.model.{Origins, TaxTypes, wokitems}
 import pp.services.PngrService
 import support.PaymentsProcessData.pngrStatusUpdateRequest
 import support.{ItSpec, Pngr}
-import uk.gov.hmrc.workitem.{ToDo, WorkItem}
+import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
+
+import java.time.{Clock, LocalDateTime}
 
 class PngrServiceSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[PngrMongoRepo]
@@ -25,7 +24,7 @@ class PngrServiceSpec extends ItSpec {
   val availableUntilInPast: LocalDateTime = time.minusSeconds(60)
   val availUntilInFuture: LocalDateTime = time.plusSeconds(60)
 
-  val workItem: PngrWorkItem = wokitems.PngrWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference", PngrStatusTypes.Successful)
+  val workItem: PngrMyWorkItem = wokitems.PngrMyWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference", PngrStatusTypes.Successful)
 
   override def configMap: Map[String, Any] =
     super.configMap
@@ -37,7 +36,7 @@ class PngrServiceSpec extends ItSpec {
     super.beforeEach()
   }
 
-  protected def numberOfQueuedNotifications: Integer = repo.count(Json.obj()).futureValue
+  protected def numberOfQueuedNotifications: Long = repo.countAll().futureValue
 
   "check error mechanism, not available" in {
     pngrService.isAvailable(workItem) shouldBe false
@@ -58,7 +57,7 @@ class PngrServiceSpec extends ItSpec {
       workItem.item.reference shouldBe pngrStatusUpdateRequest.reference
       workItem.item.status shouldBe PngrStatusTypes.Successful
       workItem.item.origin shouldBe Origins.PCI_PAL
-      workItem.status shouldBe ToDo
+      workItem.status shouldBe ProcessingStatus.ToDo
     }
   }
 
@@ -76,7 +75,7 @@ class PngrServiceSpec extends ItSpec {
         eventually {
           pngrService.retrieveWorkItems.futureValue.isEmpty shouldBe false
           numberOfQueuedNotifications shouldBe 1
-          val sentItems: Seq[WorkItem[PngrWorkItem]] = pngrService.retrieveWorkItems.futureValue
+          val sentItems: Seq[WorkItem[PngrMyWorkItem]] = pngrService.retrieveWorkItems.futureValue
           sentItems.size shouldBe 0
         }
       }

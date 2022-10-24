@@ -32,7 +32,7 @@ object ProcessingStatusOps {
 }
 
 sealed abstract class ProcessingStatusOps extends EnumEntry {
-  val processingStatus: uk.gov.hmrc.workitem.ProcessingStatus
+  val processingStatus: uk.gov.hmrc.mongo.workitem.ProcessingStatus
 }
 
 object ProcessingStatusOpsValues extends Enum[ProcessingStatusOps] {
@@ -42,14 +42,14 @@ object ProcessingStatusOpsValues extends Enum[ProcessingStatusOps] {
   def values: immutable.IndexedSeq[ProcessingStatusOps] = findValues
 
   case object PermanentlyFailed extends ProcessingStatusOps {
-    val processingStatus = uk.gov.hmrc.workitem.PermanentlyFailed
+    val processingStatus = uk.gov.hmrc.mongo.workitem.ProcessingStatus.PermanentlyFailed
   }
 
   case object ToDo extends ProcessingStatusOps {
-    val processingStatus = uk.gov.hmrc.workitem.ToDo
+    val processingStatus = uk.gov.hmrc.mongo.workitem.ProcessingStatus.ToDo
   }
 
   case object Failed extends ProcessingStatusOps {
-    val processingStatus = uk.gov.hmrc.workitem.Failed
+    val processingStatus = uk.gov.hmrc.mongo.workitem.ProcessingStatus.Failed
   }
 }

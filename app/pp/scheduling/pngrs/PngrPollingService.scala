@@ -19,7 +19,7 @@ package pp.scheduling.pngrs
 import akka.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
 import pp.config.PngrsQueueConfig
-import pp.model.wokitems.PngrWorkItem
+import pp.model.wokitems.PngrMyWorkItem
 import pp.scheduling.PollingService
 import pp.services.PngrService
 
@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext
 class PngrPollingService @Inject() (actorSystem: ActorSystem,
                                     queueConfig: PngrsQueueConfig, workItemService: PngrService)(
     implicit
-    ec: ExecutionContext) extends PollingService[PngrWorkItem](actorSystem, queueConfig, workItemService) {
+    ec: ExecutionContext) extends PollingService[PngrMyWorkItem](actorSystem, queueConfig, workItemService) {
 
   override def name: String = "PngrPollingService"
 

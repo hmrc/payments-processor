@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-//Note if you run a clean it may removed the following import which is needed !
-// import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.objectIdFormats
-
 package pp.model.chargeref
 
 import play.api.libs.json._

@@ -5,12 +5,12 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.libs.json.Json
 import pp.config.MibOpsQueueConfig
 import pp.connectors.MibConnector
-import pp.model.wokitems.MibOpsWorkItem
+import pp.model.wokitems.MibOpsMyWorkItem
 import pp.model.{Origins, TaxTypes}
 import pp.services.MibOpsService
-import support.PaymentsProcessData.{mibReference}
+import support.PaymentsProcessData.mibReference
 import support.{ItSpec, Mib, PaymentsProcessData}
-import uk.gov.hmrc.workitem.{ToDo, WorkItem}
+import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
 
 class MibOpsServiceSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[MibOpsMongoRepo]
@@ -22,7 +22,7 @@ class MibOpsServiceSpec extends ItSpec {
   val availableUntilInPast: LocalDateTime = time.minusSeconds(60)
   val availUntilInFuture: LocalDateTime = time.plusSeconds(60)
 
-  val workItem: MibOpsWorkItem = MibOpsWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference", PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef)
+  val workItem: MibOpsMyWorkItem = MibOpsMyWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference", PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef)
 
   override def configMap: Map[String, Any] =
     super.configMap
@@ -34,7 +34,7 @@ class MibOpsServiceSpec extends ItSpec {
     super.beforeEach()
   }
 
-  protected def numberOfQueuedNotifications: Integer = repo.count(Json.obj()).futureValue
+  protected def numberOfQueuedNotifications: Long = repo.countAll().futureValue
 
   "check error mechanism, not available" in {
     mibOpsService.isAvailable(workItem) shouldBe false
@@ -54,7 +54,7 @@ class MibOpsServiceSpec extends ItSpec {
       workItem.item.taxType shouldBe TaxTypes.mib
       workItem.item.reference shouldBe mibReference
       workItem.item.origin shouldBe Origins.OPS
-      workItem.status shouldBe ToDo
+      workItem.status shouldBe ProcessingStatus.ToDo
     }
   }
 
@@ -72,7 +72,7 @@ class MibOpsServiceSpec extends ItSpec {
         eventually {
           mibOpsService.retrieveWorkItems.futureValue.isEmpty shouldBe false
           numberOfQueuedNotifications shouldBe 1
-          val sentItems: Seq[WorkItem[MibOpsWorkItem]] = mibOpsService.retrieveWorkItems.futureValue
+          val sentItems: Seq[WorkItem[MibOpsMyWorkItem]] = mibOpsService.retrieveWorkItems.futureValue
           sentItems.size shouldBe 0
         }
       }

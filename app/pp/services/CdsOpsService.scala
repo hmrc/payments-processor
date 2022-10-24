@@ -16,20 +16,18 @@
 
 package pp.services
 
-import java.time.{Clock, LocalDateTime, ZoneId}
-
-import javax.inject.{Inject, Singleton}
-import org.joda.time.DateTime
 import play.api.Logger
 import play.api.mvc.Results
 import pp.config.CdsOpsQueueConfig
 import pp.connectors.CdsConnector
-import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest}
-import pp.model.wokitems.CdsOpsWorkItem
+import pp.model.cds.NotificationCds
+import pp.model.wokitems.CdsOpsMyWorkItem
 import pp.model.{Origins, TaxTypes}
 import pp.scheduling.cds.CdsOpsMongoRepo
-import uk.gov.hmrc.workitem.WorkItem
+import uk.gov.hmrc.mongo.workitem.WorkItem
 
+import java.time.{Clock, LocalDateTime}
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,12 +36,12 @@ class CdsOpsService @Inject() (
     val queueConfig: CdsOpsQueueConfig,
     cdsConnector:    CdsConnector,
     val clock:       Clock
-)(implicit val executionContext: ExecutionContext) extends WorkItemService[CdsOpsWorkItem] with Results {
+)(implicit val executionContext: ExecutionContext) extends WorkItemService[CdsOpsMyWorkItem] with Results {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   //These are all specific to cds processing
-  def sendWorkItem(workItem: WorkItem[CdsOpsWorkItem]): Future[Unit] = {
+  def sendWorkItem(workItem: WorkItem[CdsOpsMyWorkItem]): Future[Unit] = {
 
     logger.debug("inside sendWorkItemToCdsOps")
     for {
@@ -52,12 +50,12 @@ class CdsOpsService @Inject() (
 
   }
 
-  def sendCdsOpsToWorkItemRepo(notificationCds: NotificationCds): Future[WorkItem[CdsOpsWorkItem]] = {
+  def sendCdsOpsToWorkItemRepo(notificationCds: NotificationCds): Future[WorkItem[CdsOpsMyWorkItem]] = {
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
-    val jodaLocalDateTime = new DateTime(time.atZone(ZoneId.systemDefault).toInstant.toEpochMilli)
-    val workItem = CdsOpsWorkItem(time, availableUntil(time), TaxTypes.cds, Origins.OPS, reference = notificationCds.notifyImmediatePaymentRequest.requestDetail.paymentReference, notificationCds)
-    repo.pushNew(workItem, jodaLocalDateTime)
+    val localDateTime = repo.now()
+    val workItem = CdsOpsMyWorkItem(time, availableUntil(time), TaxTypes.cds, Origins.OPS, reference = notificationCds.notifyImmediatePaymentRequest.requestDetail.paymentReference, notificationCds)
+    repo.pushNew(workItem, localDateTime)
 
   }
 

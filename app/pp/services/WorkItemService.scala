@@ -16,17 +16,16 @@
 
 package pp.services
 
-import java.time.{Clock, LocalDateTime}
-
 import play.api.Logger
 import pp.config.QueueConfig
-import pp.model.WorkItemFields
+import pp.model.MyWorkItemFields
 import pp.scheduling.NotificationRepo
-import uk.gov.hmrc.workitem.{Failed, PermanentlyFailed, WorkItem}
+import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
 
+import java.time.{Clock, LocalDateTime}
 import scala.concurrent.{ExecutionContext, Future}
 
-trait WorkItemService[P <: WorkItemFields] {
+trait WorkItemService[P <: MyWorkItemFields] {
 
   val clock: Clock
 
@@ -40,7 +39,7 @@ trait WorkItemService[P <: WorkItemFields] {
 
   def sendWorkItem(workItem: WorkItem[P]): Future[Unit]
 
-  def isAvailable(workItem: WorkItemFields): Boolean = {
+  def isAvailable(workItem: MyWorkItemFields): Boolean = {
     val time = LocalDateTime.now(clock)
     time.isBefore(workItem.availableUntil)
   }
@@ -49,7 +48,7 @@ trait WorkItemService[P <: WorkItemFields] {
 
   def markAsPermFailed(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]] = {
     logger.warn(s"payments-processor: Failed to process workitem ${workItem.item.toString}")
-    repo.markAs(workItem.id, PermanentlyFailed)
+    repo.markAs(workItem.id, ProcessingStatus.PermanentlyFailed)
       .map(_ => acc :+ workItem)
   }
 
@@ -57,11 +56,11 @@ trait WorkItemService[P <: WorkItemFields] {
     logger.debug("inside processThenMarkAsComplete")
 
     sendWorkItem(workItem)
-      .map(_ => repo.complete(workItem.id))
+      .map(_ => repo.completeAndDelete(workItem.id))
       .map(_ => acc :+ workItem)
       .recoverWith {
         case _ =>
-          repo.markAs(workItem.id, Failed).map(_ => acc)
+          repo.markAs(workItem.id, ProcessingStatus.Failed).map(_ => acc)
       }
   }
 

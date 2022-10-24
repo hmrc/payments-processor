@@ -16,23 +16,25 @@
 
 package pp.scheduling.cds
 
-import java.time.Clock
-
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.modules.reactivemongo.ReactiveMongoComponent
 import pp.config.CdsOpsQueueConfig
-import pp.model.wokitems.CdsOpsWorkItem
+import pp.model.wokitems.CdsOpsMyWorkItem
 import pp.scheduling.NotificationRepo
+import uk.gov.hmrc.mongo.MongoComponent
 
+import java.time.Clock
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class CdsOpsMongoRepo @Inject() (
-    reactiveMongoComponent: ReactiveMongoComponent,
-    configuration:          Configuration,
-    clock:                  Clock,
-    queueConfig:            CdsOpsQueueConfig)(implicit ec: ExecutionContext)
-  extends NotificationRepo[CdsOpsWorkItem](reactiveMongoComponent, configuration, clock, queueConfig) {
-
-}
+    mongoComponent: MongoComponent,
+    configuration:  Configuration,
+    clock:          Clock,
+    queueConfig:    CdsOpsQueueConfig)
+  (implicit ec: ExecutionContext)
+  extends NotificationRepo[CdsOpsMyWorkItem](
+    mongoComponent = mongoComponent,
+    configuration  = configuration,
+    clock          = clock,
+    queueConfig    = queueConfig)

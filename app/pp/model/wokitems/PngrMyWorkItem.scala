@@ -20,20 +20,20 @@ import java.time.LocalDateTime
 
 import play.api.libs.json._
 import pp.model.pngrs.PngrStatusType
-import pp.model.{Origin, TaxType, WorkItemFields}
+import pp.model.{Origin, TaxType, MyWorkItemFields}
 
-case class PngrWorkItem(
+case class PngrMyWorkItem(
     createdOn:      LocalDateTime,
     availableUntil: LocalDateTime,
     taxType:        TaxType,
     origin:         Origin,
     reference:      String,
-    status:         PngrStatusType) extends WorkItemFields {
+    status:         PngrStatusType) extends MyWorkItemFields {
 
   override def toString: String =
     s"PngrWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference, status: $status}"
 }
 
-object PngrWorkItem {
-  implicit val format: OFormat[PngrWorkItem] = Json.format[PngrWorkItem]
+object PngrMyWorkItem {
+  implicit val format: OFormat[PngrMyWorkItem] = Json.format[PngrMyWorkItem]
 }

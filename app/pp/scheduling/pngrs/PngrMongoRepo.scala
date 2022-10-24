@@ -16,22 +16,26 @@
 
 package pp.scheduling.pngrs
 
-import java.time.Clock
-
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.modules.reactivemongo.ReactiveMongoComponent
 import pp.config.PngrsQueueConfig
-import pp.model.wokitems.PngrWorkItem
+import pp.model.wokitems.PngrMyWorkItem
 import pp.scheduling.NotificationRepo
+import uk.gov.hmrc.mongo.MongoComponent
 
+import java.time.Clock
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class PngrMongoRepo @Inject() (
-    reactiveMongoComponent: ReactiveMongoComponent,
-    configuration:          Configuration,
-    clock:                  Clock,
-    queueConfig:            PngrsQueueConfig)(implicit ec: ExecutionContext)
-  extends NotificationRepo[PngrWorkItem](reactiveMongoComponent, configuration, clock, queueConfig)
+    mongoComponent: MongoComponent,
+    configuration:  Configuration,
+    clock:          Clock,
+    queueConfig:    PngrsQueueConfig)
+  (implicit ec: ExecutionContext)
+  extends NotificationRepo[PngrMyWorkItem](
+    mongoComponent = mongoComponent,
+    configuration  = configuration,
+    clock          = clock,
+    queueConfig    = queueConfig)
 

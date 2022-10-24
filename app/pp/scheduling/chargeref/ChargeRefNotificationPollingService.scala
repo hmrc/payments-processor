@@ -19,7 +19,7 @@ package pp.scheduling.chargeref
 import akka.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
 import pp.config.ChargeRefQueueConfig
-import pp.model.wokitems.ChargeRefNotificationWorkItem
+import pp.model.wokitems.ChargeRefNotificationMyWorkItem
 import pp.scheduling.PollingService
 import pp.services.ChargeRefService
 
@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext
 class ChargeRefNotificationPollingService @Inject() (actorSystem: ActorSystem,
                                                      queueConfig: ChargeRefQueueConfig, workItemService: ChargeRefService)(
     implicit
-    ec: ExecutionContext) extends PollingService[ChargeRefNotificationWorkItem](actorSystem, queueConfig, workItemService) {
+    ec: ExecutionContext) extends PollingService[ChargeRefNotificationMyWorkItem](actorSystem, queueConfig, workItemService) {
 
   override def name: String = "ChargeRefNotificationPollingService"
 
