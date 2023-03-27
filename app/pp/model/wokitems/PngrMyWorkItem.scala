@@ -31,9 +31,12 @@ case class PngrMyWorkItem(
     status:         PngrStatusType) extends MyWorkItemFields {
 
   override def toString: String =
-    s"PngrWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference, status: $status}"
+    s"PngrWorkItem for chargeReference $reference ... " +
+      s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: ${taxType.toString}, " +
+      s"origin: ${origin.toString}, reference: $reference, status: ${status.toString}}"
 }
 
 object PngrMyWorkItem {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[PngrMyWorkItem] = Json.format[PngrMyWorkItem]
 }

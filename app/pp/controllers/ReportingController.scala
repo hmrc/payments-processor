@@ -52,7 +52,7 @@ class ReportingController @Inject() (
         mibOpsMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case TaxTypes.cds =>
         cdsOpsMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
-      case _ => throw new RuntimeException(s"taxType $taxType not supported, processingState $processingState not supported")
+      case _ => throw new RuntimeException(s"taxType ${taxType.entryName} not supported, processingState ${processingState.toString} not supported")
     }
   }
 
@@ -79,7 +79,7 @@ class ReportingController @Inject() (
           allRecords <- cdsOpsMongoRepo.findAll()
           allRecordsAsItems = allRecords.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
         } yield Ok(Json.toJson(allRecordsAsItems))
-      case _ => throw new RuntimeException(s"taxType $taxType not supported")
+      case _ => throw new RuntimeException(s"taxType ${taxType.entryName} not supported")
     }
   }
 

@@ -47,17 +47,21 @@ case class Access(
 )
 
 object ApiDefinition {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val oFormats: OFormat[ApiDefinition] = Json.format[ApiDefinition]
 }
 
 object Api {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val oFormats: OFormat[Api] = Json.format[Api]
 }
 
 object Version {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val oFormats: OFormat[Version] = Json.format[Version]
 }
 
 object Access {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val oFormats: OFormat[Access] = Json.format[Access]
 }

@@ -21,43 +21,33 @@ import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import play.api.Configuration
 import play.api.libs.json.OFormat
 import pp.config.QueueConfig
-import uk.gov.hmrc.mongo.{MongoComponent, MongoUtils}
+import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem, WorkItemFields, WorkItemRepository}
 
 import java.time.{Clock, Duration, Instant}
 import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
 
+@SuppressWarnings(Array("org.wartremover.warts.Any"))
 abstract class NotificationRepo[A](
     mongoComponent: MongoComponent,
     configuration:  Configuration,
     clock:          Clock,
-    queueConfig:    QueueConfig)
-  (implicit ec: ExecutionContext, format: OFormat[A], mfItem: Manifest[A])
-  extends WorkItemRepository[A](
+    queueConfig:    QueueConfig
+)(implicit ec: ExecutionContext, format: OFormat[A], mfItem: Manifest[A]) extends WorkItemRepository[A](
     collectionName = queueConfig.collectionName,
     mongoComponent = mongoComponent,
     itemFormat     = format,
-    workItemFields = WorkItemFields.default.copy(availableAt = "availableAt")) {
-
-  private lazy val ttlInSeconds = {
-    queueConfig.ttl.getSeconds
-  }
-
-  override def ensureIndexes: Future[Seq[String]] = {
-    val indexesPlusExpireAfterIndex = indexes ++ Seq(
-      IndexModel(
-        keys         = Indexes.ascending(workItemFields.receivedAt),
-        indexOptions = IndexOptions().name("receivedAtTime").expireAfter(ttlInSeconds, TimeUnit.SECONDS)
-      ))
-    MongoUtils.ensureIndexes(collection, indexesPlusExpireAfterIndex, true)
-  }
+    extraIndexes   = NotificationRepo.indexes(queueConfig.ttl),
+    workItemFields = WorkItemFields.default.copy(availableAt = "availableAt")
+  ) {
 
   lazy val retryIntervalMillis: Long = configuration.getMillis(queueConfig.retryAfterProperty)
   override lazy val inProgressRetryAfter: Duration = Duration.ofMillis(retryIntervalMillis)
 
   def pullOutstanding(implicit ec: ExecutionContext): Future[Option[WorkItem[A]]] =
-    super.pullOutstanding(now.minusMillis(retryIntervalMillis.toInt), now)
+    super.pullOutstanding(now().minusMillis(retryIntervalMillis.toInt), now())
 
   def failed(id: ObjectId)(implicit ec: ExecutionContext): Future[Boolean] = {
     markAs(id, ProcessingStatus.Failed)
@@ -71,7 +61,7 @@ abstract class NotificationRepo[A](
       .toFuture()
       .map(_.toList)
 
-  def removeAll() = collection
+  def removeAll(): Future[Unit] = collection
     .drop()
     .toFuture()
     .map(_ => ())
@@ -82,3 +72,11 @@ abstract class NotificationRepo[A](
 
 }
 
+object NotificationRepo {
+  def indexes(ttlInSeconds: FiniteDuration): Seq[IndexModel] = Seq(
+    IndexModel(
+      keys         = Indexes.ascending("receivedAtTime"),
+      indexOptions = IndexOptions().name("receivedAtTime").expireAfter(ttlInSeconds.toSeconds, TimeUnit.SECONDS)
+    )
+  )
+}

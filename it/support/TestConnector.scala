@@ -37,7 +37,6 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   val port = 19001
   val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
 
-
   implicit val readRaw: HttpReads[HttpResponse] = ResponseReadsThrowingException.readResponse
 
   def sendCardPaymentsNotification(cardPaymentsNotificationRequest: ChargeRefNotificationRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =

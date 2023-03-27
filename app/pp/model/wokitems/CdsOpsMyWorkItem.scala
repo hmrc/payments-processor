@@ -31,10 +31,13 @@ case class CdsOpsMyWorkItem(
     notificationCds: NotificationCds) extends MyWorkItemFields {
 
   override def toString: String =
-    s"CdsWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference, notification: ${notificationCds.toString}"
+    s"CdsWorkItem for chargeReference $reference ... " +
+      s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: ${taxType.toString}, " +
+      s"origin: ${origin.toString}, reference: $reference, notification: ${notificationCds.toString}"
 }
 
 object CdsOpsMyWorkItem {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[CdsOpsMyWorkItem] = Json.format[CdsOpsMyWorkItem]
 }
 

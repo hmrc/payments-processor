@@ -26,6 +26,7 @@ case class ChargeRefNotificationRequest(
     origin:          Origin)
 
 object ChargeRefNotificationRequest {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
 }
 

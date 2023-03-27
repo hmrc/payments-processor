@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package pp.model.pngrs
+package pp.scheduling
 
-import play.api.libs.json.{Json, OFormat}
+import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.FiniteDuration
 
-final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusType)
+trait ScheduledJob {
+  def name: String
+  def execute(implicit ec: ExecutionContext): Future[Result]
 
-object PngrStatusUpdateRequest {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[PngrStatusUpdateRequest] = Json.format[PngrStatusUpdateRequest]
+  case class Result(message: String)
+
+  def configKey: String = name
+
+  def initialDelay: FiniteDuration
+
+  def interval: FiniteDuration
+
+  override def toString = s"$name after ${initialDelay.toString()} every ${interval.toString()}"
 }

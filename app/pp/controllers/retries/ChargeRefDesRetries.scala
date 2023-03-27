@@ -71,11 +71,11 @@ trait ChargeRefDesRetries extends Results {
   def sendCardPaymentsNotification(chargeRefNotificationRequest: ChargeRefNotificationRequest): Future[Status] = {
     logger.debug("sendCardPaymentsNotification")
 
-    val sendChargeRef = sendAllToDes || chargeRefNotificationRequest.taxType.sendToDes
+    val sendChargeRef: Boolean = sendAllToDes || chargeRefNotificationRequest.taxType.sendToDes
     if (sendChargeRef) {
       processChargeRefNotificationRequest(chargeRefNotificationRequest)
     } else {
-      logger.debug(s"Not sending des notification for ${chargeRefNotificationRequest.taxType}, ignoreSendChargeRef was $sendChargeRef")
+      logger.debug(s"Not sending des notification for ${chargeRefNotificationRequest.taxType.entryName}, ignoreSendChargeRef was ${sendChargeRef.toString}")
       Future.successful(Ok)
     }
 

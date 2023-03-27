@@ -24,5 +24,6 @@ case class ModsPaymentCallBackRequest(
 )
 
 object ModsPaymentCallBackRequest {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ModsPaymentCallBackRequest] = Json.format[ModsPaymentCallBackRequest]
 }

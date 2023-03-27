@@ -23,8 +23,10 @@ object EnumFormat {
 
   def apply[T <: EnumEntry](e: Enum[T]): Format[T] = Format(
     Reads {
-      case JsString(value) => e.withNameOption(value).map(JsSuccess(_))
-        .getOrElse(JsError(s"Enum Error: No Value for $value"))
+      case JsString(value) =>
+        e.withNameOption(value)
+          .map[JsResult[T]](JsSuccess(_))
+          .getOrElse(JsError(s"Enum Error: No Value for $value"))
       case _ => JsError("Can only parse String")
     },
     Writes(v => JsString(v.entryName)))

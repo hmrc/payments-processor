@@ -31,10 +31,11 @@ case class MibOpsMyWorkItem(
 
   override def toString: String =
     s"MibWorkItem for chargeReference ${modsPaymentCallBackRequest.chargeReference} ... " +
-      s"{createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, " +
-      s"reference: $reference, amendmentReference: ${modsPaymentCallBackRequest.amendmentReference}}"
+      s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: ${taxType.toString}, " +
+      s"origin: ${origin.toString}, reference: $reference, amendmentReference: ${modsPaymentCallBackRequest.amendmentReference.toString}}"
 }
 
 object MibOpsMyWorkItem {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[MibOpsMyWorkItem] = Json.format[MibOpsMyWorkItem]
 }

@@ -8,7 +8,7 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
     Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }
 
-scalaVersion := "2.12.12"
+scalaVersion := "2.13.10"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
@@ -51,19 +51,23 @@ lazy val microservice = Project(appName, file("."))
        "pp.model._"
     ))
   .settings(
-    scalacOptions ++= Seq(
-      "-Ywarn-unused:-imports,-patvars,-privates,-locals,-explicits,-implicits,_",
-      "-Xfatal-warnings",
-      "-Xlint:-missing-interpolator,_",
-      "-Yno-adapted-args",
-      "-Ywarn-value-discard",
-      "-Ywarn-dead-code",
-      "-deprecation",
-      "-feature",
-      "-unchecked",
-      "-language:implicitConversions",
-      "-language:reflectiveCalls",
-      "-Ypartial-unification" //required by cats
-    )
+    scalacOptions ++= scalaCompilerOptions
   )
   .settings(scalacOptions in Compile -= "utf8")
+
+
+lazy val scalaCompilerOptions: Seq[String] = Seq(
+  "-Ywarn-unused:-imports,-patvars,-privates,-locals,-explicits,-implicits,_",
+  "-Xfatal-warnings",
+  "-Xlint:-missing-interpolator,_",
+  "-Xlint:adapted-args",
+  "-Ywarn-value-discard",
+  "-Ywarn-dead-code",
+  "-deprecation",
+  "-feature",
+  "-unchecked",
+  "-language:implicitConversions",
+  "-language:reflectiveCalls",
+  "-Wconf:cat=unused-imports&src=html/.*:s",
+  "-Wconf:src=routes/.*:s"
+)

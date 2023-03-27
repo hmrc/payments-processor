@@ -25,6 +25,7 @@ case class ChargeRefNotificationDesRequest(
     amountPaid:      BigDecimal)
 
 object ChargeRefNotificationDesRequest {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ChargeRefNotificationDesRequest] = Json.format[ChargeRefNotificationDesRequest]
 }
 

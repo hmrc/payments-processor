@@ -12,6 +12,7 @@ import support.{ItSpec, Pngr, TpsPaymentsBackend}
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
 trait PngrUpdateControllerSpec extends ItSpec {
+
   private lazy val repo = injector.instanceOf[PngrMongoRepo]
 
   override def beforeEach(): Unit = {
@@ -22,10 +23,8 @@ trait PngrUpdateControllerSpec extends ItSpec {
 
   protected def numberOfQueuedNotifications: Long = repo.countAll().futureValue
 
-
   def aSynchronousEndpointWhenThePngrStatusUpdateSucceeds(): Unit = {
-    def verifySuccess(response: HttpResponse
-                     ): Assertion = {
+    def verifySuccess(response: HttpResponse): Assertion = {
       response.status shouldBe 200
       verify(1, postRequestedFor(urlEqualTo(Pngr.endpoint)))
       numberOfQueuedNotifications shouldBe 0

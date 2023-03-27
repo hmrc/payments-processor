@@ -44,7 +44,7 @@ trait QueueConfig {
 
   lazy val retryAfterProperty: String = s"$prefix.queue.retryAfter"
 
-  lazy val ttl: Duration = configuration.underlying.getDuration(s"$prefix.queue.ttl")
+  lazy val ttl: FiniteDuration = FiniteDuration(configuration.underlying.getDuration(s"$prefix.queue.ttl").toNanos, TimeUnit.NANOSECONDS)
 
   lazy val queueAvailableFor: Duration = configuration.underlying.getDuration(s"$prefix.queue.available.for")
 

@@ -23,6 +23,7 @@ import play.api.libs.json.{Json, OFormat}
 case class Item(createdOn: LocalDateTime, reference: String, failureCount: Int, status: String)
 
 object Item {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val itemFormat: OFormat[Item] = {
     Json.format[Item]
   }
