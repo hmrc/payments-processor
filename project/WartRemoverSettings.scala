@@ -14,7 +14,7 @@ object  WartRemoverSettings {
       Wart.IsInstanceOf,
       Wart.Any
     )
-    wartremoverWarnings in(Compile, compile) ++= warningWarts
+    Compile /  compile / wartremoverWarnings ++= warningWarts
   }
   lazy val wartRemoverError = {
     // Error
@@ -33,11 +33,10 @@ object  WartRemoverSettings {
       Wart.OptionPartial,
       Wart.Recursion,
       Wart.Return,
-//      Wart.TraversableOps,
       Wart.TryPartial,
       Wart.Var,
       Wart.While)
 
-    wartremoverErrors in(Compile, compile) ++= errorWarts
+    Compile / compile / wartremoverErrors ++= errorWarts
   }
 }

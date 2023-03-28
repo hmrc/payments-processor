@@ -24,7 +24,6 @@ object AppDependencies {
   val enumeratumVersion = "1.7.0"
 
   val compile: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"                 % hmrcMongoVersion,
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-work-item-repo-play-28"  % hmrcMongoVersion,
     "uk.gov.hmrc"       %% "play-hmrc-api"                      % "7.1.0-play-28",
     "uk.gov.hmrc"       %% "bootstrap-backend-play-28"          % bootstrapVersion,
