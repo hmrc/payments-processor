@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,12 @@ case class PngrMyWorkItem(
     status:         PngrStatusType) extends MyWorkItemFields {
 
   override def toString: String =
-    s"PngrWorkItem for chargeReference $reference ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, reference: $reference, status: $status}"
+    s"PngrWorkItem for chargeReference $reference ... " +
+      s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: ${taxType.toString}, " +
+      s"origin: ${origin.toString}, reference: $reference, status: ${status.toString}}"
 }
 
 object PngrMyWorkItem {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[PngrMyWorkItem] = Json.format[PngrMyWorkItem]
 }

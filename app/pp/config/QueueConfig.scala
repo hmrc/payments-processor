@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ trait QueueConfig {
 
   lazy val retryAfterProperty: String = s"$prefix.queue.retryAfter"
 
-  lazy val ttl: Duration = configuration.underlying.getDuration(s"$prefix.queue.ttl")
+  lazy val ttl: FiniteDuration = FiniteDuration(configuration.underlying.getDuration(s"$prefix.queue.ttl").toNanos, TimeUnit.NANOSECONDS)
 
   lazy val queueAvailableFor: Duration = configuration.underlying.getDuration(s"$prefix.queue.available.for")
 

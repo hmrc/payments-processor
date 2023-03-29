@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import play.api.libs.json._
 final case class NotificationCds(notifyImmediatePaymentRequest: NotifyImmediatePaymentRequest)
 
 object NotificationCds {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[NotificationCds] = Json.format[NotificationCds]
 }
 
@@ -31,15 +32,18 @@ final case class NotifyImmediatePaymentRequest(
 final case class RequestCommon(receiptDate: String, acknowledgementReference: String, regime: String = "CDS", originatingSystem: String = "OPS")
 
 object RequestCommon {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[RequestCommon] = Json.format[RequestCommon]
 }
 
 final case class RequestDetail(paymentReference: String, amountPaid: String, unitType: String = "GBP", declarationID: String)
 
 object RequestDetail {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[RequestDetail] = Json.format[RequestDetail]
 }
 
 object NotifyImmediatePaymentRequest {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[NotifyImmediatePaymentRequest] = Json.format[NotifyImmediatePaymentRequest]
 }

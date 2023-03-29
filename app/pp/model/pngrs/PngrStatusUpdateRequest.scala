@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,5 +21,6 @@ import play.api.libs.json.{Json, OFormat}
 final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusType)
 
 object PngrStatusUpdateRequest {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[PngrStatusUpdateRequest] = Json.format[PngrStatusUpdateRequest]
 }

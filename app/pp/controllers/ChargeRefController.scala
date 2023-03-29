@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,19 +55,19 @@ class ChargeRefController @Inject() (
 
   def sendCardPaymentsNotificationPciPal(): Action[AnyContent] = Action.async { implicit request =>
 
-    logger.debug(s"sendCardPaymentsNotificationPciPal request ${request.body.asJson}")
+    logger.debug(s"sendCardPaymentsNotificationPciPal request ${request.body.asJson.toString}")
 
     val notification = Try {
       request.body.asJson.map(_.as[ChargeRefNotificationPcipalRequest])
     } match {
       case Success(Some(value)) =>
-        logger.debug(s"sendCardPaymentsNotificationPciPal for ${value}")
+        logger.debug(s"sendCardPaymentsNotificationPciPal for ${value.toString}")
         value
       case Success(None) =>
         logger.error(s"Received notification from PciPal but could not parse as json")
         throw new RuntimeException(s"Received notification from PciPal but could not parse as json")
       case Failure(exception) =>
-        logger.error(s"Received notification from PciPal but could not read body. Exception ${exception}")
+        logger.error(s"Received notification from PciPal but could not read body. Exception ${exception.toString}")
         throw new RuntimeException("Received notification from PciPal but could not read body ", exception)
     }
 

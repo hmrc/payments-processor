@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,14 @@ case class ChargeRefNotificationMyWorkItem(
     origin:          Origin) extends MyWorkItemFields {
 
   override def toString: String =
-    s"ChargeRefNotificationWorkItem for chargeReference $chargeRefNumber ... {createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, chargeRefNumber: $chargeRefNumber}"
+    s"ChargeRefNotificationWorkItem for chargeReference $chargeRefNumber ... " +
+      s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: ${taxType.toString}, " +
+      s"origin: ${origin.toString}, chargeRefNumber: $chargeRefNumber}"
 
 }
 
 object ChargeRefNotificationMyWorkItem {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ChargeRefNotificationMyWorkItem] = Json.format[ChargeRefNotificationMyWorkItem]
 }
 

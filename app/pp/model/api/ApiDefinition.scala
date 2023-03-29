@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,17 +47,21 @@ case class Access(
 )
 
 object ApiDefinition {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val oFormats: OFormat[ApiDefinition] = Json.format[ApiDefinition]
 }
 
 object Api {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val oFormats: OFormat[Api] = Json.format[Api]
 }
 
 object Version {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val oFormats: OFormat[Version] = Json.format[Version]
 }
 
 object Access {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val oFormats: OFormat[Access] = Json.format[Access]
 }

@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package pp.model
+package pp.scheduling
 
-import play.api.libs.json.{JsString, Json}
-import support.UnitSpec
+import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.FiniteDuration
 
-class StatusTypesSpec extends UnitSpec {
+trait ScheduledJob {
+  def name: String
+  def execute(implicit ec: ExecutionContext): Future[Result]
 
-  "de/serialize TaxTypes" in {
+  case class Result(message: String)
 
-    val statusTypes = List(
-      "validated" -> StatusTypes.validated,
-      "failed" -> StatusTypes.failed
-    )
+  def configKey: String = name
 
-    statusTypes.foreach { tt =>
-      val jsValue = Json.toJson(tt._2: StatusType)
-      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
-      jsValue.as[StatusType] shouldBe tt._2 withClue s"deserialize $tt"
-    }
-  }
+  def initialDelay: FiniteDuration
+
+  def interval: FiniteDuration
+
+  override def toString = s"$name after ${initialDelay.toString()} every ${interval.toString()}"
 }
-

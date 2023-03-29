@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +25,15 @@ object ValueClassBinder {
 
   def valueClassBinder[A: Reads](fromAtoString: A => String)(implicit stringBinder: PathBindable[String]): PathBindable[A] = {
 
-      def parseString(str: String) =
+      def parseString(str: String): Either[String, A] =
         JsString(str).validate[A] match {
           case JsSuccess(a, _) => Right(a)
-          case JsError(error)  => Left(s"No valid value in path: $str. Error: $error")
+          case JsError(error)  => Left(s"No valid value in path: $str. Error: ${error.toString}")
         }
 
     new PathBindable[A] {
       override def bind(key: String, value: String): Either[String, A] =
-        stringBinder.bind(key, value).right.flatMap(parseString)
+        stringBinder.bind(key, value).flatMap(parseString)
 
       override def unbind(key: String, a: A): String =
         stringBinder.unbind(key, fromAtoString(a))

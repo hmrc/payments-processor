@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import play.api.Logger
 import pp.config.QueueConfig
 import pp.model.MyWorkItemFields
 import pp.services.WorkItemService
-import uk.gov.hmrc.play.scheduling.ExclusiveScheduledJob
 
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,12 +36,12 @@ abstract class PollingService[P <: MyWorkItemFields](val actorSystem:     ActorS
   lazy val interval: FiniteDuration = queueConfig.pollerInterval
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  logger.debug(s"Starting $name, Initial delay: $initialDelay, Polling interval: $interval")
+  logger.debug(s"Starting $name, Initial delay: ${initialDelay.toString()}, Polling interval: ${interval.toString()}")
 
   callExecutor(name)
 
   override def executeInMutex(implicit ec: ExecutionContext): Future[Result] =
-    workItemService.retrieveWorkItems.map(items => Result(s"$name: Processed ${items.size} items"))
+    workItemService.retrieveWorkItems.map(items => Result(s"$name: Processed ${items.size.toString} items"))
 
   def callExecutor(name: String)(implicit ec: ExecutionContext): Cancellable = {
     actorSystem.scheduler.scheduleWithFixedDelay(initialDelay, interval) (() => {

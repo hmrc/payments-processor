@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,11 @@ case class MibOpsMyWorkItem(
 
   override def toString: String =
     s"MibWorkItem for chargeReference ${modsPaymentCallBackRequest.chargeReference} ... " +
-      s"{createdOn: $createdOn, availableUntil: $availableUntil, taxType: $taxType, origin: $origin, " +
-      s"reference: $reference, amendmentReference: ${modsPaymentCallBackRequest.amendmentReference}}"
+      s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: ${taxType.toString}, " +
+      s"origin: ${origin.toString}, reference: $reference, amendmentReference: ${modsPaymentCallBackRequest.amendmentReference.toString}}"
 }
 
 object MibOpsMyWorkItem {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[MibOpsMyWorkItem] = Json.format[MibOpsMyWorkItem]
 }
