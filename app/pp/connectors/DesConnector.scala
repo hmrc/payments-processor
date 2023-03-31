@@ -29,8 +29,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class DesConnector @Inject() (
     servicesConfig: ServicesConfig,
     httpClient:     HttpClient,
-    configuration:  Configuration)
-  (implicit ec: ExecutionContext) {
+    configuration:  Configuration
+)(implicit ec: ExecutionContext) {
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -51,15 +51,26 @@ class DesConnector @Inject() (
     "Content-Type" -> "application/json"
   )
 
+  //todo remove this once we know what's going on
+  private val regex = """^[0-9a-zA-Z{À-˿’}\\- &`'^]{1,16}$"""
+
   def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[Unit] = {
     logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
     implicit val hc: HeaderCarrier = desHeaderCarrier
     val sendChargeRefUrl: String = s"$serviceURL$chargeref"
     logger.debug(s"""Calling des api 1541 with url $sendChargeRefUrl""")
-
+    //todo remove this once we know what's going on
+    logger.warn(
+      s"""ChargeRefNotificationDesRequest: [
+         |TaxType: ${chargeRefNotificationDesRequest.taxType.toString},
+         |Amount: ${chargeRefNotificationDesRequest.amountPaid.toString()},
+         |ChargeRefLength: ${chargeRefNotificationDesRequest.chargeRefNumber.length.toString},
+         |ref matches regex: ${chargeRefNotificationDesRequest.chargeRefNumber.matches(regex).toString}
+         |]""".stripMargin
+    )
     httpClient.POST[ChargeRefNotificationDesRequest, Unit](
-      url = sendChargeRefUrl,
-      body = chargeRefNotificationDesRequest,
+      url     = sendChargeRefUrl,
+      body    = chargeRefNotificationDesRequest,
       headers = desHeaders)
 
   }
