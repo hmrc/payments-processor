@@ -44,13 +44,23 @@ class DesConnector @Inject() (
   private val desHeaderCarrier: HeaderCarrier = HeaderCarrier(authorization = Some(Authorization(s"Bearer $authorizationToken")))
     .withExtraHeaders("Environment" -> serviceEnvironment, "OriginatorID" -> "MDTP")
 
+  val desHeaders: Seq[(String, String)] = Seq(
+    "Authorization" -> s"Bearer $authorizationToken",
+    "Environment" -> serviceEnvironment,
+    "OriginatorID" -> "MDTP",
+    "Content-Type" -> "application/json"
+  )
+
   def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[Unit] = {
     logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
     implicit val hc: HeaderCarrier = desHeaderCarrier
     val sendChargeRefUrl: String = s"$serviceURL$chargeref"
     logger.debug(s"""Calling des api 1541 with url $sendChargeRefUrl""")
 
-    httpClient.POST[ChargeRefNotificationDesRequest, Unit](sendChargeRefUrl, chargeRefNotificationDesRequest)
+    httpClient.POST[ChargeRefNotificationDesRequest, Unit](
+      url = sendChargeRefUrl,
+      body = chargeRefNotificationDesRequest,
+      headers = desHeaders)
 
   }
 
