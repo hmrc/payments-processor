@@ -52,7 +52,7 @@ class DesConnector @Inject() (
   )
 
   //todo remove this once we know what's going on
-  private val regex = """^[0-9a-zA-Z{À-˿’}\\- &`'^]{1,16}$"""
+  private val regex = """[0-9a-zA-Z{À-˿'}\\ &`'^]{1,16}"""
 
   def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[Unit] = {
     logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
