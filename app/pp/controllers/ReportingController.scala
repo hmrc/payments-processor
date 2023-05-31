@@ -40,10 +40,9 @@ class ReportingController @Inject() (
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def count(taxType: TaxType, processingState: ProcessingStatusOps): Action[AnyContent] = Action.async { implicit request =>
+  def count(taxType: TaxType, processingState: ProcessingStatusOps): Action[AnyContent] = Action.async { _ =>
     logger.debug("count")
     taxType match {
-
       case TaxTypes.pngr =>
         pngrMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case TaxTypes.p800 =>
@@ -56,7 +55,7 @@ class ReportingController @Inject() (
     }
   }
 
-  def getAll(taxType: TaxType): Action[AnyContent] = Action.async { implicit request =>
+  def getAll(taxType: TaxType): Action[AnyContent] = Action.async { _ =>
     logger.debug("count")
     taxType match {
       case TaxTypes.pngr =>

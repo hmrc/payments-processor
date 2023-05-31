@@ -22,7 +22,7 @@ import play.api.libs.json._
 import pp.model.pngrs.PngrStatusType
 import pp.model.{Origin, TaxType, MyWorkItemFields}
 
-case class PngrMyWorkItem(
+final case class PngrMyWorkItem(
     createdOn:      LocalDateTime,
     availableUntil: LocalDateTime,
     taxType:        TaxType,

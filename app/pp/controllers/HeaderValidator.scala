@@ -20,6 +20,7 @@ import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
+import cats.implicits.catsSyntaxEq
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex
@@ -27,9 +28,9 @@ import scala.util.matching.Regex.Match
 
 trait HeaderValidator extends Results with Status {
 
-  private def validateVersion(version: String): Boolean = version == "1.0"
+  private def validateVersion(version: String): Boolean = version === "1.0"
 
-  private def validateContentType(contentType: String): Boolean = contentType == "json"
+  private def validateContentType(contentType: String): Boolean = contentType === "json"
 
   private def matchHeader(header: String): Option[Match] = new Regex("""^application/vnd[.]{1}hmrc[.]{1}(.*?)[+]{1}(.*)$""", "version", "contenttype") findFirstMatchIn header
 

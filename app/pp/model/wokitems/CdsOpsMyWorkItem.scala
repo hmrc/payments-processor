@@ -22,7 +22,7 @@ import play.api.libs.json.{Json, OFormat}
 import pp.model.cds.NotificationCds
 import pp.model.{Origin, TaxType, MyWorkItemFields}
 
-case class CdsOpsMyWorkItem(
+final case class CdsOpsMyWorkItem(
     createdOn:       LocalDateTime,
     availableUntil:  LocalDateTime,
     taxType:         TaxType,

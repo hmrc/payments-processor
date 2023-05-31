@@ -22,7 +22,6 @@ import pp.model.wokitems.PngrMyWorkItem
 import pp.scheduling.NotificationRepo
 import uk.gov.hmrc.mongo.MongoComponent
 
-import java.time.Clock
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -30,12 +29,10 @@ import scala.concurrent.ExecutionContext
 class PngrMongoRepo @Inject() (
     mongoComponent: MongoComponent,
     configuration:  Configuration,
-    clock:          Clock,
     queueConfig:    PngrsQueueConfig)
   (implicit ec: ExecutionContext)
   extends NotificationRepo[PngrMyWorkItem](
     mongoComponent = mongoComponent,
     configuration  = configuration,
-    clock          = clock,
     queueConfig    = queueConfig)
 

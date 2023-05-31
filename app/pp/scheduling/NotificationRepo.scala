@@ -24,7 +24,7 @@ import pp.config.QueueConfig
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem, WorkItemFields, WorkItemRepository}
 
-import java.time.{Clock, Duration, Instant}
+import java.time.{Duration, Instant}
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,9 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class NotificationRepo[A](
     mongoComponent: MongoComponent,
     configuration:  Configuration,
-    clock:          Clock,
     queueConfig:    QueueConfig
-)(implicit ec: ExecutionContext, format: OFormat[A], mfItem: Manifest[A]) extends WorkItemRepository[A](
+)(implicit ec: ExecutionContext, format: OFormat[A]) extends WorkItemRepository[A](
   collectionName = queueConfig.collectionName,
   mongoComponent = mongoComponent,
   itemFormat     = format,
@@ -46,10 +45,10 @@ abstract class NotificationRepo[A](
   lazy val retryIntervalMillis: Long = configuration.getMillis(queueConfig.retryAfterProperty)
   override lazy val inProgressRetryAfter: Duration = Duration.ofMillis(retryIntervalMillis)
 
-  def pullOutstanding(implicit ec: ExecutionContext): Future[Option[WorkItem[A]]] =
+  def pullOutstanding: Future[Option[WorkItem[A]]] =
     super.pullOutstanding(now().minusMillis(retryIntervalMillis.toInt), now())
 
-  def failed(id: ObjectId)(implicit ec: ExecutionContext): Future[Boolean] = {
+  def failed(id: ObjectId): Future[Boolean] = {
     markAs(id, ProcessingStatus.Failed)
   }
 

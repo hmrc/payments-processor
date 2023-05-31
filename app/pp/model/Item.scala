@@ -20,7 +20,9 @@ import java.time.LocalDateTime
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Item(createdOn: LocalDateTime, reference: String, failureCount: Int, status: String)
+//formerly known as ReportingObjects.scala, no idea why.
+
+final case class Item(createdOn: LocalDateTime, reference: String, failureCount: Int, status: String)
 
 object Item {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

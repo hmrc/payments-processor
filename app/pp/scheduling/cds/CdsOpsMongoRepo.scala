@@ -22,7 +22,6 @@ import pp.model.wokitems.CdsOpsMyWorkItem
 import pp.scheduling.NotificationRepo
 import uk.gov.hmrc.mongo.MongoComponent
 
-import java.time.Clock
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -30,11 +29,8 @@ import scala.concurrent.ExecutionContext
 class CdsOpsMongoRepo @Inject() (
     mongoComponent: MongoComponent,
     configuration:  Configuration,
-    clock:          Clock,
-    queueConfig:    CdsOpsQueueConfig)
-  (implicit ec: ExecutionContext)
-  extends NotificationRepo[CdsOpsMyWorkItem](
-    mongoComponent = mongoComponent,
-    configuration  = configuration,
-    clock          = clock,
-    queueConfig    = queueConfig)
+    queueConfig:    CdsOpsQueueConfig
+)(implicit ec: ExecutionContext) extends NotificationRepo[CdsOpsMyWorkItem](
+  mongoComponent = mongoComponent,
+  configuration  = configuration,
+  queueConfig    = queueConfig)
