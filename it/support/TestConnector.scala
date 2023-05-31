@@ -42,8 +42,8 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def sendCardPaymentsNotification(cardPaymentsNotificationRequest: ChargeRefNotificationRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[ChargeRefNotificationRequest, HttpResponse](s"http://localhost:$port/payments-processor/send-card-payments-notification", cardPaymentsNotificationRequest, headers)
 
-  def sendCardPayments(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST[ChargeRefNotificationPcipalRequest,HttpResponse](s"http://localhost:$port/send-card-payments", chargeRefNotificationPciPalRequest, headers)
+  def sendCardPaymentsPcipalNotification(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.POST[ChargeRefNotificationPcipalRequest, HttpResponse](s"http://localhost:$port/send-card-payments", chargeRefNotificationPciPalRequest, headers)
 
   def sendCardPaymentsWrongFormatRequest(wrongFormatRequest: JsValue)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[JsValue,HttpResponse](s"http://localhost:$port/send-card-payments", wrongFormatRequest, headers)

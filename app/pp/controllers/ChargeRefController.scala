@@ -27,7 +27,7 @@ import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest.{toChargeRefNotificationRequest, toPngrStatusUpdateRequest}
 import pp.model.{TaxType, TaxTypes}
-import pp.services.{ChargeRefService, MibOpsService, PngrService}
+import pp.services.{AuditService, ChargeRefService, MibOpsService, PngrService}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
@@ -46,8 +46,8 @@ class ChargeRefController @Inject() (
     val pngrConnector:           PngrConnector,
     val mibOpsService:           MibOpsService,
     val mibOpsQueueConfig:       MibOpsQueueConfig,
-    val mibConnector:            MibConnector
-
+    val mibConnector:            MibConnector,
+    auditService:                AuditService
 )
   (implicit val executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator with ChargeRefDesRetries with PngrRetries with MibRetries {
 
@@ -60,9 +60,10 @@ class ChargeRefController @Inject() (
     val notification = Try {
       request.body.asJson.map(_.as[ChargeRefNotificationPcipalRequest])
     } match {
-      case Success(Some(value)) =>
-        logger.debug(s"sendCardPaymentsNotificationPciPal for ${value.toString}")
-        value
+      case Success(Some(chargeRefNotificationPcipalRequest)) =>
+        logger.debug(s"sendCardPaymentsNotificationPciPal for ${chargeRefNotificationPcipalRequest.toString}")
+        auditService.auditPcipalNotificationEvent(chargeRefNotificationPcipalRequest)
+        chargeRefNotificationPcipalRequest
       case Success(None) =>
         logger.error(s"Received notification from PciPal but could not parse as json")
         throw new RuntimeException(s"Received notification from PciPal but could not parse as json")

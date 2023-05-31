@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package pp.model.chargeref
+package pp.model.audit
 
-import play.api.libs.json._
-import pp.model.{Origin, TaxType}
+import play.api.libs.json.{Json, OWrites}
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 
-case class ChargeRefNotificationRequest(
-    taxType:         TaxType,
-    chargeRefNumber: String,
-    amountPaid:      BigDecimal,
-    origin:          Origin
-)
-
-object ChargeRefNotificationRequest {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
+final case class PcipalNotificationAuditEvent(chargeRefNotificationPcipalRequest: ChargeRefNotificationPcipalRequest) extends AuditDetail {
+  val auditType = "PciPalNotificationSuccess"
 }
 
+object PcipalNotificationAuditEvent {
+  implicit val writes: OWrites[PcipalNotificationAuditEvent] = Json.writes[PcipalNotificationAuditEvent]
+}
