@@ -28,7 +28,6 @@ class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControlle
       .updated("chargeref.queue.enabled", "true")
       .updated("chargeref.poller.enabled", "true")
 
-
   "the ChargeRefController" when {
     "queuing and polling are both enabled" should {
       behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()

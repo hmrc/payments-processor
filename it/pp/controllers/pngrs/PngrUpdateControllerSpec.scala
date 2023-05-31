@@ -24,11 +24,11 @@ trait PngrUpdateControllerSpec extends ItSpec {
   protected def numberOfQueuedNotifications: Long = repo.countAll().futureValue
 
   def aSynchronousEndpointWhenThePngrStatusUpdateSucceeds(): Unit = {
-    def verifySuccess(response: HttpResponse): Assertion = {
-      response.status shouldBe 200
-      verify(1, postRequestedFor(urlEqualTo(Pngr.endpoint)))
-      numberOfQueuedNotifications shouldBe 0
-    }
+      def verifySuccess(response: HttpResponse): Assertion = {
+        response.status shouldBe 200
+        verify(1, postRequestedFor(urlEqualTo(Pngr.endpoint)))
+        numberOfQueuedNotifications shouldBe 0
+      }
 
     s"return Ok for a POST to the internal endpoint /pngr/send-update" when {
       "the Pngr call succeeds with OK, status=Successful" in {
@@ -67,6 +67,5 @@ trait PngrUpdateControllerSpec extends ItSpec {
       }
     }
   }
-
 
 }

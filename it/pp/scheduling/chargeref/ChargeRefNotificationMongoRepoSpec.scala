@@ -25,13 +25,12 @@ import uk.gov.hmrc.mongo.workitem._
 class ChargeRefNotificationMongoRepoSpec extends ItSpec {
 
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
-  private val dateTime= repo.now()
+  private val dateTime = repo.now()
 
   override def beforeEach(): Unit = {
     val _ = repo.removeAll().futureValue
     super.beforeEach()
   }
-
 
   "Count should be 0 with empty repo" in {
     collectionSize shouldBe 0
@@ -84,18 +83,18 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
     ProcessingStatus.Deferred,
     ProcessingStatus.PermanentlyFailed,
     ProcessingStatus.Succeeded).foreach(status =>
-    s"Pull a request with a status of ${status.toString} should not find anything if we have not waited" in {
-      val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue
-      repo.markAs(workItem.id, status).futureValue should be(true)
-      val outstanding: Option[WorkItem[ChargeRefNotificationMyWorkItem]] = repo.pullOutstanding.futureValue
-      outstanding match {
-        case Some(_) =>
-          "found" shouldBe "a value when we should not"
-        case None =>
-      }
+      s"Pull a request with a status of ${status.toString} should not find anything if we have not waited" in {
+        val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue
+        repo.markAs(workItem.id, status).futureValue should be(true)
+        val outstanding: Option[WorkItem[ChargeRefNotificationMyWorkItem]] = repo.pullOutstanding.futureValue
+        outstanding match {
+          case Some(_) =>
+            "found" shouldBe "a value when we should not"
+          case None =>
+        }
 
-    }
-  )
+      }
+    )
 
   s"Pull a request with a status of Failed should find something as we have waited" in {
     val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue
@@ -113,24 +112,24 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
   }
 
   Seq(ProcessingStatus.Duplicate,
-    ProcessingStatus.Cancelled,
-    ProcessingStatus.Ignored,
-    ProcessingStatus.Deferred,
-    ProcessingStatus.PermanentlyFailed,
-    ProcessingStatus.Succeeded).foreach(status =>
-    s"Pull a request with a status of ${status.toString} should not find anything, we have waited" in {
-      val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue
-      repo.markAs(workItem.id, status).futureValue should be(true)
+      ProcessingStatus.Cancelled,
+      ProcessingStatus.Ignored,
+      ProcessingStatus.Deferred,
+      ProcessingStatus.PermanentlyFailed,
+      ProcessingStatus.Succeeded).foreach(status =>
+      s"Pull a request with a status of ${status.toString} should not find anything, we have waited" in {
+        val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue
+        repo.markAs(workItem.id, status).futureValue should be(true)
 
-      eventually {
-        val outstanding: Option[WorkItem[ChargeRefNotificationMyWorkItem]] = repo.pullOutstanding.futureValue
-        outstanding match {
-          case Some(_) => "found" shouldBe "a value when we should not"
-          case None =>
+        eventually {
+          val outstanding: Option[WorkItem[ChargeRefNotificationMyWorkItem]] = repo.pullOutstanding.futureValue
+          outstanding match {
+            case Some(_) => "found" shouldBe "a value when we should not"
+            case None    =>
+          }
         }
       }
-    }
-  )
+    )
 
   "complete and delete an in progress request" in {
     val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue
@@ -144,8 +143,8 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
     repo.completeAndDelete(workItem.id).futureValue should be(false)
     val workItemUpdated = repo.findById(workItem.id).futureValue
     workItemUpdated match {
-      case Some(x) => x.status shouldBe  ProcessingStatus.ToDo
-      case None => "failed" shouldBe "to find a workitem"
+      case Some(x) => x.status shouldBe ProcessingStatus.ToDo
+      case None    => "failed" shouldBe "to find a workitem"
     }
   }
 
@@ -159,19 +158,19 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
     val failed: Option[WorkItem[ChargeRefNotificationMyWorkItem]] = repo.findById(workItem.id).futureValue
     failed match {
       case Some(x) => x.failureCount shouldBe 1
-      case None => "failed" shouldBe "to find a workitem"
+      case None    => "failed" shouldBe "to find a workitem"
     }
     repo.failed(workItem.id).futureValue should be(true)
     val failed2: Option[WorkItem[ChargeRefNotificationMyWorkItem]] = repo.findById(workItem.id).futureValue
     failed2 match {
       case Some(x) => x.failureCount shouldBe 2
-      case None => "failed" shouldBe "to find a workitem"
+      case None    => "failed" shouldBe "to find a workitem"
     }
 
     val outstanding: Option[WorkItem[ChargeRefNotificationMyWorkItem]] = repo.pullOutstanding.futureValue
     outstanding match {
       case Some(_) => "found" shouldBe "a value when we should not"
-      case None =>
+      case None    =>
     }
 
     eventually {
@@ -189,6 +188,5 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
   private def collectionSize: Long = {
     repo.countAll().futureValue
   }
-
 
 }

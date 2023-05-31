@@ -24,14 +24,17 @@ object AppDependencies {
   val enumeratumVersion = "1.7.0"
 
   val compile: Seq[ModuleID] = Seq(
+    // format: OFF
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-work-item-repo-play-28"  % hmrcMongoVersion,
     "uk.gov.hmrc"       %% "play-hmrc-api"                      % "7.1.0-play-28",
     "uk.gov.hmrc"       %% "bootstrap-backend-play-28"          % bootstrapVersion,
     "com.beachape"      %% "enumeratum"                         % enumeratumVersion,
-    "com.beachape"      %% "enumeratum-play-json"               % enumeratumVersion,
+    "com.beachape"      %% "enumeratum-play-json"               % enumeratumVersion
+    // format: ON
   )
 
   val test: Seq[ModuleID] = Seq(
+    // format: OFF
     "uk.gov.hmrc"            %% "bootstrap-test-play-28"    % bootstrapVersion,
     "org.scalatest"          %% "scalatest"                 % "3.2.9",
     "com.typesafe.play"      %% "play-test"                 % PlayVersion.current,
@@ -39,9 +42,11 @@ object AppDependencies {
     "org.scalatestplus.play" %% "scalatestplus-play"        % "5.1.0",
     "com.github.tomakehurst" %  "wiremock-jre8"             % "2.27.2",
     "com.vladsch.flexmark"   %  "flexmark-all"              % "0.36.8" //required by scalatest, see: https://github.com/scalatest/scalatest/issues/1736
+    // format: ON
   ).map(_ % Test)
 
   val itTest: Seq[ModuleID] = Seq(
+    // format: OFF
     "uk.gov.hmrc"            %% "bootstrap-backend-play-28" % "5.4.0",
     "org.scalatest"          %% "scalatest"                 % "3.2.9",
     "com.typesafe.play"      %% "play-test"                 % PlayVersion.current,
@@ -49,6 +54,7 @@ object AppDependencies {
     "org.scalatestplus.play" %% "scalatestplus-play"        % "5.1.0",
     "com.github.tomakehurst" %  "wiremock-jre8"             % "2.27.2",
     "com.vladsch.flexmark"   %  "flexmark-all"              % "0.36.8" //required by scalatest, see: https://github.com/scalatest/scalatest/issues/1736
+    // format: ON
   ).map(_ % "it")
 
 }

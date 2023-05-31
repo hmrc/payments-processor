@@ -40,5 +40,4 @@ class MibControllerQueuingAndPollingEnabledSpec extends MibControllerSpec {
     }
   }
 
-
 }

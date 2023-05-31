@@ -16,19 +16,18 @@ lazy val microservice = Project(appName, file("."))
     majorVersion := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test ++ AppDependencies.itTest
   )
-  .settings(ScalariformSettings())
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
-  .settings(WartRemoverSettings.wartRemoverError)
-  .settings(WartRemoverSettings.wartRemoverWarning)
-  .settings(Test / compile / wartremoverErrors --= Seq(Wart.Any, Wart.Equals, Wart.Null, Wart.NonUnitStatements, Wart.PublicInference))
+  .settings(ScalariformSettings.scalariformSettings: _*)
+  .settings(WartRemoverSettings.wartRemoverSettings: _*)
+  .settings(SbtUpdatesSettings.sbtUpdatesSettings: _*)
+//  .settings(Test / compile / wartremoverErrors --= Seq(Wart.Any, Wart.Equals, Wart.Null, Wart.NonUnitStatements, Wart.PublicInference))
   .settings(wartremoverExcluded ++=
     (Compile / routes) .value ++
       (baseDirectory.value / "it").get ++
       (baseDirectory.value / "test").get ++
       Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
-  .settings(ScalariformSettings())
   .settings(
     Test / unmanagedSourceDirectories := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common")
   )
@@ -54,18 +53,39 @@ lazy val microservice = Project(appName, file("."))
   .settings(Compile / scalacOptions -= "utf8")
 
 
-lazy val scalaCompilerOptions: Seq[String] = Seq(
-  "-Ywarn-unused:-imports,-patvars,-privates,-locals,-explicits,-implicits,_",
+//lazy val scalaCompilerOptions: Seq[String] = Seq(
+//  "-Ywarn-unused:-imports,-patvars,-privates,-locals,-explicits,-implicits,_",
+//  "-Xfatal-warnings",
+//  "-Xlint:-missing-interpolator,_",
+//  "-Xlint:adapted-args",
+//  "-Ywarn-value-discard",
+//  "-Ywarn-dead-code",
+//  "-deprecation",
+//  "-feature",
+//  "-unchecked",
+//  "-language:implicitConversions",
+//  "-language:reflectiveCalls",
+//  "-Wconf:cat=unused-imports&src=html/.*:s",
+//  "-Wconf:src=routes/.*:s"
+//)
+lazy val scalaCompilerOptions = Seq(
   "-Xfatal-warnings",
   "-Xlint:-missing-interpolator,_",
   "-Xlint:adapted-args",
+  "-Ywarn-unused:implicits",
+  "-Ywarn-unused:imports",
+  "-Ywarn-unused:locals",
+  "-Ywarn-unused:params",
+  "-Ywarn-unused:patvars",
+  "-Ywarn-unused:privates",
   "-Ywarn-value-discard",
   "-Ywarn-dead-code",
   "-deprecation",
   "-feature",
   "-unchecked",
   "-language:implicitConversions",
-  "-language:reflectiveCalls",
+//  "-language:reflectiveCalls",
+  // required in place of silencer plugin
   "-Wconf:cat=unused-imports&src=html/.*:s",
   "-Wconf:src=routes/.*:s"
 )

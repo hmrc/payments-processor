@@ -75,5 +75,4 @@ class HeaderValidatorSpec extends ItSpec with HeaderValidator {
 
   }
 
-
 }

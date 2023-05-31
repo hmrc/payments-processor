@@ -1,10 +1,8 @@
 package support
 
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
-
 
 object Mib {
 
@@ -13,7 +11,7 @@ object Mib {
   val successMessage = "ok"
 
   def statusUpdateSucceeds(delayMillis: Int = 0, sequence: Int = 0): StubMapping =
-    statusUpdateRespondsWith(status = Status.OK, responseBody = successMessage, delayMillis = delayMillis, sequence = sequence)
+    statusUpdateRespondsWith(status       = Status.OK, responseBody = successMessage, delayMillis = delayMillis, sequence = sequence)
 
   def statusUpdateFailsWithAnInternalServerError(delayMillis: Int = 0, sequence: Int = 0): StubMapping =
     statusUpdateRespondsWith(Status.INTERNAL_SERVER_ERROR, errorMessage, delayMillis, sequence)

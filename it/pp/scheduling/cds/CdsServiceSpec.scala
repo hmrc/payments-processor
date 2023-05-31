@@ -42,9 +42,8 @@ class CdsServiceSpec extends ItSpec {
   }
 
   "check error mechanism, available" in {
-    cdsOpsService.isAvailable(workItem.copy(createdOn = time, availableUntil = availUntilInFuture)) shouldBe true
+    cdsOpsService.isAvailable(workItem.copy(createdOn      = time, availableUntil = availUntilInFuture)) shouldBe true
   }
-
 
   "sendCdsOpsToWorkItemRepo" should {
     "add a notification to the queue" in {

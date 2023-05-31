@@ -9,7 +9,7 @@ import support.PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef
 import support.{ItSpec, Mib}
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
-trait MibControllerSpec extends ItSpec{
+trait MibControllerSpec extends ItSpec {
 
   private lazy val repo = injector.instanceOf[MibOpsMongoRepo]
 
@@ -21,16 +21,12 @@ trait MibControllerSpec extends ItSpec{
 
   protected def numberOfQueuedNotifications: Long = repo.countAll().futureValue
 
-
   def aSynchronousEndpointWhenTheMibPaymentUpdateSucceeds(): Unit = {
-    def verifySuccess(response: HttpResponse
-                     ): Assertion = {
-      response.status shouldBe 200
-      verify(1, postRequestedFor(urlEqualTo(Mib.endpoint)))
-      numberOfQueuedNotifications shouldBe 0
-    }
-
-
+      def verifySuccess(response: HttpResponse): Assertion = {
+        response.status shouldBe 200
+        verify(1, postRequestedFor(urlEqualTo(Mib.endpoint)))
+        numberOfQueuedNotifications shouldBe 0
+      }
 
     s"return Ok for a POST to the internal endpoint /mib/payment-callback/:reference" when {
       "the Mib call succeeds with OK, status=Successful" in {
@@ -62,6 +58,5 @@ trait MibControllerSpec extends ItSpec{
       }
     }
   }
-
 
 }

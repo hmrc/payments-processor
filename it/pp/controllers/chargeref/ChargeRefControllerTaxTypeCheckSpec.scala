@@ -13,7 +13,6 @@ import uk.gov.hmrc.http.HttpResponse
 
 class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
 
-
   override def configMap: Map[String, Any] =
     super
       .configMap
@@ -25,13 +24,12 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
       .updated("mibops.poller.enabled", "true")
       .updated("sendAllToDes", "false")
 
-
-  private def verifySuccess(response: HttpResponse,
-                            checkTpsBackend: Boolean = false,
-                            backendCount: Int = 1,
-                            checkPngr: Boolean = false,
-                            checkMib: Boolean = false
-                           ): Unit = {
+  private def verifySuccess(response:        HttpResponse,
+                            checkTpsBackend: Boolean      = false,
+                            backendCount:    Int          = 1,
+                            checkPngr:       Boolean      = false,
+                            checkMib:        Boolean      = false
+  ): Unit = {
     response.status shouldBe 200
     verify(0, postRequestedFor(urlEqualTo(Des.endpoint)))
     if (checkPngr) verify(1, postRequestedFor(urlEqualTo(Pngr.endpoint)))
@@ -44,43 +42,43 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
     (mibPaymentItemId, mib, mibPcipalNotification, mibChargeRefNotificationRequest),
     (pngrPaymentItemId, pngr, pngrPcipalNotification, pngrChargeRefNotificationRequest)
   ).foreach { fixture =>
-    val paymentItemId = fixture._1
-    val taxType = fixture._2
-    val pcipalNotification = fixture._3
-    val chargeRefNotificationRequest = fixture._4
+      val paymentItemId = fixture._1
+      val taxType = fixture._2
+      val pcipalNotification = fixture._3
+      val chargeRefNotificationRequest = fixture._4
 
-    "return Ok for a POST to the public api /send-card-payments with no call to des" when {
-      s"status=complete, taxType = $taxType" in {
-        TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
-        TpsPaymentsBackend.tpsUpdateOk
-        AuditConnectorStub.stubAudit
-        if (taxType == TaxTypes.mib) TpsPaymentsBackend.getAmendmentRefOk(paymentItemId, modsPaymentCallBackRequestWithAmendmentRef)
-        taxType match {
-          case TaxTypes.pngr => Pngr.statusUpdateSucceeds()
-          case TaxTypes.mib => Mib.statusUpdateSucceeds()
-          case _ => Logger(this.getClass).debug("Not needed")
+      "return Ok for a POST to the public api /send-card-payments with no call to des" when {
+        s"status=complete, taxType = $taxType" in {
+          TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
+          TpsPaymentsBackend.tpsUpdateOk
+          AuditConnectorStub.stubAudit
+          if (taxType == TaxTypes.mib) TpsPaymentsBackend.getAmendmentRefOk(paymentItemId, modsPaymentCallBackRequestWithAmendmentRef)
+          taxType match {
+            case TaxTypes.pngr => Pngr.statusUpdateSucceeds()
+            case TaxTypes.mib  => Mib.statusUpdateSucceeds()
+            case _             => Logger(this.getClass).debug("Not needed")
+          }
+          taxType match {
+            case TaxTypes.mib  => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true, checkMib = true)
+            case TaxTypes.pngr => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true, checkPngr = true)
+            case _             => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true)
+          }
+          AuditConnectorStub.verifyEventAudited(
+            auditType  = "PciPalNotificationSuccess",
+            auditEvent = Json.obj("chargeRefNotificationPcipalRequest" -> Json.toJson(pcipalNotification)).as[JsObject]
+          )
         }
-        taxType match {
-          case TaxTypes.mib => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true, checkMib = true)
-          case TaxTypes.pngr => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true, checkPngr = true)
-          case _ => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true)
+      }
+
+      "return Ok for a POST to the synchronous api with no call to des" when {
+        s"status=complete, taxType = $taxType" in {
+          TpsPaymentsBackend.tpsUpdateOk
+          TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
+          verifySuccess(
+            response     = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue,
+            backendCount = 0)
         }
-        AuditConnectorStub.verifyEventAudited(
-          auditType = "PciPalNotificationSuccess",
-          auditEvent = Json.obj("chargeRefNotificationPcipalRequest" -> Json.toJson(pcipalNotification)).as[JsObject]
-        )
       }
     }
-
-    "return Ok for a POST to the synchronous api with no call to des" when {
-      s"status=complete, taxType = $taxType" in {
-        TpsPaymentsBackend.tpsUpdateOk
-        TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
-        verifySuccess(
-          response = testConnector.sendCardPaymentsNotification(chargeRefNotificationRequest).futureValue,
-          backendCount = 0)
-      }
-    }
-  }
 
 }

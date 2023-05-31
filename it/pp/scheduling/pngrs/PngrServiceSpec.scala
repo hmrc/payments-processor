@@ -1,6 +1,5 @@
 package pp.scheduling.pngrs
 
-
 import com.github.tomakehurst.wiremock.client.WireMock
 import pp.config.PngrsQueueConfig
 import pp.connectors.PngrConnector
@@ -28,7 +27,7 @@ class PngrServiceSpec extends ItSpec {
 
   override def configMap: Map[String, Any] =
     super.configMap
-            .updated("pngr.queue.available.for", "1 seconds")
+      .updated("pngr.queue.available.for", "1 seconds")
 
   override def beforeEach(): Unit = {
     val _ = repo.removeAll().futureValue
@@ -43,9 +42,8 @@ class PngrServiceSpec extends ItSpec {
   }
 
   "check error mechanism, available" in {
-    pngrService.isAvailable(workItem.copy(createdOn = time, availableUntil = availUntilInFuture)) shouldBe true
+    pngrService.isAvailable(workItem.copy(createdOn      = time, availableUntil = availUntilInFuture)) shouldBe true
   }
-
 
   "sendPngrToWorkItemRepo" should {
     "add a notification to the queue" in {

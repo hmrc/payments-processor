@@ -41,9 +41,8 @@ class MibOpsServiceSpec extends ItSpec {
   }
 
   "check error mechanism, available" in {
-    mibOpsService.isAvailable(workItem.copy(createdOn = time, availableUntil = availUntilInFuture)) shouldBe true
+    mibOpsService.isAvailable(workItem.copy(createdOn      = time, availableUntil = availUntilInFuture)) shouldBe true
   }
-
 
   "sendMibOpsToWorkItemRepo" should {
     "add a notification to the queue" in {
