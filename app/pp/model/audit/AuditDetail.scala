@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-package pp.model.chargeref
+package pp.model.audit
 
-import play.api.libs.json._
-import pp.model.{Origin, TaxType}
-
-case class ChargeRefNotificationRequest(
-    taxType:         TaxType,
-    chargeRefNumber: String,
-    amountPaid:      BigDecimal,
-    origin:          Origin
-)
-
-object ChargeRefNotificationRequest {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
+trait AuditDetail {
+  def auditType: String
 }
-

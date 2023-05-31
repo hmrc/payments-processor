@@ -111,7 +111,10 @@ trait ItSpec
     "microservice.services.tps-payments-backend.port" -> WireMockSupport.port,
     "microservice.services.merchandise-in-baggage.port" -> WireMockSupport.port,
     "sendAllToDes" -> true,
-    "microservice.services.bc-passengers-declarations.port" -> WireMockSupport.port
+    "microservice.services.bc-passengers-declarations.port" -> WireMockSupport.port,
+    "auditing.consumer.baseUri.port" -> WireMockSupport.port,
+    "auditing.enabled" -> true,
+    "auditing.traceRequests" -> false
   )
 
   def injector: Injector = fakeApplication().injector
@@ -126,6 +129,13 @@ trait ItSpec
       val sc = ServerConfig(port    = Some(testServerPort), sslPort = Some(0), mode = Mode.Test, rootDir = app.path)
       sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
     }
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    //this is added to stop the logs getting filled with wiremock errors for implicit audit events.
+    AuditConnectorStub.stubImplicitAuditEvents
+    ()
   }
 
 }
