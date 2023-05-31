@@ -20,7 +20,11 @@ object SbtUpdatesSettings {
     // java.lang.NoSuchMethodError: 'scala.Option play.api.libs.json.JsBoolean$.unapply(play.api.libs.json.JsBoolean)'
     // error on 1.7.2
     dependencyUpdatesFilter -= moduleFilter("com.beachape", "enumeratum"),
-    dependencyUpdatesFilter -= moduleFilter("com.beachape", "enumeratum-play-json")
+    dependencyUpdatesFilter -= moduleFilter("com.beachape", "enumeratum-play-json"),
+    // Not having this means we have to add a load of funky other dependency overrides due to jackson xml version conflicts
+    // if you want that, implement what they've done here:
+    // https://github.com/hmrc/benefits/blob/075c2ef6b81a43568ded3cff452c381985fdbb9d/project/AppDependencies.scala#L29
+    dependencyUpdatesFilter -= moduleFilter("com.github.tomakehurst", "wiremock-jre8")
   )
 
 }

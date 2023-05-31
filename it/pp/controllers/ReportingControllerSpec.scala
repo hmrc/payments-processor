@@ -2,7 +2,6 @@ package pp.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.http.Status
-import play.api.libs.json.Json
 import pp.model.Item
 import pp.model.ProcessingStatusOpsValues.Failed
 import pp.model.TaxTypes.{mib, p800, pngr}

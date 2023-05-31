@@ -27,7 +27,7 @@ trait WireMockSupport extends BeforeAndAfterAll with BeforeAndAfterEach {
   implicit lazy val wireMockServer: WireMockServer = new WireMockServer(wireMockConfig().port(WireMockSupport.port))
   val wireMockHost = "localhost"
 
-  lazy val wireMockBaseUrlAsString = s"http://$wireMockHost:$WireMockSupport.port"
+  lazy val wireMockBaseUrlAsString = s"http://$wireMockHost:${WireMockSupport.toString}.port"
 
   WireMock.configureFor(WireMockSupport.port)
 

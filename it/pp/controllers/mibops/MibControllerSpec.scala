@@ -3,7 +3,6 @@ package pp.controllers.mibops
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import org.scalatest.Assertion
-import play.api.libs.json.Json
 import pp.scheduling.mib.MibOpsMongoRepo
 import support.PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef
 import support.{ItSpec, Mib}

@@ -1,7 +1,6 @@
 package pp.scheduling.cds
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import play.api.libs.json.Json
 import pp.config.CdsOpsQueueConfig
 import pp.connectors.CdsConnector
 import pp.model.wokitems.CdsOpsMyWorkItem
@@ -12,6 +11,7 @@ import support.{Cds, ItSpec}
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
 
 import java.time.{Clock, LocalDateTime}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class CdsServiceSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[CdsOpsMongoRepo]

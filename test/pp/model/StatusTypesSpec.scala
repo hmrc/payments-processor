@@ -23,15 +23,15 @@ class StatusTypesSpec extends UnitSpec {
 
   "de/serialize TaxTypes" in {
 
-    val statusTypes = List(
+    val statusTypes: List[(String, StatusType)] = List[(String, StatusType)](
       "validated" -> StatusTypes.validated,
       "failed" -> StatusTypes.failed
     )
 
     statusTypes.foreach { tt =>
       val jsValue = Json.toJson(tt._2: StatusType)
-      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
-      jsValue.as[StatusType] shouldBe tt._2 withClue s"deserialize $tt"
+      jsValue shouldBe JsString(tt._1) withClue s"serialize ${tt.toString}"
+      jsValue.as[StatusType] shouldBe tt._2 withClue s"deserialize ${tt.toString}"
     }
   }
 }

@@ -74,7 +74,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
     }
   }
 
-  Seq(
+  Seq[ProcessingStatus](
     ProcessingStatus.Failed,
     ProcessingStatus.InProgress,
     ProcessingStatus.Duplicate,
@@ -82,7 +82,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
     ProcessingStatus.Ignored,
     ProcessingStatus.Deferred,
     ProcessingStatus.PermanentlyFailed,
-    ProcessingStatus.Succeeded).foreach(status =>
+    ProcessingStatus.Succeeded).foreach { status =>
       s"Pull a request with a status of ${status.toString} should not find anything if we have not waited" in {
         val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue
         repo.markAs(workItem.id, status).futureValue should be(true)
@@ -92,9 +92,8 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
             "found" shouldBe "a value when we should not"
           case None =>
         }
-
       }
-    )
+    }
 
   s"Pull a request with a status of Failed should find something as we have waited" in {
     val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue
@@ -111,12 +110,12 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
     }
   }
 
-  Seq(ProcessingStatus.Duplicate,
-      ProcessingStatus.Cancelled,
-      ProcessingStatus.Ignored,
-      ProcessingStatus.Deferred,
-      ProcessingStatus.PermanentlyFailed,
-      ProcessingStatus.Succeeded).foreach(status =>
+  Seq[ProcessingStatus](ProcessingStatus.Duplicate,
+                        ProcessingStatus.Cancelled,
+                        ProcessingStatus.Ignored,
+                        ProcessingStatus.Deferred,
+                        ProcessingStatus.PermanentlyFailed,
+                        ProcessingStatus.Succeeded).foreach { status =>
       s"Pull a request with a status of ${status.toString} should not find anything, we have waited" in {
         val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue
         repo.markAs(workItem.id, status).futureValue should be(true)
@@ -129,7 +128,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
           }
         }
       }
-    )
+    }
 
   "complete and delete an in progress request" in {
     val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue

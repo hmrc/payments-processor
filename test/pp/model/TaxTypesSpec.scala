@@ -23,7 +23,7 @@ class TaxTypesSpec extends UnitSpec with RichMatchers {
 
   "de/serialize TaxTypes" in {
 
-    val taxTypes = List(
+    val taxTypes: List[(String, TaxType)] = List[(String, TaxType)](
       "NLIJ" -> TaxTypes.NLIJ,
       "CDSX" -> TaxTypes.CDSX,
       "PARC" -> TaxTypes.PARC,
@@ -65,8 +65,8 @@ class TaxTypesSpec extends UnitSpec with RichMatchers {
 
     taxTypes.foreach { tt =>
       val jsValue = Json.toJson(tt._2: TaxType)
-      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
-      jsValue.as[TaxType] shouldBe tt._2 withClue s"deserialize $tt"
+      jsValue shouldBe JsString(tt._1) withClue s"serialize ${tt.toString}"
+      jsValue.as[TaxType] shouldBe tt._2 withClue s"deserialize ${tt.toString}"
     }
   }
 

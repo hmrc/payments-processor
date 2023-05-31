@@ -3,7 +3,6 @@ package pp.controllers.pngrs
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import org.scalatest.Assertion
-import play.api.libs.json.Json
 import pp.model.TaxTypes.pngr
 import pp.model.pngrs.PngrStatusTypes
 import pp.scheduling.pngrs.PngrMongoRepo

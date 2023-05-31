@@ -26,8 +26,8 @@ object AppDependencies {
   val scalaTestVersion = "3.2.16"
   val pegdownVersion = "1.6.0"
   val scalaTestPlusPlayVersion = "5.1.0"
-  val wiremockJre8Version = "2.35.0"
-  val flexmarkAllVersion = "0.36.8"
+  val wiremockJre8Version = "2.27.2"
+  val flexmarkAllVersion = "0.62.2"
 
   val compile: Seq[ModuleID] = Seq(
     // format: OFF
@@ -63,6 +63,4 @@ object AppDependencies {
     "com.vladsch.flexmark"   %  "flexmark-all"              % flexmarkAllVersion //required by scalatest, see: https://github.com/scalatest/scalatest/issues/1736
   // format: ON
   ).map(_ % "it")
-
 }
-

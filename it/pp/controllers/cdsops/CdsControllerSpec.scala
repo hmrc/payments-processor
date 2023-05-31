@@ -3,7 +3,6 @@ package pp.controllers.cdsops
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import org.scalatest.Assertion
-import play.api.libs.json.Json
 import pp.scheduling.cds.CdsOpsMongoRepo
 import support.PaymentsProcessData.cdsStatusUpdateRequest
 import support.{Cds, ItSpec}

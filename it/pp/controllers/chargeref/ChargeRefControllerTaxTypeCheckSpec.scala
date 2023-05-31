@@ -2,13 +2,13 @@ package pp.controllers.chargeref
 
 import com.github.tomakehurst.wiremock.client.WireMock.{patchRequestedFor, postRequestedFor, urlEqualTo, verify}
 import play.api.Logger
-import play.api.libs.json.Json.parse
-import play.api.libs.json.{JsNull, JsObject, JsValue, Json}
-import pp.model.StatusTypes.validated
-import pp.model.TaxTypes
+import play.api.libs.json.{JsObject, Json}
+import pp.model.{PaymentItemId, TaxType, TaxTypes}
 import pp.model.TaxTypes.{mib, p800, pngr}
+import pp.model.chargeref.ChargeRefNotificationRequest
+import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import support.PaymentsProcessData._
-import support.{AuditConnectorStub, Des, Mib, Pngr, TpsPaymentsBackend}
+import support._
 import uk.gov.hmrc.http.HttpResponse
 
 class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
@@ -36,8 +36,7 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
     if (checkMib) verify(postRequestedFor(urlEqualTo(Mib.endpoint)))
     if (checkTpsBackend) verify(backendCount, patchRequestedFor(urlEqualTo(TpsPaymentsBackend.updateEndpoint)))
   }
-
-  Seq(
+  Seq[(PaymentItemId, TaxType, ChargeRefNotificationPcipalRequest, ChargeRefNotificationRequest)](
     (p800PaymentItemId, p800, p800PcipalNotification, p800ChargeRefNotificationRequest),
     (mibPaymentItemId, mib, mibPcipalNotification, mibChargeRefNotificationRequest),
     (pngrPaymentItemId, pngr, pngrPcipalNotification, pngrChargeRefNotificationRequest)
@@ -48,11 +47,11 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
       val chargeRefNotificationRequest = fixture._4
 
       "return Ok for a POST to the public api /send-card-payments with no call to des" when {
-        s"status=complete, taxType = $taxType" in {
+        s"status=complete, taxType = ${taxType.toString}" in {
           TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
           TpsPaymentsBackend.tpsUpdateOk
           AuditConnectorStub.stubAudit
-          if (taxType == TaxTypes.mib) TpsPaymentsBackend.getAmendmentRefOk(paymentItemId, modsPaymentCallBackRequestWithAmendmentRef)
+          if (taxType === TaxTypes.mib) TpsPaymentsBackend.getAmendmentRefOk(paymentItemId, modsPaymentCallBackRequestWithAmendmentRef)
           taxType match {
             case TaxTypes.pngr => Pngr.statusUpdateSucceeds()
             case TaxTypes.mib  => Mib.statusUpdateSucceeds()
@@ -71,7 +70,7 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
       }
 
       "return Ok for a POST to the synchronous api with no call to des" when {
-        s"status=complete, taxType = $taxType" in {
+        s"status=complete, taxType = ${taxType.toString}" in {
           TpsPaymentsBackend.tpsUpdateOk
           TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
           verifySuccess(

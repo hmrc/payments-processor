@@ -18,7 +18,7 @@ package pp.mods
 
 import play.api.libs.json.Json
 import pp.model.mods.ModsPaymentCallBackRequest
-import support.PaymentsProcessData.{modsPaymentCallBackRequestWithAmendmentRef, modsPaymentCallBackRequestWithoutAmendmentRef, modsPaymentCallbackRequestWithAmendmentRefJson, modsPaymentCallbackRequestWithoutAmendmentRefJson, pngrStatusUpdateRequestJson}
+import support.PaymentsProcessData.{modsPaymentCallBackRequestWithAmendmentRef, modsPaymentCallBackRequestWithoutAmendmentRef, modsPaymentCallbackRequestWithAmendmentRefJson, modsPaymentCallbackRequestWithoutAmendmentRefJson}
 import support.{RichMatchers, UnitSpec}
 
 class ModsPaymentCallBackRequestSpec extends UnitSpec with RichMatchers {

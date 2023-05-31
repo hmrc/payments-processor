@@ -12,6 +12,7 @@ import support.{ItSpec, Pngr}
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
 
 import java.time.{Clock, LocalDateTime}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class PngrServiceSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[PngrMongoRepo]

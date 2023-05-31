@@ -1,8 +1,6 @@
 package pp.scheduling.mib
 
-import java.time.{Clock, LocalDateTime}
 import com.github.tomakehurst.wiremock.client.WireMock
-import play.api.libs.json.Json
 import pp.config.MibOpsQueueConfig
 import pp.connectors.MibConnector
 import pp.model.wokitems.MibOpsMyWorkItem
@@ -11,6 +9,9 @@ import pp.services.MibOpsService
 import support.PaymentsProcessData.mibReference
 import support.{ItSpec, Mib, PaymentsProcessData}
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
+
+import java.time.{Clock, LocalDateTime}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class MibOpsServiceSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[MibOpsMongoRepo]

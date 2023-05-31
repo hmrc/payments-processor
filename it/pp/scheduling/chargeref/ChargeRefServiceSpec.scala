@@ -26,6 +26,7 @@ import support.{Des, ItSpec}
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
 
 import java.time.Clock
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ChargeRefServiceSpec extends ItSpec {
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
@@ -34,7 +35,7 @@ class ChargeRefServiceSpec extends ItSpec {
   private lazy val chargeRefService = new ChargeRefService(desConnector, repo, Clock.systemDefaultZone(), queueConfig)
   private val pollLimit = 2
 
-  override def configMap: Map[String, Any] = super.configMap.updated("chargeref.poller.pollLimit", s"$pollLimit")
+  override def configMap: Map[String, Any] = super.configMap.updated("chargeref.poller.pollLimit", s"${pollLimit.toString}")
 
   override def beforeEach(): Unit = {
     val _ = repo.removeAll().futureValue
