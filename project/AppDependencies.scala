@@ -29,8 +29,6 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "bootstrap-backend-play-28"          % bootstrapVersion,
     "com.beachape"      %% "enumeratum"                         % enumeratumVersion,
     "com.beachape"      %% "enumeratum-play-json"               % enumeratumVersion,
-    // added just to migrate to scala 2.13, we should nuke this dependency asap.
-    "joda-time"         %  "joda-time"                          % "2.12.4"
   )
 
   val test: Seq[ModuleID] = Seq(
