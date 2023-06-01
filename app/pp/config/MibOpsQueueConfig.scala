@@ -16,12 +16,12 @@
 
 package pp.config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
-class MibOpsQueueConfig @Inject() (val configuration: Configuration, servicesConfig: ServicesConfig) extends QueueConfig {
+class MibOpsQueueConfig @Inject() (val configuration: Configuration) extends QueueConfig {
   //All Configs need these
   val prefix = "mibops"
   val collectionName = "mibops"

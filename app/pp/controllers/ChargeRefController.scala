@@ -29,6 +29,7 @@ import pp.model.pcipal.ChargeRefNotificationPcipalRequest.{toChargeRefNotificati
 import pp.model.{TaxType, TaxTypes}
 import pp.services.{AuditService, ChargeRefService, MibOpsService, PngrService}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import cats.implicits.catsSyntaxEq
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -73,20 +74,20 @@ class ChargeRefController @Inject() (
     }
 
       def sendToDesIfValidatedAndConfigured(taxType: TaxType): Future[Status] = {
-        if (notification.Status == validated && (sendAllToDes || taxType.sendToDes)) {
+        if (notification.Status === validated && (sendAllToDes || taxType.sendToDes)) {
           processChargeRefNotificationRequest(toChargeRefNotificationRequest(notification, taxType))
         } else Future successful Ok
       }
 
       def sendStatusUpdateToPngrIfConfigured(taxType: TaxType): Future[Status] =
-        if (taxType == TaxTypes.pngr) {
+        if (taxType === TaxTypes.pngr) {
           sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
         } else Future successful Ok
 
       def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
-        if (taxType == TaxTypes.mib && notification.Status == validated) {
+        if (taxType === TaxTypes.mib && notification.Status === validated) {
           for {
-            amendmentRef: ModsPaymentCallBackRequest <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
+            amendmentRef <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
             modsPayload = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef.amendmentReference)
             statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
           } yield statusFromPaymentUpdate

@@ -26,6 +26,7 @@ import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
+@SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements")) // for line 42: `callExecutor(name)`
 abstract class PollingService[P <: MyWorkItemFields](val actorSystem:     ActorSystem,
                                                      val queueConfig:     QueueConfig,
                                                      val workItemService: WorkItemService[P])(

@@ -214,7 +214,7 @@ object PaymentsProcessData {
                                       {
                                         "version": "1.0",
                                         "status": "${status}",
-                                        "endpointsEnabled": ${endpointsEnabled},
+                                        "endpointsEnabled": ${endpointsEnabled.toString},
                                         "access": {
                                           "type": "PRIVATE",
                                           "whitelistedApplicationIds": ["testId"],

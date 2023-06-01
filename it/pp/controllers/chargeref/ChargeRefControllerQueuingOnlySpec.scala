@@ -26,7 +26,6 @@ import support._
 class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
   override def configMap: Map[String, Any] = super.configMap.updated("chargeref.queue.enabled", "true")
 
-
   "the ChargeRefController" when {
     "queuing is enabled and polling is disabled" should {
       behave like aSynchronousEndpointWhenTheDesNotificationSucceeds()

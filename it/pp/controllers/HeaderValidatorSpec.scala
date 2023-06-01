@@ -23,6 +23,7 @@ import support.ItSpec
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class HeaderValidatorSpec extends ItSpec with HeaderValidator {
 
@@ -74,6 +75,5 @@ class HeaderValidatorSpec extends ItSpec with HeaderValidator {
     errorResponse.message shouldBe Constants.acceptHeaderMissing
 
   }
-
 
 }

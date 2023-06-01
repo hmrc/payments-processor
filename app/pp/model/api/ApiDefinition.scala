@@ -18,12 +18,12 @@ package pp.model.api
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ApiDefinition(
+final case class ApiDefinition(
     scopes: Seq[String] = Seq(),
     api:    Api
 )
 
-case class Api(
+final case class Api(
     name:        String = "Charge Ref Notification",
     description: String = "Provides a way to notify DES/ETMP of Charge Refs",
     //Field 'context' must start with one of 'agents', 'customs', 'individuals', 'mobile', 'organisations', 'test'
@@ -32,14 +32,14 @@ case class Api(
     versions:   Seq[Version]
 )
 
-case class Version(
+final case class Version(
     version:          String  = "1.0",
     status:           String,
     endpointsEnabled: Boolean,
     access:           Access
 )
 
-case class Access(
+final case class Access(
     `type`:                    String      = "PRIVATE",
     whitelistedApplicationIds: Seq[String],
     isTrial:                   Boolean     = false

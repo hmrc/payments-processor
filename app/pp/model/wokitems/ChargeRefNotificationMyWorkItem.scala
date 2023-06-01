@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 import play.api.libs.json._
 import pp.model.{Origin, TaxType, MyWorkItemFields}
 
-case class ChargeRefNotificationMyWorkItem(
+final case class ChargeRefNotificationMyWorkItem(
     createdOn:       LocalDateTime,
     availableUntil:  LocalDateTime,
     taxType:         TaxType,

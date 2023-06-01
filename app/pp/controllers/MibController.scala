@@ -16,8 +16,7 @@
 
 package pp.controllers
 
-import javax.inject.Inject
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.{Action, ControllerComponents}
 import play.api.{Configuration, Logger}
 import pp.config.MibOpsQueueConfig
 import pp.connectors.MibConnector
@@ -26,6 +25,7 @@ import pp.model.mods.ModsPaymentCallBackRequest
 import pp.services.MibOpsService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class MibController @Inject() (

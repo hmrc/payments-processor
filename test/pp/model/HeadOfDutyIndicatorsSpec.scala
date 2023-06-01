@@ -23,7 +23,7 @@ import support.{RichMatchers, UnitSpec}
 
 class HeadOfDutyIndicatorsSpec extends UnitSpec with RichMatchers {
   "HeadOfDutyIndicators should de/serialize" in {
-    val headOfDutyIndicators = List(
+    val headOfDutyIndicators: List[(String, HeadOfDutyIndicator)] = List[(String, HeadOfDutyIndicator)](
       "B" -> B,
       "A" -> A,
       "N" -> N,
@@ -40,8 +40,8 @@ class HeadOfDutyIndicatorsSpec extends UnitSpec with RichMatchers {
 
     headOfDutyIndicators.foreach { headOfDutyIndicator =>
       val jsValue = toJson(headOfDutyIndicator._2: HeadOfDutyIndicator)
-      jsValue shouldBe JsString(headOfDutyIndicator._1) withClue s"serialize $headOfDutyIndicator"
-      jsValue.as[HeadOfDutyIndicator] shouldBe headOfDutyIndicator._2 withClue s"deserialize $headOfDutyIndicator"
+      jsValue shouldBe JsString(headOfDutyIndicator._1) withClue s"serialize ${headOfDutyIndicator.toString()}"
+      jsValue.as[HeadOfDutyIndicator] shouldBe headOfDutyIndicator._2 withClue s"deserialize ${headOfDutyIndicator.toString()}"
     }
   }
 }

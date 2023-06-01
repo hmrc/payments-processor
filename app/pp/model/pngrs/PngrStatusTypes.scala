@@ -21,6 +21,7 @@ import play.api.libs.json.Format
 import pp.controllers.ValueClassBinder._
 import pp.jsonext.EnumFormat
 import play.api.mvc.{PathBindable, QueryStringBindable}
+import cats.syntax.eq.catsSyntaxEq
 
 import scala.collection.immutable
 
@@ -28,21 +29,17 @@ object PngrStatusType {
   implicit val format: Format[PngrStatusType] = EnumFormat(PngrStatusTypes)
   implicit val pathBinder: QueryStringBindable[PngrStatusType] = bindableA(_.toString)
   implicit val statusBinder: PathBindable[PngrStatusType] = valueClassBinder(_.toString)
-
 }
 
-sealed abstract class PngrStatusType extends EnumEntry {
-}
+sealed abstract class PngrStatusType extends EnumEntry
 
 object PngrStatusTypes extends Enum[PngrStatusType] {
 
-  def forCode(code: String): Option[PngrStatusType] = values.find(_.toString == code)
+  def forCode(code: String): Option[PngrStatusType] = values.find(_.toString === code)
 
-  case object Successful extends PngrStatusType {
-  }
+  case object Successful extends PngrStatusType
 
-  case object Failed extends PngrStatusType {
-  }
+  case object Failed extends PngrStatusType
 
   def values: immutable.IndexedSeq[PngrStatusType] = findValues
 }

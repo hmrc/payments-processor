@@ -12,7 +12,6 @@ class MibControllerPollingOnlySpec extends MibControllerSpec {
   override def configMap: Map[String, Any] = super.configMap
     .updated("mibops.poller.enabled", "true")
 
-
   "the MibController" when {
     "polling is enabled and queuing is disabled" should {
       behave like aSynchronousEndpointWhenTheMibPaymentUpdateSucceeds()
@@ -36,6 +35,5 @@ class MibControllerPollingOnlySpec extends MibControllerSpec {
       }
     }
   }
-
 
 }

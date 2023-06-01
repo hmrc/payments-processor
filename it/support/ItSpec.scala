@@ -33,21 +33,18 @@ package support
  */
 
 import com.google.inject.AbstractModule
-import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.time.{Millis, Seconds, Span}
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.{Application, Mode}
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.Result
 import play.api.test.{DefaultTestServerFactory, RunningServer}
+import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.ExecutionContext
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * This is common spec for every test case which brings all of useful routines we want to use in our scenarios.
@@ -63,20 +60,18 @@ trait ItSpec
 
   val testServerPort = 19001
 
-  implicit lazy val ec: ExecutionContext = global
-
   private lazy val module = new AbstractModule {
     override def configure(): Unit = ()
   }
 
-  lazy val baseUrl: String = s"http://localhost:${WireMockSupport.port}"
+  lazy val baseUrl: String = s"http://localhost:${WireMockSupport.port.toString}"
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(
     timeout  = scaled(Span(10, Seconds)),
     interval = scaled(Span(300, Millis)))
 
   implicit val emptyHC: HeaderCarrier = HeaderCarrier()
-  lazy val webdriverUrl = s"http://localhost:$port"
+  lazy val webdriverUrl = s"http://localhost:${port.toString}"
   lazy val testConnector: TestConnector = injector.instanceOf[TestConnector]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()

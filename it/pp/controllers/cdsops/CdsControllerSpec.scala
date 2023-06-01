@@ -3,7 +3,6 @@ package pp.controllers.cdsops
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import org.scalatest.Assertion
-import play.api.libs.json.Json
 import pp.scheduling.cds.CdsOpsMongoRepo
 import support.PaymentsProcessData.cdsStatusUpdateRequest
 import support.{Cds, ItSpec}
@@ -21,14 +20,11 @@ trait CdsControllerSpec extends ItSpec {
   protected def numberOfQueuedNotifications: Long = repo.countAll().futureValue
 
   def aSynchronousEndpointWhenTheCdsPaymentUpdateSucceeds(): Unit = {
-    def verifySuccess(response: HttpResponse
-                     ): Assertion = {
-      response.status shouldBe 200
-      verify(1, postRequestedFor(urlEqualTo(Cds.endpoint)))
-      numberOfQueuedNotifications shouldBe 0
-    }
-
-
+      def verifySuccess(response: HttpResponse): Assertion = {
+        response.status shouldBe 200
+        verify(1, postRequestedFor(urlEqualTo(Cds.endpoint)))
+        numberOfQueuedNotifications shouldBe 0
+      }
 
     s"return Ok for a POST to the internal endpoint /cds/send-notification" when {
       "the Cds call succeeds with OK, status=Successful" in {
@@ -61,6 +57,5 @@ trait CdsControllerSpec extends ItSpec {
       }
     }
   }
-
 
 }

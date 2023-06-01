@@ -21,7 +21,7 @@ import play.api.libs.json._
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.{Origin, TaxType, MyWorkItemFields}
 
-case class MibOpsMyWorkItem(
+final case class MibOpsMyWorkItem(
     createdOn:                  LocalDateTime,
     availableUntil:             LocalDateTime,
     taxType:                    TaxType,

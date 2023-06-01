@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package pp.scheduling
+package pp.model
 
-import java.time.Clock
-import java.util.TimeZone
+import java.time.LocalDateTime
 
-import org.joda.time.{DateTime, DateTimeZone}
+import play.api.libs.json.{Json, OFormat}
 
-object DateTimeHelpers {
+//formerly known as ReportingObjects.scala, no idea why.
 
-  implicit class ClockJodaExtensions(clock: Clock) {
-    def nowAsJoda: DateTime = {
-      new DateTime(
-        clock.instant().toEpochMilli,
-        DateTimeZone.forTimeZone(TimeZone.getTimeZone(clock.getZone)))
-    }
+final case class Item(createdOn: LocalDateTime, reference: String, failureCount: Int, status: String)
+
+object Item {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val itemFormat: OFormat[Item] = {
+    Json.format[Item]
   }
-
 }
+

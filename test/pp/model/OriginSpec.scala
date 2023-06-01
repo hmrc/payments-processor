@@ -23,7 +23,7 @@ import support.{RichMatchers, UnitSpec}
 
 class OriginSpec extends UnitSpec with RichMatchers {
   "Origins should de/serialize" in {
-    val origins = List(
+    val origins: List[(String, Origin)] = List[(String, Origin)](
       "OPS" -> OPS,
       "PCI_PAL" -> PCI_PAL
     )
@@ -32,8 +32,8 @@ class OriginSpec extends UnitSpec with RichMatchers {
 
     origins.foreach { origin =>
       val jsValue = toJson(origin._2: Origin)
-      jsValue shouldBe JsString(origin._1) withClue s"serialize $origin"
-      jsValue.as[Origin] shouldBe origin._2 withClue s"deserialize $origin"
+      jsValue shouldBe JsString(origin._1) withClue s"serialize ${origin.toString()}"
+      jsValue.as[Origin] shouldBe origin._2 withClue s"deserialize ${origin.toString()}"
     }
   }
 }

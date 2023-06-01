@@ -16,7 +16,7 @@
 
 package pp.connectors
 
-import uk.gov.hmrc.http.HttpReads.Implicits.{readRaw, readEitherOf, throwOnFailure, _}
+import uk.gov.hmrc.http.HttpReads.Implicits.{readRaw, readEitherOf, throwOnFailure}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse, UpstreamErrorResponse}
 
 object UnitReadsThrowingException {

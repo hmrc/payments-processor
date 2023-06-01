@@ -56,5 +56,4 @@ class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
     }
   }
 
-
 }

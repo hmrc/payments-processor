@@ -19,6 +19,7 @@ package pp.scheduling
 import java.util.concurrent.Semaphore
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
+import cats.syntax.eq.catsSyntaxEq
 
 trait ExclusiveScheduledJob extends ScheduledJob {
 
@@ -32,7 +33,7 @@ trait ExclusiveScheduledJob extends ScheduledJob {
       }
     } else Future.successful(Result("Skipping execution: job running"))
 
-  def isRunning: Future[Boolean] = Future.successful(mutex.availablePermits() == 0)
+  def isRunning: Future[Boolean] = Future.successful(mutex.availablePermits() === 0)
 
   final private val mutex = new Semaphore(1)
 }

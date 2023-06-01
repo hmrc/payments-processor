@@ -17,24 +17,22 @@
 package support
 
 import play.api.libs.json.JsValue
-
-import javax.inject.{Inject, Singleton}
 import pp.connectors.ResponseReadsThrowingException
-import pp.model.cds.{NotificationCds, NotifyImmediatePaymentRequest}
-import pp.model.{ProcessingStatusOps, TaxType}
+import pp.model.cds.NotificationCds
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pngrs.PngrStatusUpdateRequest
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import pp.model.{ProcessingStatusOps, TaxType}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext: ExecutionContext) {
 
-  val port = 19001
+  val port: String = "19001"
   val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
 
   implicit val readRaw: HttpReads[HttpResponse] = ResponseReadsThrowingException.readResponse
@@ -46,17 +44,17 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
     httpClient.POST[ChargeRefNotificationPcipalRequest, HttpResponse](s"http://localhost:$port/send-card-payments", chargeRefNotificationPciPalRequest, headers)
 
   def sendCardPaymentsWrongFormatRequest(wrongFormatRequest: JsValue)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST[JsValue,HttpResponse](s"http://localhost:$port/send-card-payments", wrongFormatRequest, headers)
+    httpClient.POST[JsValue, HttpResponse](s"http://localhost:$port/send-card-payments", wrongFormatRequest, headers)
 
   def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/conf/1.0/application.raml")
 
   def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/definition")
 
   def count(taxType: TaxType, processingStatusOps: ProcessingStatusOps)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/count/$taxType/$processingStatusOps")
+    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/count/${taxType.toString}/${processingStatusOps.toString}")
 
   def getAll(taxType: TaxType)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/$taxType")
+    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/${taxType.toString}")
 
   def sendStatusUpdateToPngr(pngrStatusUpdateRequest: PngrStatusUpdateRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[PngrStatusUpdateRequest, HttpResponse](s"http://localhost:$port/payments-processor/pngr/send-update", pngrStatusUpdateRequest)

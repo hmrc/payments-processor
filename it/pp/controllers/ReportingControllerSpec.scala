@@ -2,7 +2,6 @@ package pp.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.http.Status
-import play.api.libs.json.Json
 import pp.model.Item
 import pp.model.ProcessingStatusOpsValues.Failed
 import pp.model.TaxTypes.{mib, p800, pngr}
@@ -12,7 +11,7 @@ import pp.scheduling.pngrs.PngrMongoRepo
 import support.PaymentsProcessData.{modsPaymentCallBackRequestWithAmendmentRef, p800ChargeRefNotificationRequest, pngrStatusUpdateRequest}
 import support.{Des, ItSpec, Mib, Pngr}
 
-class ReportingControllerSpec extends ItSpec{
+class ReportingControllerSpec extends ItSpec {
   private lazy val repoPngr = injector.instanceOf[PngrMongoRepo]
   private lazy val repoChargeRef = injector.instanceOf[ChargeRefNotificationMongoRepo]
   private lazy val mibOpsRepo = injector.instanceOf[MibOpsMongoRepo]
@@ -34,8 +33,6 @@ class ReportingControllerSpec extends ItSpec{
       .updated("chargeref.poller.enabled", "true")
       .updated("mibops.queue.enabled", "true")
       .updated("mibops.poller.enabled", "true")
-
-
 
   protected def numberOfQueuedNotificationsPngr: Long = repoPngr.countAll().futureValue
   protected def numberOfQueuedNotificationsChargeRef: Long = repoChargeRef.countAll().futureValue

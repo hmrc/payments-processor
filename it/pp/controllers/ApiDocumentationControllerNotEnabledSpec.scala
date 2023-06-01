@@ -13,14 +13,12 @@ class ApiDocumentationControllerNotEnabledSpec extends ItSpec {
       .updated("api.enabled", "false")
       .updated("api.status", "STABLE")
 
-
   "DefinitionController.definition return OK status" in {
     val response: HttpResponse = testConnector.getDef.futureValue
     response.status shouldBe Status.OK
     val json = Json.parse(response.body)
     json shouldBe PaymentsProcessData.definition(endpointsEnabled = false, "STABLE")
   }
-
 
 }
 

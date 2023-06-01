@@ -17,7 +17,7 @@
 package pp.services
 
 import com.google.inject.{Inject, Singleton}
-import play.api.libs.json.{JsNull, JsValue, Json, Writes}
+import play.api.libs.json.{Json, Writes}
 import pp.model.audit.{AuditDetail, PcipalNotificationAuditEvent}
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import uk.gov.hmrc.http.HeaderCarrier

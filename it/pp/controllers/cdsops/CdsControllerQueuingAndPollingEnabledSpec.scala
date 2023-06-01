@@ -40,5 +40,4 @@ class CdsControllerQueuingAndPollingEnabledSpec extends CdsControllerSpec {
     }
   }
 
-
 }

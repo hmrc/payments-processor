@@ -18,7 +18,6 @@ package pp.controllers.pngrs
 
 class PngrUpdateControllerQueuingAndPollingDisabledSpec extends PngrUpdateControllerSpec {
 
-
   "the PngrUpdateController" when {
     "polling is disabled and queuing is disabled" should {
       behave like aSynchronousEndpointWhenThePngrStatusUpdateSucceeds()

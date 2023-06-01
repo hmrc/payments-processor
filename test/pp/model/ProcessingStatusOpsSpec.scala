@@ -23,7 +23,7 @@ class ProcessingStatusOpsSpec extends UnitSpec with RichMatchers {
 
   "de/serialize ProcessingStatusOps" in {
 
-    val processingStatusOps = List(
+    val processingStatusOps: List[(String, ProcessingStatusOps)] = List[(String, ProcessingStatusOps)](
       "ToDo" -> ProcessingStatusOpsValues.ToDo,
       "PermanentlyFailed" -> ProcessingStatusOpsValues.PermanentlyFailed,
       "Failed" -> ProcessingStatusOpsValues.Failed
@@ -33,8 +33,8 @@ class ProcessingStatusOpsSpec extends UnitSpec with RichMatchers {
 
     processingStatusOps.foreach { tt =>
       val jsValue = Json.toJson(tt._2: ProcessingStatusOps)
-      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
-      jsValue.as[ProcessingStatusOps] shouldBe tt._2 withClue s"deserialize $tt"
+      jsValue shouldBe JsString(tt._1) withClue s"serialize ${tt.toString}"
+      jsValue.as[ProcessingStatusOps] shouldBe tt._2 withClue s"deserialize ${tt.toString}"
     }
   }
 

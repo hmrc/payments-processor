@@ -19,7 +19,7 @@ package pp.model.pcipal
 import play.api.libs.json.{Json, OFormat}
 import pp.model.Origins.PCI_PAL
 import pp.model.StatusTypes.validated
-import pp.model.{chargeref, _}
+import pp.model.{HeadOfDutyIndicator, PaymentItemId, StatusType, TaxType, chargeref}
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pngrs.{PngrStatusTypes, PngrStatusUpdateRequest}
 

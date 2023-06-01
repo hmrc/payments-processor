@@ -24,15 +24,15 @@ import pp.model.{PaymentItemId, TaxType}
 
 object TpsPaymentsBackend {
 
-  private val basePath = "/tps-payments-backend"
+  private val basePath: String = "/tps-payments-backend"
 
-  val updateEndpoint = s"$basePath/update-with-pcipal-data"
-  val updateErrorMessage = "tps failed"
-  val notFoundErrorMessage = "404"
-  val successMessage = "ok"
+  val updateEndpoint: String = s"$basePath/update-with-pcipal-data"
+  val updateErrorMessage: String = "tps failed"
+  val notFoundErrorMessage: String = "404"
+  val successMessage: String = "ok"
 
-  def getTaxTypeEndpoint(paymentItemId: PaymentItemId) = s"$basePath/payment-items/${paymentItemId.value}/tax-type"
-  def getModsAmendmentRefEndpoint(paymentItemId: PaymentItemId) = s"$basePath/payment-items/${paymentItemId.value}/mods-amendment-ref"
+  def getTaxTypeEndpoint(paymentItemId: PaymentItemId): String = s"$basePath/payment-items/${paymentItemId.value}/tax-type"
+  def getModsAmendmentRefEndpoint(paymentItemId: PaymentItemId): String = s"$basePath/payment-items/${paymentItemId.value}/mods-amendment-ref"
 
   def tpsUpdateOk: StubMapping = updateTps(200, successMessage)
 

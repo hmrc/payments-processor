@@ -24,7 +24,7 @@ class PngrStatusTypesSpec extends UnitSpec with RichMatchers {
 
   "de/serialize PngrStatusTypes" in {
 
-    val pngrStatusTypes = List(
+    val pngrStatusTypes: List[(String, PngrStatusType)] = List[(String, PngrStatusType)](
       "Failed" -> PngrStatusTypes.Failed,
       "Successful" -> PngrStatusTypes.Successful
     )
@@ -33,8 +33,8 @@ class PngrStatusTypesSpec extends UnitSpec with RichMatchers {
 
     pngrStatusTypes.foreach { tt =>
       val jsValue = Json.toJson(tt._2: PngrStatusType)
-      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
-      jsValue.as[PngrStatusType] shouldBe tt._2 withClue s"deserialize $tt"
+      jsValue shouldBe JsString(tt._1) withClue s"serialize ${tt.toString}"
+      jsValue.as[PngrStatusType] shouldBe tt._2 withClue s"deserialize ${tt.toString}"
     }
   }
 }

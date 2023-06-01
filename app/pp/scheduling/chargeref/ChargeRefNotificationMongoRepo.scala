@@ -22,7 +22,6 @@ import pp.model.wokitems.ChargeRefNotificationMyWorkItem
 import pp.scheduling.NotificationRepo
 import uk.gov.hmrc.mongo.MongoComponent
 
-import java.time.Clock
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -30,12 +29,9 @@ import scala.concurrent.ExecutionContext
 class ChargeRefNotificationMongoRepo @Inject() (
     mongoComponent: MongoComponent,
     configuration:  Configuration,
-    clock:          Clock,
-    queueConfig:    ChargeRefQueueConfig)
-  (implicit ec: ExecutionContext)
-  extends NotificationRepo[ChargeRefNotificationMyWorkItem](
-    mongoComponent = mongoComponent,
-    configuration  = configuration,
-    clock          = clock,
-    queueConfig    = queueConfig)
+    queueConfig:    ChargeRefQueueConfig
+)(implicit ec: ExecutionContext) extends NotificationRepo[ChargeRefNotificationMyWorkItem](
+  mongoComponent = mongoComponent,
+  configuration  = configuration,
+  queueConfig    = queueConfig)
 

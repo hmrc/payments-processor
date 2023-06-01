@@ -19,7 +19,7 @@ package pp.model.chargeref
 import play.api.libs.json._
 import pp.model.TaxType
 
-case class ChargeRefNotificationDesRequest(
+final case class ChargeRefNotificationDesRequest(
     taxType:         TaxType,
     chargeRefNumber: String,
     amountPaid:      BigDecimal)
