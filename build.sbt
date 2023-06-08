@@ -13,8 +13,7 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test ++ AppDependencies.itTest,
     libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Compile / scalacOptions -= "utf8",
-    coverageEnabled := true
+    Compile / scalacOptions -= "utf8"
   )
   // compiler flags, linting/code quality tools
   .settings(scalacOptions ++= scalaCompilerOptions)
