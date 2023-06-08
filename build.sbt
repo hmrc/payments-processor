@@ -11,14 +11,17 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     majorVersion := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test ++ AppDependencies.itTest,
+    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Compile / scalacOptions -= "utf8"
+    Compile / scalacOptions -= "utf8",
+    coverageEnabled := true
   )
   // compiler flags, linting/code quality tools
   .settings(scalacOptions ++= scalaCompilerOptions)
   .settings(ScalariformSettings.scalariformSettings: _*)
   .settings(WartRemoverSettings.wartRemoverSettings: _*)
   .settings(SbtUpdatesSettings.sbtUpdatesSettings: _*)
+  .settings(ScoverageSettings.scoverageSettings: _*)
   //
   // play related settings
   .settings(
