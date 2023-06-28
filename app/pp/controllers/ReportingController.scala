@@ -21,7 +21,6 @@ import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import pp.model.{Item, ProcessingStatusOps, TaxType, TaxTypes}
-import pp.scheduling.cds.CdsOpsMongoRepo
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import pp.scheduling.mib.MibOpsMongoRepo
 import pp.scheduling.pngrs.PngrMongoRepo
@@ -33,8 +32,7 @@ class ReportingController @Inject() (
     cc:                             ControllerComponents,
     pngrMongoRepo:                  PngrMongoRepo,
     chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
-    mibOpsMongoRepo:                MibOpsMongoRepo,
-    cdsOpsMongoRepo:                CdsOpsMongoRepo
+    mibOpsMongoRepo:                MibOpsMongoRepo
 )
   (implicit val executionContext: ExecutionContext) extends BackendController(cc) {
 
@@ -49,8 +47,6 @@ class ReportingController @Inject() (
         chargeRefNotificationMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case TaxTypes.mib =>
         mibOpsMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
-      case TaxTypes.cds =>
-        cdsOpsMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case _ => throw new RuntimeException(s"taxType ${taxType.entryName} not supported, processingState ${processingState.toString} not supported")
     }
   }
@@ -73,11 +69,6 @@ class ReportingController @Inject() (
           m <- mibOpsMongoRepo.findAll()
           i = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
         } yield Ok(Json.toJson(i))
-      case TaxTypes.cds =>
-        for {
-          allRecords <- cdsOpsMongoRepo.findAll()
-          allRecordsAsItems = allRecords.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
-        } yield Ok(Json.toJson(allRecordsAsItems))
       case _ => throw new RuntimeException(s"taxType ${taxType.entryName} not supported")
     }
   }

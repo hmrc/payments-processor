@@ -19,8 +19,8 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapVersion = "7.15.0"
-  val hmrcMongoVersion = "1.2.0"
+  val bootstrapVersion = "7.19.0"
+  val hmrcMongoVersion = "1.3.0"
   val enumeratumVersion = "1.7.0"
 
   val scalaTestVersion = "3.2.16"
