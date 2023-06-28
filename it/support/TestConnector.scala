@@ -18,7 +18,6 @@ package support
 
 import play.api.libs.json.JsValue
 import pp.connectors.ResponseReadsThrowingException
-import pp.model.cds.NotificationCds
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
@@ -58,9 +57,6 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
 
   def sendStatusUpdateToPngr(pngrStatusUpdateRequest: PngrStatusUpdateRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[PngrStatusUpdateRequest, HttpResponse](s"http://localhost:$port/payments-processor/pngr/send-update", pngrStatusUpdateRequest)
-
-  def sendStatusUpdateToCds(notificationCds: NotificationCds)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST[NotificationCds, HttpResponse](s"http://localhost:$port/payments-processor/cds/send-notification", notificationCds)
 
   def mibPaymentCallBack(modsPaymentCallBackRequest: ModsPaymentCallBackRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[ModsPaymentCallBackRequest, HttpResponse](s"http://localhost:$port/payments-processor/mib/payment-callback", modsPaymentCallBackRequest)
