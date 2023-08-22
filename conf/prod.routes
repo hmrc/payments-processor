@@ -5,4 +5,4 @@
 
 GET        /admin/metrics             com.kenshoo.play.metrics.MetricsController.metrics
 
-POST       /send-card-payments   pp.controllers.ChargeRefController.sendCardPaymentsNotificationPciPal()
+POST       /send-card-payments        pp.controllers.ChargeRefController.sendCardPaymentsNotificationPciPal()
