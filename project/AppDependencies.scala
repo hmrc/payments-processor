@@ -19,7 +19,7 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapVersion = "7.19.0"
+  val bootstrapVersion = "7.21.0"
   val hmrcMongoVersion = "1.3.0"
   val enumeratumVersion = "1.7.0"
 
@@ -36,7 +36,7 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "bootstrap-backend-play-28"          % bootstrapVersion,
     "com.beachape"      %% "enumeratum"                         % enumeratumVersion,
     "com.beachape"      %% "enumeratum-play-json"               % enumeratumVersion,
-    "org.typelevel"     %% "cats-core"                          % "2.9.0"
+    "org.typelevel"     %% "cats-core"                          % "2.10.0"
   // format: ON
   )
 
