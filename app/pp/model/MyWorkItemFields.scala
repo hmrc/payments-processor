@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 
 trait MyWorkItemFields {
   val createdOn: LocalDateTime
-  val taxType: TaxType
+  val taxType: String
   val origin: Origin
   val availableUntil: LocalDateTime
 }

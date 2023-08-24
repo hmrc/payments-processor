@@ -55,7 +55,7 @@ class PngrService @Inject() (
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
     val localDateTime = repo.now()
-    val workItem = wokitems.PngrMyWorkItem(time, availableUntil(time), TaxTypes.pngr, Origins.PCI_PAL,
+    val workItem = wokitems.PngrMyWorkItem(time, availableUntil(time), TaxTypes.pngr.entryName, Origins.PCI_PAL,
                                            pngrStatusUpdate.reference, pngrStatusUpdate.status)
     repo.pushNew(workItem, localDateTime)
 

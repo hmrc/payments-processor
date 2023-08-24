@@ -43,7 +43,7 @@ class ChargeRefService @Inject() (
   def sendWorkItem(chargeRefNotificationWorkItem: WorkItem[ChargeRefNotificationMyWorkItem]): Future[Unit] = {
 
     logger.debug("inside sendWorkItemToDes")
-    val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationWorkItem.item.taxType,
+    val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationWorkItem.item.taxType.take(4),
                                                        chargeRefNotificationWorkItem.item.chargeRefNumber,
                                                        chargeRefNotificationWorkItem.item.amountPaid)
     for {
@@ -55,7 +55,7 @@ class ChargeRefService @Inject() (
   def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[Unit] = {
     logger.debug("inside sendCardPaymentsNotificationSync")
 
-    val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationPciPalRequest.taxType,
+    val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationPciPalRequest.taxType.entryName.take(4),
                                                        chargeRefNotificationPciPalRequest.chargeRefNumber,
                                                        chargeRefNotificationPciPalRequest.amountPaid)
 
@@ -67,7 +67,7 @@ class ChargeRefService @Inject() (
     val time = LocalDateTime.now(clock)
 
     val localDateTime = repo.now()
-    val workItem = ChargeRefNotificationMyWorkItem(time, availableUntil(time), chargeRefNotificationPciPalRequest.taxType,
+    val workItem = ChargeRefNotificationMyWorkItem(time, availableUntil(time), chargeRefNotificationPciPalRequest.taxType.entryName.take(4),
                                                    chargeRefNotificationPciPalRequest.chargeRefNumber,
                                                    chargeRefNotificationPciPalRequest.amountPaid, chargeRefNotificationPciPalRequest.origin)
 
