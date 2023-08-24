@@ -22,8 +22,9 @@ import pp.config.PngrsQueueConfig
 import pp.connectors.PngrConnector
 import pp.model.pngrs.PngrStatusUpdateRequest
 import pp.model.wokitems.PngrMyWorkItem
-import pp.model.{Origins, TaxTypes, wokitems}
+import pp.model.{Origins, wokitems}
 import pp.scheduling.pngrs.PngrMongoRepo
+import tps.model.TaxTypes
 import uk.gov.hmrc.mongo.workitem.WorkItem
 
 import java.time.{Clock, LocalDateTime}
@@ -55,8 +56,14 @@ class PngrService @Inject() (
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
     val localDateTime = repo.now()
-    val workItem = wokitems.PngrMyWorkItem(time, availableUntil(time), TaxTypes.pngr, Origins.PCI_PAL,
-                                           pngrStatusUpdate.reference, pngrStatusUpdate.status)
+    val workItem = wokitems.PngrMyWorkItem(
+      createdOn      = time,
+      availableUntil = availableUntil(time),
+      taxType        = TaxTypes.PNGR,
+      origin         = Origins.PCI_PAL,
+      reference      = pngrStatusUpdate.reference,
+      status         = pngrStatusUpdate.status
+    )
     repo.pushNew(workItem, localDateTime)
 
   }

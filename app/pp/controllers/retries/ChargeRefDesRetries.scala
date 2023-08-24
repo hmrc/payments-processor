@@ -26,6 +26,7 @@ import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
 import scala.concurrent.{ExecutionContext, Future}
 import cats.implicits.catsSyntaxEq
+import pp.model.TaxTypeHelper.taxTypeShouldGoToDes
 
 trait ChargeRefDesRetries extends Results {
 
@@ -72,7 +73,7 @@ trait ChargeRefDesRetries extends Results {
   def sendCardPaymentsNotification(chargeRefNotificationRequest: ChargeRefNotificationRequest): Future[Status] = {
     logger.debug("sendCardPaymentsNotification")
 
-    val sendChargeRef: Boolean = sendAllToDes || chargeRefNotificationRequest.taxType.sendToDes
+    val sendChargeRef: Boolean = sendAllToDes || taxTypeShouldGoToDes(chargeRefNotificationRequest.taxType)
     if (sendChargeRef) {
       processChargeRefNotificationRequest(chargeRefNotificationRequest)
     } else {

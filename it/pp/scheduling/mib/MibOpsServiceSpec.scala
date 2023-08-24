@@ -3,11 +3,12 @@ package pp.scheduling.mib
 import com.github.tomakehurst.wiremock.client.WireMock
 import pp.config.MibOpsQueueConfig
 import pp.connectors.MibConnector
+import pp.model.Origins
 import pp.model.wokitems.MibOpsMyWorkItem
-import pp.model.{Origins, TaxTypes}
 import pp.services.MibOpsService
 import support.PaymentsProcessData.mibReference
 import support.{ItSpec, Mib, PaymentsProcessData}
+import tps.model.TaxTypes
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
 
 import java.time.{Clock, LocalDateTime}
@@ -23,7 +24,7 @@ class MibOpsServiceSpec extends ItSpec {
   val availableUntilInPast: LocalDateTime = time.minusSeconds(60)
   val availUntilInFuture: LocalDateTime = time.plusSeconds(60)
 
-  val workItem: MibOpsMyWorkItem = MibOpsMyWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference", PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef)
+  val workItem: MibOpsMyWorkItem = MibOpsMyWorkItem(created, availableUntilInPast, TaxTypes.MIB, Origins.OPS, "reference", PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef)
 
   override def configMap: Map[String, Any] =
     super.configMap
@@ -51,7 +52,7 @@ class MibOpsServiceSpec extends ItSpec {
       val workItem = mibOpsService.sendMibOpsToWorkItemRepo(PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef).futureValue
       numberOfQueuedNotifications shouldBe 1
 
-      workItem.item.taxType shouldBe TaxTypes.mib
+      workItem.item.taxType shouldBe TaxTypes.MIB
       workItem.item.reference shouldBe mibReference
       workItem.item.origin shouldBe Origins.OPS
       workItem.status shouldBe ProcessingStatus.ToDo

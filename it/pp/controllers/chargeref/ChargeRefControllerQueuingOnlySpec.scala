@@ -19,9 +19,9 @@ package pp.controllers.chargeref
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import play.api.http.Status
 import pp.model.Origins.OPS
-import pp.model.TaxTypes.NLIJ
 import pp.model.chargeref
 import support._
+import tps.model.TaxTypes
 
 class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
   override def configMap: Map[String, Any] = super.configMap.updated("chargeref.queue.enabled", "true")
@@ -37,7 +37,7 @@ class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
       "return OK and persist to the queue but not process asynchronously" when {
         "the Des call fails with an internal server error" in {
           val chargeReferenceNumber = "XQ000123456789"
-          val chargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(NLIJ, chargeReferenceNumber, 101.01, OPS)
+          val chargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(TaxTypes.ZCHB, chargeReferenceNumber, 101.01, OPS)
 
           Des.cardPaymentsNotificationFailsWithAnInternalServerError()
 

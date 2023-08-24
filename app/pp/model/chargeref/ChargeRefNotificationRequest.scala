@@ -17,7 +17,8 @@
 package pp.model.chargeref
 
 import play.api.libs.json._
-import pp.model.{Origin, TaxType}
+import pp.model.Origin
+import tps.model.TaxType
 
 final case class ChargeRefNotificationRequest(
     taxType:         TaxType,

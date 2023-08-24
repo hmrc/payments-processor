@@ -3,11 +3,11 @@ package pp.controllers.pngrs
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{postRequestedFor, urlEqualTo, verify}
 import org.scalatest.Assertion
-import pp.model.TaxTypes.pngr
 import pp.model.pngrs.PngrStatusTypes
 import pp.scheduling.pngrs.PngrMongoRepo
 import support.PaymentsProcessData.{pngrPaymentItemId, pngrStatusUpdateRequest}
 import support.{ItSpec, Pngr, TpsPaymentsBackend}
+import tps.model.TaxTypes
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
 trait PngrUpdateControllerSpec extends ItSpec {
@@ -32,13 +32,13 @@ trait PngrUpdateControllerSpec extends ItSpec {
     s"return Ok for a POST to the internal endpoint /pngr/send-update" when {
       "the Pngr call succeeds with OK, status=Successful" in {
         Pngr.statusUpdateSucceeds()
-        TpsPaymentsBackend.getTaxTypeOk(pngrPaymentItemId, pngr)
+        TpsPaymentsBackend.getTaxTypeOk(pngrPaymentItemId, TaxTypes.PNGR)
         verifySuccess(testConnector.sendStatusUpdateToPngr(pngrStatusUpdateRequest).futureValue)
       }
 
       "the Pngr call succeeds with OK, status=Failed" in {
         Pngr.statusUpdateSucceeds()
-        TpsPaymentsBackend.getTaxTypeOk(pngrPaymentItemId, pngr)
+        TpsPaymentsBackend.getTaxTypeOk(pngrPaymentItemId, TaxTypes.PNGR)
         verifySuccess(testConnector.sendStatusUpdateToPngr(pngrStatusUpdateRequest.copy(status = PngrStatusTypes.Failed)).futureValue)
       }
     }

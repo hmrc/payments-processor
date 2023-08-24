@@ -3,12 +3,13 @@ package pp.controllers.chargeref
 import com.github.tomakehurst.wiremock.client.WireMock.{patchRequestedFor, postRequestedFor, urlEqualTo, verify}
 import play.api.Logger
 import play.api.libs.json.{JsObject, Json}
-import pp.model.{PaymentItemId, TaxType, TaxTypes}
-import pp.model.TaxTypes.{mib, p800, pngr}
+import pp.model.PaymentItemId
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import support.PaymentsProcessData._
 import support._
+import tps.model.{TaxType, TaxTypes}
+import tps.model.TaxTypes.{MIB, P800, PNGR}
 import uk.gov.hmrc.http.HttpResponse
 
 class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
@@ -37,9 +38,9 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
     if (checkTpsBackend) verify(backendCount, patchRequestedFor(urlEqualTo(TpsPaymentsBackend.updateEndpoint)))
   }
   Seq[(PaymentItemId, TaxType, ChargeRefNotificationPcipalRequest, ChargeRefNotificationRequest)](
-    (p800PaymentItemId, p800, p800PcipalNotification, p800ChargeRefNotificationRequest),
-    (mibPaymentItemId, mib, mibPcipalNotification, mibChargeRefNotificationRequest),
-    (pngrPaymentItemId, pngr, pngrPcipalNotification, pngrChargeRefNotificationRequest)
+    (p800PaymentItemId, P800, p800PcipalNotification, p800ChargeRefNotificationRequest),
+    (mibPaymentItemId, MIB, mibPcipalNotification, mibChargeRefNotificationRequest),
+    (pngrPaymentItemId, PNGR, pngrPcipalNotification, pngrChargeRefNotificationRequest)
   ).foreach { fixture =>
       val paymentItemId = fixture._1
       val taxType = fixture._2
@@ -51,15 +52,15 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
           TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
           TpsPaymentsBackend.tpsUpdateOk
           AuditConnectorStub.stubAudit
-          if (taxType === TaxTypes.mib) TpsPaymentsBackend.getAmendmentRefOk(paymentItemId, modsPaymentCallBackRequestWithAmendmentRef)
+          if (taxType === TaxTypes.MIB) TpsPaymentsBackend.getAmendmentRefOk(paymentItemId, modsPaymentCallBackRequestWithAmendmentRef)
           taxType match {
-            case TaxTypes.pngr => Pngr.statusUpdateSucceeds()
-            case TaxTypes.mib  => Mib.statusUpdateSucceeds()
+            case TaxTypes.PNGR => Pngr.statusUpdateSucceeds()
+            case TaxTypes.MIB  => Mib.statusUpdateSucceeds()
             case _             => Logger(this.getClass).debug("Not needed")
           }
           taxType match {
-            case TaxTypes.mib  => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true, checkMib = true)
-            case TaxTypes.pngr => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true, checkPngr = true)
+            case TaxTypes.MIB  => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true, checkMib = true)
+            case TaxTypes.PNGR => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true, checkPngr = true)
             case _             => verifySuccess(testConnector.sendCardPaymentsPcipalNotification(pcipalNotification).futureValue, checkTpsBackend = true)
           }
           AuditConnectorStub.verifyEventAudited(

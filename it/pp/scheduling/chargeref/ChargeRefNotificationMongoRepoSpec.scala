@@ -17,9 +17,9 @@
 package pp.scheduling.chargeref
 
 import org.bson.types.ObjectId
-import pp.model.TaxTypes
 import pp.model.wokitems.ChargeRefNotificationMyWorkItem
 import support.{ItSpec, PaymentsProcessData}
+import tps.model.TaxTypes
 import uk.gov.hmrc.mongo.workitem._
 
 class ChargeRefNotificationMongoRepoSpec extends ItSpec {
@@ -50,7 +50,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
       case Some(x) =>
         x.status shouldBe ProcessingStatus.ToDo
         x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
-        x.item.taxType shouldBe TaxTypes.p800
+        x.item.taxType shouldBe TaxTypes.P800
       case None => "failed" shouldBe "to find a value"
     }
   }
@@ -62,7 +62,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
       case Some(x) =>
         x.status shouldBe ProcessingStatus.InProgress
         x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
-        x.item.taxType shouldBe TaxTypes.p800
+        x.item.taxType shouldBe TaxTypes.P800
       case None => "failed" shouldBe "to find a value"
     }
 
@@ -104,7 +104,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
       outstanding match {
         case Some(x) =>
           x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
-          x.item.taxType shouldBe TaxTypes.p800
+          x.item.taxType shouldBe TaxTypes.P800
         case None => "failed" shouldBe "to find a value"
       }
     }
@@ -177,7 +177,7 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
       outstanding2 match {
         case Some(x) =>
           x.item.chargeRefNumber shouldBe PaymentsProcessData.chargeReferenceNumber
-          x.item.taxType shouldBe TaxTypes.p800
+          x.item.taxType shouldBe TaxTypes.P800
           x.status shouldBe ProcessingStatus.InProgress
         case None => "failed" shouldBe "to find a value"
       }

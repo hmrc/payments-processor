@@ -20,7 +20,8 @@ import play.api.Logger
 import pp.connectors.ResponseReadsThrowingException.readResponse
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
-import pp.model.{PaymentItemId, TaxType, TaxTypes}
+import pp.model.{PaymentItemId}
+import tps.model.{TaxType, TaxTypes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

@@ -5,10 +5,11 @@ import pp.config.PngrsQueueConfig
 import pp.connectors.PngrConnector
 import pp.model.pngrs.PngrStatusTypes
 import pp.model.wokitems.PngrMyWorkItem
-import pp.model.{Origins, TaxTypes, wokitems}
+import pp.model.{Origins, wokitems}
 import pp.services.PngrService
 import support.PaymentsProcessData.pngrStatusUpdateRequest
 import support.{ItSpec, Pngr}
+import tps.model.TaxTypes
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
 
 import java.time.{Clock, LocalDateTime}
@@ -24,7 +25,7 @@ class PngrServiceSpec extends ItSpec {
   val availableUntilInPast: LocalDateTime = time.minusSeconds(60)
   val availUntilInFuture: LocalDateTime = time.plusSeconds(60)
 
-  val workItem: PngrMyWorkItem = wokitems.PngrMyWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference", PngrStatusTypes.Successful)
+  val workItem: PngrMyWorkItem = wokitems.PngrMyWorkItem(created, availableUntilInPast, TaxTypes.PNGR, Origins.OPS, "reference", PngrStatusTypes.Successful)
 
   override def configMap: Map[String, Any] =
     super.configMap
@@ -52,7 +53,7 @@ class PngrServiceSpec extends ItSpec {
       val workItem = pngrService.sendPngrToWorkItemRepo(pngrStatusUpdateRequest).futureValue
       numberOfQueuedNotifications shouldBe 1
 
-      workItem.item.taxType shouldBe TaxTypes.pngr
+      workItem.item.taxType shouldBe TaxTypes.PNGR
       workItem.item.reference shouldBe pngrStatusUpdateRequest.reference
       workItem.item.status shouldBe PngrStatusTypes.Successful
       workItem.item.origin shouldBe Origins.PCI_PAL

@@ -16,10 +16,12 @@
 
 package pp.model.wokitems
 
-import java.time.LocalDateTime
 import play.api.libs.json._
 import pp.model.mods.ModsPaymentCallBackRequest
-import pp.model.{Origin, TaxType, MyWorkItemFields}
+import pp.model.{MyWorkItemFields, Origin}
+import tps.model.TaxType
+
+import java.time.LocalDateTime
 
 final case class MibOpsMyWorkItem(
     createdOn:                  LocalDateTime,

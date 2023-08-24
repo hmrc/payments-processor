@@ -20,13 +20,13 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json.parse
 import pp.model.Origins.OPS
 import pp.model.StatusTypes.validated
-import pp.model.TaxTypes.{mib, p800, pngr}
 import pp.model.chargeref.{ChargeRefNotificationDesRequest, ChargeRefNotificationRequest}
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import pp.model.pngrs.{PngrStatusTypes, PngrStatusUpdateRequest}
 import pp.model.wokitems.ChargeRefNotificationMyWorkItem
 import pp.model._
+import tps.model.TaxTypes.{MIB, P800, PNGR}
 
 import java.time.Clock
 import java.time.Clock.systemUTC
@@ -58,20 +58,20 @@ object PaymentsProcessData {
 
   private val pciPalSessionId = PcipalSessionId("48c978bb")
 
-  val chargeRefNotificationWorkItem: ChargeRefNotificationMyWorkItem = ChargeRefNotificationMyWorkItem(now(clock), now(clock).minusSeconds(100), p800, chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem: ChargeRefNotificationMyWorkItem = ChargeRefNotificationMyWorkItem(now(clock), now(clock).minusSeconds(100), P800, chargeReferenceNumber, 100.12, OPS)
 
-  val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = chargeref.ChargeRefNotificationDesRequest(p800, chargeReferenceNumber, 100.11)
+  val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = chargeref.ChargeRefNotificationDesRequest(P800, chargeReferenceNumber, 100.11)
 
-  val p800ChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(p800, chargeReferenceNumber, 100.11, OPS)
+  val p800ChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(P800, chargeReferenceNumber, 100.11, OPS)
 
-  val mibChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(mib, chargeReferenceNumber, 100.11, OPS)
+  val mibChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(MIB, chargeReferenceNumber, 100.11, OPS)
 
-  val pngrChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(pngr, chargeReferenceNumber, 100.11, OPS)
+  val pngrChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(PNGR, chargeReferenceNumber, 100.11, OPS)
 
   //language=JSON
   val chargeRefNotificationDesRequestJson: JsValue = parse(
     s"""{
-       "taxType" : "p800",
+       "taxType" : "P800",
        "chargeRefNumber" : "XQ002610015768",
        "amountPaid" : 100.11
        }
@@ -82,7 +82,7 @@ object PaymentsProcessData {
   //language=JSON
   val chargeRefNotificationRequestJson: JsValue = parse(
     s"""{
-       "taxType" : "p800",
+       "taxType" : "P800",
        "chargeRefNumber" : "XQ002610015768",
        "amountPaid" : 100.11,
        "origin" : "OPS"

@@ -19,9 +19,10 @@ package pp.model.pcipal
 import play.api.libs.json.{Json, OFormat}
 import pp.model.Origins.PCI_PAL
 import pp.model.StatusTypes.validated
-import pp.model.{HeadOfDutyIndicator, PaymentItemId, StatusType, TaxType, chargeref}
+import pp.model.{HeadOfDutyIndicator, PaymentItemId, StatusType, chargeref}
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pngrs.{PngrStatusTypes, PngrStatusUpdateRequest}
+import tps.model.TaxType
 
 final case class ChargeRefNotificationPcipalRequest(
     HoD:                  HeadOfDutyIndicator,
@@ -42,14 +43,19 @@ object ChargeRefNotificationPcipalRequest {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ChargeRefNotificationPcipalRequest] = Json.format[ChargeRefNotificationPcipalRequest]
 
-  def toChargeRefNotificationRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest, taxType: TaxType): ChargeRefNotificationRequest = {
+  def toChargeRefNotificationRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest, taxType: TaxType): ChargeRefNotificationRequest =
     chargeref.ChargeRefNotificationRequest(
-      taxType, chargeRefNotificationPciPalRequest.ChargeReference, chargeRefNotificationPciPalRequest.Amount, PCI_PAL)
-  }
+      taxType         = taxType,
+      chargeRefNumber = chargeRefNotificationPciPalRequest.ChargeReference,
+      amountPaid      = chargeRefNotificationPciPalRequest.Amount,
+      origin          = PCI_PAL
+    )
 
   def toPngrStatusUpdateRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): PngrStatusUpdateRequest = {
-    PngrStatusUpdateRequest(chargeRefNotificationPciPalRequest.ChargeReference,
-      if (chargeRefNotificationPciPalRequest.Status == validated) PngrStatusTypes.Successful else PngrStatusTypes.Failed)
+    PngrStatusUpdateRequest(
+      reference = chargeRefNotificationPciPalRequest.ChargeReference,
+      status    = if (chargeRefNotificationPciPalRequest.Status == validated) PngrStatusTypes.Successful else PngrStatusTypes.Failed
+    )
   }
 
 }

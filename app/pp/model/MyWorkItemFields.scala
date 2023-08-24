@@ -16,6 +16,8 @@
 
 package pp.model
 
+import tps.model.TaxType
+
 import java.time.LocalDateTime
 
 trait MyWorkItemFields {

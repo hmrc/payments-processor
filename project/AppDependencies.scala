@@ -22,6 +22,7 @@ object AppDependencies {
   val bootstrapVersion = "7.21.0"
   val hmrcMongoVersion = "1.3.0"
   val enumeratumVersion = "1.7.0"
+  val tpsBackendCorVersion = "2.18.0"
 
   val scalaTestVersion = "3.2.16"
   val pegdownVersion = "1.6.0"
@@ -36,7 +37,8 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "bootstrap-backend-play-28"          % bootstrapVersion,
     "com.beachape"      %% "enumeratum"                         % enumeratumVersion,
     "com.beachape"      %% "enumeratum-play-json"               % enumeratumVersion,
-    "org.typelevel"     %% "cats-core"                          % "2.10.0"
+    "org.typelevel"     %% "cats-core"                          % "2.10.0",
+    "uk.gov.hmrc"       %% "tps-payments-backend-cor-journey"   % tpsBackendCorVersion
   // format: ON
   )
 

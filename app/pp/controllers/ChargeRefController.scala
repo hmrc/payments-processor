@@ -26,7 +26,8 @@ import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest.{toChargeRefNotificationRequest, toPngrStatusUpdateRequest}
-import pp.model.{TaxType, TaxTypes}
+import pp.model.TaxTypeHelper.taxTypeShouldGoToDes
+import tps.model.{TaxType, TaxTypes}
 import pp.services.{AuditService, ChargeRefService, MibOpsService, PngrService}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import cats.implicits.catsSyntaxEq
@@ -74,19 +75,20 @@ class ChargeRefController @Inject() (
         throw new RuntimeException("Received notification from PciPal but could not read body ", exception)
     }
 
+      //please note, if in future you decide to send more regimes to des, they need the tax type sent as a string to be length 1 - 4
       def sendToDesIfValidatedAndConfigured(taxType: TaxType): Future[Status] = {
-        if (notification.Status === validated && (sendAllToDes || taxType.sendToDes)) {
+        if (notification.Status === validated && (sendAllToDes || taxTypeShouldGoToDes(taxType))) {
           processChargeRefNotificationRequest(toChargeRefNotificationRequest(notification, taxType))
         } else Future successful Ok
       }
 
       def sendStatusUpdateToPngrIfConfigured(taxType: TaxType): Future[Status] =
-        if (taxType === TaxTypes.pngr) {
+        if (taxType === TaxTypes.PNGR) {
           sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
         } else Future successful Ok
 
       def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
-        if (taxType === TaxTypes.mib && notification.Status === validated) {
+        if (taxType === TaxTypes.MIB && notification.Status === validated) {
           for {
             amendmentRef <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
             modsPayload = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef.amendmentReference)

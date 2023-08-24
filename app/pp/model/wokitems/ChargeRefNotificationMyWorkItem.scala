@@ -19,7 +19,8 @@ package pp.model.wokitems
 import java.time.LocalDateTime
 
 import play.api.libs.json._
-import pp.model.{Origin, TaxType, MyWorkItemFields}
+import pp.model.{Origin, MyWorkItemFields}
+import tps.model.TaxType
 
 final case class ChargeRefNotificationMyWorkItem(
     createdOn:       LocalDateTime,

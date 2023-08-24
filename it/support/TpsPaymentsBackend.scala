@@ -20,7 +20,8 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.Json.toJson
 import pp.model.mods.ModsPaymentCallBackRequest
-import pp.model.{PaymentItemId, TaxType}
+import pp.model.PaymentItemId
+import tps.model.TaxType
 
 object TpsPaymentsBackend {
 
@@ -48,7 +49,7 @@ object TpsPaymentsBackend {
     get(urlEqualTo(getTaxTypeEndpoint(paymentItemId)))
       .willReturn(aResponse()
         .withStatus(200)
-        .withBody(toJson(taxType.tpsValue).toString())))
+        .withBody(toJson(taxType.entryName).toString())))
 
   def getTaxTypeNotFound(paymentItemId: PaymentItemId): StubMapping =
     stubFor(get(urlEqualTo(getTaxTypeEndpoint(paymentItemId))).willReturn(aResponse().withStatus(404)))

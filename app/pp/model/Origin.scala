@@ -34,11 +34,9 @@ object Origin {
 
 object Origins extends Enum[Origin] {
 
-  case object OPS extends Origin {
-  }
+  case object OPS extends Origin
 
-  case object PCI_PAL extends Origin {
-  }
+  case object PCI_PAL extends Origin
 
   override def values: immutable.IndexedSeq[Origin] = findValues
 }

@@ -4,12 +4,12 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import play.api.http.Status
 import pp.model.Item
 import pp.model.ProcessingStatusOpsValues.Failed
-import pp.model.TaxTypes.{mib, p800, pngr}
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
 import pp.scheduling.mib.MibOpsMongoRepo
 import pp.scheduling.pngrs.PngrMongoRepo
 import support.PaymentsProcessData.{modsPaymentCallBackRequestWithAmendmentRef, p800ChargeRefNotificationRequest, pngrStatusUpdateRequest}
 import support.{Des, ItSpec, Mib, Pngr}
+import tps.model.TaxTypes.{MIB, P800, PNGR}
 
 class ReportingControllerSpec extends ItSpec {
   private lazy val repoPngr = injector.instanceOf[PngrMongoRepo]
@@ -48,12 +48,12 @@ class ReportingControllerSpec extends ItSpec {
     response.status shouldBe Status.OK
     numberOfQueuedNotificationsPngr shouldBe 1
     eventually {
-      testConnector.count(pngr, Failed).futureValue.json.as[Int] shouldBe 1
-      testConnector.count(p800, Failed).futureValue.json.as[Int] shouldBe 0
-      testConnector.count(mib, Failed).futureValue.json.as[Int] shouldBe 0
-      testConnector.getAll(pngr).futureValue.json.as[List[Item]].size shouldBe 1
-      testConnector.getAll(p800).futureValue.json.as[List[Item]].size shouldBe 0
-      testConnector.getAll(mib).futureValue.json.as[List[Item]].size shouldBe 0
+      testConnector.count(PNGR, Failed).futureValue.json.as[Int] shouldBe 1
+      testConnector.count(P800, Failed).futureValue.json.as[Int] shouldBe 0
+      testConnector.count(MIB, Failed).futureValue.json.as[Int] shouldBe 0
+      testConnector.getAll(PNGR).futureValue.json.as[List[Item]].size shouldBe 1
+      testConnector.getAll(P800).futureValue.json.as[List[Item]].size shouldBe 0
+      testConnector.getAll(MIB).futureValue.json.as[List[Item]].size shouldBe 0
     }
 
   }
@@ -68,12 +68,12 @@ class ReportingControllerSpec extends ItSpec {
     response.status shouldBe Status.OK
     numberOfQueuedNotificationsChargeRef shouldBe 1
     eventually {
-      testConnector.count(p800, Failed).futureValue.json.as[Int] shouldBe 1
-      testConnector.count(pngr, Failed).futureValue.json.as[Int] shouldBe 0
-      testConnector.count(mib, Failed).futureValue.json.as[Int] shouldBe 0
-      testConnector.getAll(p800).futureValue.json.as[List[Item]].size shouldBe 1
-      testConnector.getAll(pngr).futureValue.json.as[List[Item]].size shouldBe 0
-      testConnector.getAll(mib).futureValue.json.as[List[Item]].size shouldBe 0
+      testConnector.count(P800, Failed).futureValue.json.as[Int] shouldBe 1
+      testConnector.count(PNGR, Failed).futureValue.json.as[Int] shouldBe 0
+      testConnector.count(MIB, Failed).futureValue.json.as[Int] shouldBe 0
+      testConnector.getAll(P800).futureValue.json.as[List[Item]].size shouldBe 1
+      testConnector.getAll(PNGR).futureValue.json.as[List[Item]].size shouldBe 0
+      testConnector.getAll(MIB).futureValue.json.as[List[Item]].size shouldBe 0
     }
 
   }
@@ -87,12 +87,12 @@ class ReportingControllerSpec extends ItSpec {
     response.status shouldBe Status.OK
     numberOfQueuedNotificationsMibOps shouldBe 1
     eventually {
-      testConnector.count(p800, Failed).futureValue.json.as[Int] shouldBe 0
-      testConnector.count(pngr, Failed).futureValue.json.as[Int] shouldBe 0
-      testConnector.count(mib, Failed).futureValue.json.as[Int] shouldBe 1
-      testConnector.getAll(p800).futureValue.json.as[List[Item]].size shouldBe 0
-      testConnector.getAll(pngr).futureValue.json.as[List[Item]].size shouldBe 0
-      testConnector.getAll(mib).futureValue.json.as[List[Item]].size shouldBe 1
+      testConnector.count(P800, Failed).futureValue.json.as[Int] shouldBe 0
+      testConnector.count(PNGR, Failed).futureValue.json.as[Int] shouldBe 0
+      testConnector.count(MIB, Failed).futureValue.json.as[Int] shouldBe 1
+      testConnector.getAll(P800).futureValue.json.as[List[Item]].size shouldBe 0
+      testConnector.getAll(PNGR).futureValue.json.as[List[Item]].size shouldBe 0
+      testConnector.getAll(MIB).futureValue.json.as[List[Item]].size shouldBe 1
     }
 
   }

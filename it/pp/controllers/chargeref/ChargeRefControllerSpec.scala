@@ -4,8 +4,8 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{patchRequestedFor, postRequestedFor, urlEqualTo, verify}
 import org.scalatest.Assertion
 import pp.model.StatusTypes.failed
-import pp.model.TaxTypes.p800
 import pp.scheduling.chargeref.ChargeRefNotificationMongoRepo
+import tps.model.TaxTypes.P800
 import support.PaymentsProcessData.{p800ChargeRefNotificationRequest, p800PaymentItemId, p800PcipalNotification, wrongFormatChargeRefNotificationRequestJson}
 import support.{Des, ItSpec, TpsPaymentsBackend}
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
@@ -47,21 +47,21 @@ trait ChargeRefControllerSpec extends ItSpec {
     s"return Ok for a POST to the public api /send-card-payments" when {
       "the Des call succeeds with OK, status=complete" in {
         Des.cardPaymentsNotificationSucceeds()
-        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, p800)
+        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, P800)
         TpsPaymentsBackend.tpsUpdateOk
         verifySuccess(testConnector.sendCardPaymentsPcipalNotification(p800PcipalNotification).futureValue, checkTpsBackend = true)
       }
 
       "the Des call succeeds with NO_CONTENT,status=complete" in {
         Des.cardPaymentsNotificationSucceedsWithNoContent()
-        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, p800)
+        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, P800)
         TpsPaymentsBackend.tpsUpdateOk
         verifySuccess(testConnector.sendCardPaymentsPcipalNotification(p800PcipalNotification).futureValue, checkTpsBackend = true)
       }
 
       "the Des call succeeds with OK, status=failed" in {
         Des.cardPaymentsNotificationSucceeds()
-        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, p800)
+        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, P800)
         TpsPaymentsBackend.tpsUpdateOk
         verifySuccess(testConnector.sendCardPaymentsPcipalNotification(p800PcipalNotification.copy(Status = failed)).futureValue, checkDes = false, checkTpsBackend = true)
       }
@@ -118,7 +118,7 @@ trait ChargeRefControllerSpec extends ItSpec {
     "fail without persisting to the queue" when {
       "the tps-backend update call fails with an error" in {
         Des.cardPaymentsNotificationSucceedsWithNoContent()
-        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, p800)
+        TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, P800)
         TpsPaymentsBackend.tpsUpdateFailed
 
         val failure = testConnector.sendCardPaymentsPcipalNotification(p800PcipalNotification).failed.futureValue

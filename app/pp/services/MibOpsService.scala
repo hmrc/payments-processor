@@ -22,8 +22,9 @@ import pp.config.MibOpsQueueConfig
 import pp.connectors.MibConnector
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.wokitems.MibOpsMyWorkItem
-import pp.model.{Origins, TaxTypes}
+import pp.model.Origins
 import pp.scheduling.mib.MibOpsMongoRepo
+import tps.model.TaxTypes
 import uk.gov.hmrc.mongo.workitem.WorkItem
 
 import java.time.{Clock, LocalDateTime}
@@ -57,7 +58,7 @@ class MibOpsService @Inject() (
     val workItem: MibOpsMyWorkItem = MibOpsMyWorkItem(
       createdOn                  = time,
       availableUntil             = availableUntil(time),
-      taxType                    = TaxTypes.mib,
+      taxType                    = TaxTypes.MIB,
       origin                     = Origins.OPS,
       reference                  = modsPaymentCallBackRequest.chargeReference,
       modsPaymentCallBackRequest = modsPaymentCallBackRequest

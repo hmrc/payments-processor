@@ -18,11 +18,12 @@ package support
 
 import play.api.libs.json.JsValue
 import pp.connectors.ResponseReadsThrowingException
+import pp.model.ProcessingStatusOps
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pngrs.PngrStatusUpdateRequest
-import pp.model.{ProcessingStatusOps, TaxType}
+import tps.model.TaxType
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
@@ -50,10 +51,10 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/definition")
 
   def count(taxType: TaxType, processingStatusOps: ProcessingStatusOps)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/count/${taxType.toString}/${processingStatusOps.toString}")
+    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/count/${taxType.entryName}/${processingStatusOps.toString}")
 
   def getAll(taxType: TaxType)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/${taxType.toString}")
+    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/${taxType.entryName}")
 
   def sendStatusUpdateToPngr(pngrStatusUpdateRequest: PngrStatusUpdateRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[PngrStatusUpdateRequest, HttpResponse](s"http://localhost:$port/payments-processor/pngr/send-update", pngrStatusUpdateRequest)
