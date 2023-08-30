@@ -57,7 +57,7 @@ class MibOpsService @Inject() (
     val workItem: MibOpsMyWorkItem = MibOpsMyWorkItem(
       createdOn                  = time,
       availableUntil             = availableUntil(time),
-      taxType                    = TaxTypes.mib,
+      taxType                    = TaxTypes.mib.entryName,
       origin                     = Origins.OPS,
       reference                  = modsPaymentCallBackRequest.chargeReference,
       modsPaymentCallBackRequest = modsPaymentCallBackRequest

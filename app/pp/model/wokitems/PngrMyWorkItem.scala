@@ -16,23 +16,23 @@
 
 package pp.model.wokitems
 
-import java.time.LocalDateTime
-
 import play.api.libs.json._
 import pp.model.pngrs.PngrStatusType
-import pp.model.{Origin, TaxType, MyWorkItemFields}
+import pp.model.{MyWorkItemFields, Origin}
+
+import java.time.LocalDateTime
 
 final case class PngrMyWorkItem(
     createdOn:      LocalDateTime,
     availableUntil: LocalDateTime,
-    taxType:        TaxType,
+    taxType:        String,
     origin:         Origin,
     reference:      String,
     status:         PngrStatusType) extends MyWorkItemFields {
 
   override def toString: String =
     s"PngrWorkItem for chargeReference $reference ... " +
-      s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: ${taxType.toString}, " +
+      s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: $taxType, " +
       s"origin: ${origin.toString}, reference: $reference, status: ${status.toString}}"
 }
 

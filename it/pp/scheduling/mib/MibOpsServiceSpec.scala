@@ -23,7 +23,7 @@ class MibOpsServiceSpec extends ItSpec {
   val availableUntilInPast: LocalDateTime = time.minusSeconds(60)
   val availUntilInFuture: LocalDateTime = time.plusSeconds(60)
 
-  val workItem: MibOpsMyWorkItem = MibOpsMyWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference", PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef)
+  val workItem: MibOpsMyWorkItem = MibOpsMyWorkItem(created, availableUntilInPast, TaxTypes.mib.entryName, Origins.OPS, "reference", PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef)
 
   override def configMap: Map[String, Any] =
     super.configMap
@@ -51,7 +51,7 @@ class MibOpsServiceSpec extends ItSpec {
       val workItem = mibOpsService.sendMibOpsToWorkItemRepo(PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef).futureValue
       numberOfQueuedNotifications shouldBe 1
 
-      workItem.item.taxType shouldBe TaxTypes.mib
+      workItem.item.taxType shouldBe TaxTypes.mib.entryName
       workItem.item.reference shouldBe mibReference
       workItem.item.origin shouldBe Origins.OPS
       workItem.status shouldBe ProcessingStatus.ToDo

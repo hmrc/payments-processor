@@ -16,22 +16,22 @@
 
 package pp.model.wokitems
 
-import java.time.LocalDateTime
-
 import play.api.libs.json._
-import pp.model.{Origin, TaxType, MyWorkItemFields}
+import pp.model.{MyWorkItemFields, Origin}
+
+import java.time.LocalDateTime
 
 final case class ChargeRefNotificationMyWorkItem(
     createdOn:       LocalDateTime,
     availableUntil:  LocalDateTime,
-    taxType:         TaxType,
+    taxType:         String,
     chargeRefNumber: String,
     amountPaid:      BigDecimal,
     origin:          Origin) extends MyWorkItemFields {
 
   override def toString: String =
     s"ChargeRefNotificationWorkItem for chargeReference $chargeRefNumber ... " +
-      s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: ${taxType.toString}, " +
+      s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: $taxType, " +
       s"origin: ${origin.toString}, chargeRefNumber: $chargeRefNumber}"
 
 }
@@ -40,4 +40,3 @@ object ChargeRefNotificationMyWorkItem {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ChargeRefNotificationMyWorkItem] = Json.format[ChargeRefNotificationMyWorkItem]
 }
-

@@ -58,9 +58,9 @@ object PaymentsProcessData {
 
   private val pciPalSessionId = PcipalSessionId("48c978bb")
 
-  val chargeRefNotificationWorkItem: ChargeRefNotificationMyWorkItem = ChargeRefNotificationMyWorkItem(now(clock), now(clock).minusSeconds(100), p800, chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem: ChargeRefNotificationMyWorkItem = ChargeRefNotificationMyWorkItem(now(clock), now(clock).minusSeconds(100), p800.entryName, chargeReferenceNumber, 100.12, OPS)
 
-  val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = chargeref.ChargeRefNotificationDesRequest(p800, chargeReferenceNumber, 100.11)
+  val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = chargeref.ChargeRefNotificationDesRequest(p800.entryName, chargeReferenceNumber, 100.11)
 
   val p800ChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(p800, chargeReferenceNumber, 100.11, OPS)
 

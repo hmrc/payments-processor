@@ -51,7 +51,7 @@ class ChargeRefServiceSpec extends ItSpec {
       val workItem = chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
       numberOfQueuedNotifications shouldBe 1
 
-      workItem.item.taxType shouldBe p800ChargeRefNotificationRequest.taxType
+      workItem.item.taxType shouldBe p800ChargeRefNotificationRequest.taxType.entryName
       workItem.item.chargeRefNumber shouldBe p800ChargeRefNotificationRequest.chargeRefNumber
       workItem.item.amountPaid shouldBe p800ChargeRefNotificationRequest.amountPaid
       workItem.item.origin shouldBe p800ChargeRefNotificationRequest.origin

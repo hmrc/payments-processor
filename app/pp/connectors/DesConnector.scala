@@ -62,7 +62,7 @@ class DesConnector @Inject() (
     //todo remove this once we know what's going on
     logger.warn(
       s"""ChargeRefNotificationDesRequest: [
-         |TaxType: ${chargeRefNotificationDesRequest.taxType.toString},
+         |TaxType: ${chargeRefNotificationDesRequest.taxType},
          |Amount: ${chargeRefNotificationDesRequest.amountPaid.toString()},
          |ChargeRefLength: ${chargeRefNotificationDesRequest.chargeRefNumber.length.toString},
          |ref matches regex: ${chargeRefNotificationDesRequest.chargeRefNumber.matches(regex).toString}

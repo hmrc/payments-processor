@@ -24,7 +24,7 @@ class PngrServiceSpec extends ItSpec {
   val availableUntilInPast: LocalDateTime = time.minusSeconds(60)
   val availUntilInFuture: LocalDateTime = time.plusSeconds(60)
 
-  val workItem: PngrMyWorkItem = wokitems.PngrMyWorkItem(created, availableUntilInPast, TaxTypes.pngr, Origins.OPS, "reference", PngrStatusTypes.Successful)
+  val workItem: PngrMyWorkItem = wokitems.PngrMyWorkItem(created, availableUntilInPast, TaxTypes.pngr.entryName, Origins.OPS, "reference", PngrStatusTypes.Successful)
 
   override def configMap: Map[String, Any] =
     super.configMap
@@ -52,7 +52,7 @@ class PngrServiceSpec extends ItSpec {
       val workItem = pngrService.sendPngrToWorkItemRepo(pngrStatusUpdateRequest).futureValue
       numberOfQueuedNotifications shouldBe 1
 
-      workItem.item.taxType shouldBe TaxTypes.pngr
+      workItem.item.taxType shouldBe TaxTypes.pngr.entryName
       workItem.item.reference shouldBe pngrStatusUpdateRequest.reference
       workItem.item.status shouldBe PngrStatusTypes.Successful
       workItem.item.origin shouldBe Origins.PCI_PAL
