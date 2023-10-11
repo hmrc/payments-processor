@@ -19,11 +19,11 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapVersion = "7.21.0"
+  val bootstrapVersion = "7.22.0"
   val hmrcMongoVersion = "1.3.0"
   val enumeratumVersion = "1.7.0"
 
-  val scalaTestVersion = "3.2.16"
+  val scalaTestVersion = "3.2.17"
   val pegdownVersion = "1.6.0"
   val scalaTestPlusPlayVersion = "5.1.0"
   val wiremockJre8Version = "2.27.2"
