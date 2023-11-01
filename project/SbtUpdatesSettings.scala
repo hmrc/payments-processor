@@ -24,7 +24,8 @@ object SbtUpdatesSettings {
     // Not having this means we have to add a load of funky other dependency overrides due to jackson xml version conflicts
     // if you want that, implement what they've done here:
     // https://github.com/hmrc/benefits/blob/075c2ef6b81a43568ded3cff452c381985fdbb9d/project/AppDependencies.scala#L29
-    dependencyUpdatesFilter -= moduleFilter("com.github.tomakehurst", "wiremock-jre8")
+    dependencyUpdatesFilter -= moduleFilter("com.github.tomakehurst", "wiremock-jre8"),
+    dependencyUpdatesFilter -= moduleFilter("org.scalatestplus.play", "scalatestplus-play")
   )
 
 }
