@@ -17,28 +17,27 @@
 package pp.controllers
 
 import controllers.Assets
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import pp.config.AppContext
 import pp.model.api.{Access, Api, ApiDefinition, Version}
-import uk.gov.hmrc.api.controllers.DocumentationController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
 class ApiDocumentationController @Inject() (
-    errorHandler:  HttpErrorHandler,
     cc:            ControllerComponents,
     assets:        Assets,
     appContext:    AppContext,
     configuration: Configuration
-) extends DocumentationController(cc, assets, errorHandler) {
+) extends BackendController(cc) {
 
-  override def definition(): Action[AnyContent] = Action.async {
-
+  // NOTE: This must follow DocumentationController from play-hmrc-api
+  // See https://github.com/hmrc/play-hmrc-api/blob/main/src/main/play-28/uk/gov/hmrc/api/controllers/DocumentationController.scala
+  def definition(): Action[AnyContent] = Action.async {
     val accessIn: Access = Access(whitelistedApplicationIds = appContext.whiteListedAppIds.getOrElse(Seq.empty[String]))
     val version: Version = Version(access           = accessIn,
                                    endpointsEnabled = configuration.underlying.getBoolean("api.enabled"), status = configuration.underlying.getString("api.status"))
@@ -47,5 +46,11 @@ class ApiDocumentationController @Inject() (
 
     Future.successful(Ok(Json.toJson(apiDefinition)))
   }
+
+  def conf(
+      version: String,
+      file:    String
+  ): Action[AnyContent] =
+    assets.at(s"/public/api/conf/$version", file)
 
 }

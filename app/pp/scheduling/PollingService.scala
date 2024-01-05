@@ -16,7 +16,7 @@
 
 package pp.scheduling
 
-import akka.actor.{ActorSystem, Cancellable}
+import org.apache.pekko.actor.{ActorSystem, Cancellable}
 import play.api.Logger
 import pp.config.QueueConfig
 import pp.model.MyWorkItemFields

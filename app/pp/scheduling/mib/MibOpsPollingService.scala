@@ -16,7 +16,7 @@
 
 package pp.scheduling.mib
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
 import pp.config.MibOpsQueueConfig
 import pp.model.wokitems.MibOpsMyWorkItem

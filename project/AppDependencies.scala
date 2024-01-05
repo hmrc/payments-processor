@@ -19,21 +19,15 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapVersion = "7.22.0"
-  val hmrcMongoVersion = "1.3.0"
+  val bootstrapVersion = "8.4.0"
+  val hmrcMongoVersion = "1.7.0"
   val enumeratumVersion = "1.7.0"
-
-  val scalaTestVersion = "3.2.17"
   val pegdownVersion = "1.6.0"
-  val scalaTestPlusPlayVersion = "5.1.0"
-  val wiremockJre8Version = "2.27.2"
-  val flexmarkAllVersion = "0.62.2"
 
   val compile: Seq[ModuleID] = Seq(
     // format: OFF
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-work-item-repo-play-28"  % hmrcMongoVersion,
-    "uk.gov.hmrc"       %% "play-hmrc-api"                      % "7.2.0-play-28",
-    "uk.gov.hmrc"       %% "bootstrap-backend-play-28"          % bootstrapVersion,
+    "uk.gov.hmrc.mongo" %% "hmrc-mongo-work-item-repo-play-30"  % hmrcMongoVersion,
+    "uk.gov.hmrc"       %% "bootstrap-backend-play-30"          % bootstrapVersion,
     "com.beachape"      %% "enumeratum"                         % enumeratumVersion,
     "com.beachape"      %% "enumeratum-play-json"               % enumeratumVersion,
     "org.typelevel"     %% "cats-core"                          % "2.10.0"
@@ -42,25 +36,15 @@ object AppDependencies {
 
   val test: Seq[ModuleID] = Seq(
     // format: OFF
-    "uk.gov.hmrc"            %% "bootstrap-test-play-28"    % bootstrapVersion,
-    "org.scalatest"          %% "scalatest"                 % scalaTestVersion,
-    "com.typesafe.play"      %% "play-test"                 % PlayVersion.current,
+    "uk.gov.hmrc"            %% "bootstrap-test-play-30"    % bootstrapVersion,
     "org.pegdown"            %  "pegdown"                   % pegdownVersion,
-    "org.scalatestplus.play" %% "scalatestplus-play"        % scalaTestPlusPlayVersion,
-    "com.github.tomakehurst" %  "wiremock-jre8"             % wiremockJre8Version,
-    "com.vladsch.flexmark"   %  "flexmark-all"              % flexmarkAllVersion //required by scalatest, see: https://github.com/scalatest/scalatest/issues/1736
   // format: ON
   ).map(_ % Test)
 
   val itTest: Seq[ModuleID] = Seq(
     // format: OFF
-    "uk.gov.hmrc"            %% "bootstrap-backend-play-28" % bootstrapVersion,//todo jake why is this like it is, update it
-    "org.scalatest"          %% "scalatest"                 % scalaTestVersion,
-    "com.typesafe.play"      %% "play-test"                 % PlayVersion.current,
+    "uk.gov.hmrc"            %% "bootstrap-test-play-30"    % bootstrapVersion,
     "org.pegdown"            %  "pegdown"                   % pegdownVersion,
-    "org.scalatestplus.play" %% "scalatestplus-play"        % scalaTestPlusPlayVersion,
-    "com.github.tomakehurst" %  "wiremock-jre8"             % wiremockJre8Version,
-    "com.vladsch.flexmark"   %  "flexmark-all"              % flexmarkAllVersion //required by scalatest, see: https://github.com/scalatest/scalatest/issues/1736
   // format: ON
   ).map(_ % "it")
 }

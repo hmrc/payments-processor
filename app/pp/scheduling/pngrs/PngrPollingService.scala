@@ -16,7 +16,7 @@
 
 package pp.scheduling.pngrs
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
 import pp.config.PngrsQueueConfig
 import pp.model.wokitems.PngrMyWorkItem

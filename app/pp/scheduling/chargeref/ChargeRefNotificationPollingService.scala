@@ -16,7 +16,7 @@
 
 package pp.scheduling.chargeref
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import com.google.inject.{Inject, Singleton}
 import pp.config.ChargeRefQueueConfig
 import pp.model.wokitems.ChargeRefNotificationMyWorkItem
