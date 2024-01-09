@@ -59,7 +59,7 @@ lazy val scalaCompilerOptions = Seq(
   "-language:implicitConversions",
   "-language:reflectiveCalls",
   // required in place of silencer plugin
-  "-Wconf:cat=unused-imports&src=html/.*:s",
+  "-Wconf:cat=unused-imports&src=routes/.*:s",
   "-Wconf:src=routes/.*:s"
 )
 
