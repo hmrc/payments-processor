@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+  title: Payments Send Charge Reference
+  contact: {}
+  version: '1.0'
+servers:
+  - url: https://test-api.service.hmrc.gov.uk/
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk/
+    description: Production
+paths:
+  /payments/notifications/send-card-payments:
+    post:
+      description: This endpoint accepts the charge reference information and sends it to ETMP via DES.
+      operationId: Send card payment
+      parameters:
+        - $ref: '#/components/parameters/trait_headers.acceptHeader_Accept'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content: {}
+        '401':
+          $ref: '#/components/responses/trait_authorisationHeaderInvalid_401'
+        '406':
+          $ref: '#/components/responses/trait_acceptHeaderInvalid_406'
+      requestBody:
+        content:
+          application/json:
+            example:
+              HoD: B
+              TaxReference: JE231111B
+              Amount: 1.92
+              Commission: 1.23
+              CardType: VISA
+              Status: valid
+              PCIPalSessionId: session-48c978bb-64b6-4a00-a1f1-51e267d84f91
+              TransactionReference: 48c978bb
+              paymentItemId: 48c978cc
+              ChargeReference: ''
+              ReferenceNumber: ''
+              CardLast4: ''
+            schema:
+              $ref: '#/components/schemas/types.requestBody'
+        required: true
+      deprecated: false
+      security:
+        - sec.x-application: []
+components:
+  securitySchemes:
+    sec.x-application:
+      type: apiKey
+      description: |
+        Application restricted endpoints require a server token. This must be passed as an Authorization header with type Bearer.
+      in: header
+      name: Authorization
+  schemas:
+    types.requestBody:
+      properties:
+        HoD:
+          type: string
+          description: 'Head of Duty Indicator, one of ["B", "A", "N", "M", "J", "P", "V", "X", "K", "C"]'
+        TaxReference:
+          description: 'A tax reference'
+          type: string
+        Amount:
+          description: 'Amount in pounds and pence, e.g. 123.57'
+          type: double
+        Commission:
+          description: 'Commission in pounds and pence, e.g. 123.57'
+          type: double
+        CardType:
+          description: 'Card type, for example "VISA"'
+          type: string
+        Status:
+          description: 'Status, one of ["validated", "failed"]'
+          type: string
+        PCIPalSessionId:
+          description: 'PCI Pal Session ID'
+          type: string
+        TransactionReference:
+          description: 'The reference for the transaction, commonly the charge reference number'
+          type: string
+        paymentItemId:
+          type: string
+        ChargeReference:
+          type: string
+        ReferenceNumber:
+          type: string,
+        CardLast4:
+          type: string
+      required:
+        - code
+      type: object
+    types.errorResponse:
+      includePath: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
+      properties:
+        code:
+          type: string
+      required:
+        - code
+      type: object
+  responses:
+    trait_badRequest_400:
+      description: ''
+      content:
+        application/json:
+          example:
+            badRequest:
+              code: BAD_REQUEST
+          schema:
+            $ref: '#/components/schemas/types.errorResponse'
+    trait_authorisationHeaderMissing_401:
+      description: ''
+      content:
+        application/json:
+          example:
+            badRequest:
+              code: AUTH_HEADER_MISSING
+          schema:
+            $ref: '#/components/schemas/types.errorResponse'
+    trait_authorisationHeaderInvalid_401:
+      description: ''
+      content:
+        application/json:
+          example:
+            badRequest:
+              code: AUTH_HEADER_INVALID
+          schema:
+            $ref: '#/components/schemas/types.errorResponse'
+    trait_acceptHeaderInvalid_406:
+      description: ''
+      content:
+        application/json:
+          example:
+            badRequest:
+              code: ACCEPT_HEADER_INVALID
+          schema:
+            $ref: '#/components/schemas/types.errorResponse'
+    trait_internalServerError_500:
+      description: ''
+      content:
+        application/json:
+          example:
+            badRequest:
+              code: INTERNAL_SERVER_ERROR
+          schema:
+            $ref: '#/components/schemas/types.errorResponse'
+    trait_badGateway_502:
+      description: ''
+      content:
+        application/json:
+          example:
+            badRequest:
+              code: BAD_GATEWAY
+          schema:
+            $ref: '#/components/schemas/types.errorResponse'
+  parameters:
+    trait_headers.acceptHeader_Accept:
+      name: Accept
+      in: header
+      required: true
+      description: Specifies the response format and the [version](/api-documentation/docs/reference-guide#versioning) of the API to be used.
+      schema:
+        type: string
+  examples: {}
+  requestBodies: {}
+  headers: {}
+  links: {}
+  callbacks: {}
