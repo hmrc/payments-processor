@@ -2,10 +2,10 @@ import sbt.Tests.{Group, SubProcess}
 
 val appName = "payments-processor"
 
-scalaVersion := "2.13.10"
+scalaVersion := "2.13.12"
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(scalaVersion := "2.13.10")
   .settings(
