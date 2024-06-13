@@ -45,7 +45,7 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def sendCardPaymentsWrongFormatRequest(wrongFormatRequest: JsValue)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[JsValue, HttpResponse](s"http://localhost:$port/send-card-payments", wrongFormatRequest, headers)
 
-  def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/conf/1.0/application.raml")
+  def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/conf/1.0/application.yaml")
 
   def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/definition")
 
