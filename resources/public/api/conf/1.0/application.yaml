@@ -65,10 +65,10 @@ components:
           type: string
         Amount:
           description: 'Amount in pounds and pence, e.g. 123.57'
-          type: double
+          type: number
         Commission:
           description: 'Commission in pounds and pence, e.g. 123.57'
-          type: double
+          type: number
         CardType:
           description: 'Card type, for example "VISA"'
           type: string
@@ -86,14 +86,13 @@ components:
         ChargeReference:
           type: string
         ReferenceNumber:
-          type: string,
+          type: string
         CardLast4:
           type: string
       required:
         - code
       type: object
     types.errorResponse:
-      includePath: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
       properties:
         code:
           type: string
@@ -168,3 +167,4 @@ components:
   headers: {}
   links: {}
   callbacks: {}
+
