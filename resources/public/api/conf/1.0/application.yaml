@@ -45,15 +45,18 @@ paths:
         required: true
       deprecated: false
       security:
-        - sec.x-application: []
+        - applicationRestricted: []
 components:
   securitySchemes:
-    sec.x-application:
-      type: apiKey
+    applicationRestricted:
+      type: oauth2
       description: |
-        Application restricted endpoints require a server token. This must be passed as an Authorization header with type Bearer.
-      in: header
-      name: Authorization
+        HMRC supports OAuth 2.0 for authenticating application restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints for details.
+      flows:
+        clientCredentials:
+          tokenUrl: "https://api.service.hmrc.gov.uk/oauth/token"
+          scopes: {}
   schemas:
     types.requestBody:
       properties:
