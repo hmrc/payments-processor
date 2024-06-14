@@ -132,7 +132,7 @@ class ChargeRefServiceSpec extends ItSpec {
       numberOfQueuedNotifications shouldBe expectedQueuedNotifications
       numberOfQueuedNotifications > pollLimit shouldBe true
 
-      eventually {
+      eventually () {
         val sentItems: Seq[WorkItem[ChargeRefNotificationMyWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
 
         sentItems.size shouldBe pollLimit
