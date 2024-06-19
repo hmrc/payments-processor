@@ -11,8 +11,9 @@ servers:
 paths:
   /payments/notifications/send-card-payments:
     post:
+      summary: Send card payment
       description: This endpoint accepts the charge reference information and sends it to ETMP via DES.
-      operationId: Send card payment
+      operationId: SendCardPayment
       parameters:
         - $ref: '#/components/parameters/trait_headers.acceptHeader_Accept'
       responses:
