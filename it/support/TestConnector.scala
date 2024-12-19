@@ -16,20 +16,21 @@
 
 package support
 
-import play.api.libs.json.JsValue
+import play.api.libs.json.{Json, JsValue}
 import pp.connectors.ResponseReadsThrowingException
 import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.pngrs.PngrStatusUpdateRequest
 import pp.model.{ProcessingStatusOps, TaxType}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, HttpReads, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext: ExecutionContext) {
+class TestConnector @Inject() (httpClient: HttpClientV2)(implicit executionContext: ExecutionContext) {
 
   val port: String = "19001"
   val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
@@ -37,27 +38,55 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   implicit val readRaw: HttpReads[HttpResponse] = ResponseReadsThrowingException.readResponse
 
   def sendCardPaymentsNotification(cardPaymentsNotificationRequest: ChargeRefNotificationRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST[ChargeRefNotificationRequest, HttpResponse](s"http://localhost:$port/payments-processor/send-card-payments-notification", cardPaymentsNotificationRequest, headers)
+    httpClient
+      .post(url"http://localhost:$port/payments-processor/send-card-payments-notification")
+      .withBody(Json.toJson(cardPaymentsNotificationRequest))
+      .setHeader(headers: _*)
+      .execute[HttpResponse]
 
   def sendCardPaymentsPcipalNotification(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST[ChargeRefNotificationPcipalRequest, HttpResponse](s"http://localhost:$port/send-card-payments", chargeRefNotificationPciPalRequest, headers)
+    httpClient
+      .post(url"http://localhost:$port/send-card-payments")
+      .withBody(Json.toJson(chargeRefNotificationPciPalRequest))
+      .setHeader(headers: _*)
+      .execute[HttpResponse]
 
   def sendCardPaymentsWrongFormatRequest(wrongFormatRequest: JsValue)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST[JsValue, HttpResponse](s"http://localhost:$port/send-card-payments", wrongFormatRequest, headers)
+    httpClient
+      .post(url"http://localhost:$port/send-card-payments")
+      .withBody(wrongFormatRequest)
+      .setHeader(headers: _*)
+      .execute[HttpResponse]
 
-  def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/conf/1.0/application.yaml")
+  def getApiDoc(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient
+      .get(url"http://localhost:$port/api/conf/1.0/application.yaml")
+      .execute[HttpResponse]
 
-  def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] = httpClient.GET[HttpResponse](s"http://localhost:$port/api/definition")
+  def getDef(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient
+      .get(url"http://localhost:$port/api/definition")
+      .execute[HttpResponse]
 
   def count(taxType: TaxType, processingStatusOps: ProcessingStatusOps)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/count/${taxType.toString}/${processingStatusOps.toString}")
+    httpClient
+      .get(url"http://localhost:$port/payments-processor/reporting/count/${taxType.toString}/${processingStatusOps.toString}")
+      .execute[HttpResponse]
 
   def getAll(taxType: TaxType)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET[HttpResponse](s"http://localhost:$port/payments-processor/reporting/${taxType.toString}")
+    httpClient
+      .get(url"http://localhost:$port/payments-processor/reporting/${taxType.toString}")
+      .execute[HttpResponse]
 
   def sendStatusUpdateToPngr(pngrStatusUpdateRequest: PngrStatusUpdateRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST[PngrStatusUpdateRequest, HttpResponse](s"http://localhost:$port/payments-processor/pngr/send-update", pngrStatusUpdateRequest)
+    httpClient
+      .post(url"http://localhost:$port/payments-processor/pngr/send-update")
+      .withBody(Json.toJson(pngrStatusUpdateRequest))
+      .execute[HttpResponse]
 
   def mibPaymentCallBack(modsPaymentCallBackRequest: ModsPaymentCallBackRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST[ModsPaymentCallBackRequest, HttpResponse](s"http://localhost:$port/payments-processor/mib/payment-callback", modsPaymentCallBackRequest)
+    httpClient
+      .post(url"http://localhost:$port/payments-processor/mib/payment-callback")
+      .withBody(Json.toJson(modsPaymentCallBackRequest))
+      .execute[HttpResponse]
 }

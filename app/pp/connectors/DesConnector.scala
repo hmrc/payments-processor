@@ -16,19 +16,20 @@
 
 package pp.connectors
 
-import javax.inject.{Inject, Singleton}
+import play.api.libs.json.Json
 import play.api.{Configuration, Logger}
 import pp.model.chargeref.ChargeRefNotificationDesRequest
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpReads}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, StringContextOps, HttpReads}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.http.HttpClient
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DesConnector @Inject() (
     servicesConfig: ServicesConfig,
-    httpClient:     HttpClient,
+    httpClient:     HttpClientV2,
     configuration:  Configuration
 )(implicit ec: ExecutionContext) {
 
@@ -37,7 +38,7 @@ class DesConnector @Inject() (
   private val serviceURL: String = servicesConfig.baseUrl("des")
   private val authorizationToken: String = configuration.underlying.getString("microservice.services.des.authorizationToken")
   private val serviceEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
-  private val chargeref: String = configuration.underlying.getString("microservice.services.des.chargeref-url")
+  private val chargerefUrl: String = configuration.underlying.getString("microservice.services.des.chargeref-url")
 
   implicit val readUnit: HttpReads[Unit] = UnitReadsThrowingException.readUnit
 
@@ -55,10 +56,12 @@ class DesConnector @Inject() (
   private val regex = """[0-9a-zA-Z{À-˿'}\\ &`'^]{1,16}"""
 
   def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[Unit] = {
-    logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
     implicit val hc: HeaderCarrier = desHeaderCarrier
-    val sendChargeRefUrl: String = s"$serviceURL$chargeref"
+
+    val sendChargeRefUrl: String = s"$serviceURL$chargerefUrl"
+    logger.debug(s"Calling des api 1541 for chargeRefNotificationDesRequest ${chargeRefNotificationDesRequest.toString}")
     logger.debug(s"""Calling des api 1541 with url $sendChargeRefUrl""")
+
     //todo remove this once we know what's going on
     logger.warn(
       s"""ChargeRefNotificationDesRequest: [
@@ -68,11 +71,12 @@ class DesConnector @Inject() (
          |ref matches regex: ${chargeRefNotificationDesRequest.chargeRefNumber.matches(regex).toString}
          |]""".stripMargin
     )
-    httpClient.POST[ChargeRefNotificationDesRequest, Unit](
-      url     = sendChargeRefUrl,
-      body    = chargeRefNotificationDesRequest,
-      headers = desHeaders)
 
+    httpClient
+      .post(url"$sendChargeRefUrl")
+      .setHeader(desHeaders: _*)
+      .withBody(Json.toJson(chargeRefNotificationDesRequest))
+      .execute[Unit]
   }
 
 }
