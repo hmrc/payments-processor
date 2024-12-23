@@ -40,11 +40,4 @@ object AppDependencies {
     "org.pegdown"            %  "pegdown"                   % pegdownVersion,
   // format: ON
   ).map(_ % Test)
-
-  val itTest: Seq[ModuleID] = Seq(
-    // format: OFF
-    "uk.gov.hmrc"            %% "bootstrap-test-play-30"    % bootstrapVersion,
-    "org.pegdown"            %  "pegdown"                   % pegdownVersion,
-  // format: ON
-  ).map(_ % "it")
 }

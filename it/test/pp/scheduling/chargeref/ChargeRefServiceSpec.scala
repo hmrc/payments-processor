@@ -24,7 +24,6 @@ import pp.services.ChargeRefService
 import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 import support.{Des, ItSpec}
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
-import org.scalatest.time.{Millis, Seconds, Span}
 
 import java.time.Clock
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,10 +34,6 @@ class ChargeRefServiceSpec extends ItSpec {
   private lazy val queueConfig = injector.instanceOf[ChargeRefQueueConfig]
   private lazy val chargeRefService = new ChargeRefService(desConnector, repo, Clock.systemDefaultZone(), queueConfig)
   private val pollLimit = 2
-
-  override implicit val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(20, Seconds)),
-    interval = scaled(Span(150, Millis)))
 
   override def configMap: Map[String, Any] = super.configMap.updated("chargeref.poller.pollLimit", s"${pollLimit.toString}")
 

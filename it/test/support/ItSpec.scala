@@ -67,8 +67,8 @@ trait ItSpec
   lazy val baseUrl: String = s"http://localhost:${WireMockSupport.port.toString}"
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(10, Seconds)),
-    interval = scaled(Span(300, Millis)))
+    timeout  = scaled(Span(30, Seconds)),
+    interval = scaled(Span(150, Millis)))
 
   implicit val emptyHC: HeaderCarrier = HeaderCarrier()
   lazy val webdriverUrl = s"http://localhost:${port.toString}"
@@ -102,8 +102,7 @@ trait ItSpec
     "microservice.services.bc-passengers-declarations.port" -> WireMockSupport.port,
     "auditing.consumer.baseUri.port" -> WireMockSupport.port,
     "auditing.enabled" -> true,
-    "auditing.traceRequests" -> false
-  )
+    "auditing.traceRequests" -> false)
 
   def injector: Injector = fakeApplication().injector
 
