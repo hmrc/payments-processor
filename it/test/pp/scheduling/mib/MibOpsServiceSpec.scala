@@ -85,6 +85,7 @@ class MibOpsServiceSpec extends ItSpec {
         val workItem = mibOpsService.sendMibOpsToWorkItemRepo(PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef).futureValue
         workItem.item.availableUntil.isAfter(workItem.item.createdOn) shouldBe true
         numberOfQueuedNotifications shouldBe 1
+
         eventually {
           mibOpsService.retrieveWorkItems.futureValue.isEmpty shouldBe false
           numberOfQueuedNotifications shouldBe 1

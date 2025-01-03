@@ -112,22 +112,22 @@ class ChargeRefServiceSpec extends ItSpec {
     }
 
     "process a number of queued work items up to the poll limit" in {
-      Des.cardPaymentsNotificationSucceeds()
-      Des.cardPaymentsNotificationSucceeds(0, 1)
-      Des.cardPaymentsNotificationSucceeds(0, 2)
-
-      numberOfQueuedNotifications shouldBe 0
-
-      chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
-      chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015760")).futureValue
-      chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015761")).futureValue
-
-      val expectedQueuedNotifications = 3
-
-      numberOfQueuedNotifications shouldBe expectedQueuedNotifications
-      numberOfQueuedNotifications > pollLimit shouldBe true
-
       eventually {
+        Des.cardPaymentsNotificationSucceeds()
+        Des.cardPaymentsNotificationSucceeds(0, 1)
+        Des.cardPaymentsNotificationSucceeds(0, 2)
+
+        numberOfQueuedNotifications shouldBe 0
+
+        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest).futureValue
+        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015760")).futureValue
+        chargeRefService.sendCardPaymentsNotificationToWorkItemRepo(p800ChargeRefNotificationRequest.copy(chargeRefNumber = "XQ002610015761")).futureValue
+
+        val expectedQueuedNotifications = 3
+
+        numberOfQueuedNotifications shouldBe expectedQueuedNotifications
+        numberOfQueuedNotifications > pollLimit shouldBe true
+
         val sentItems: Seq[WorkItem[ChargeRefNotificationMyWorkItem]] = chargeRefService.retrieveWorkItems.futureValue
 
         sentItems.size shouldBe pollLimit

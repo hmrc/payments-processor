@@ -67,8 +67,8 @@ trait ItSpec
   lazy val baseUrl: String = s"http://localhost:${WireMockSupport.port.toString}"
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(30, Seconds)),
-    interval = scaled(Span(150, Millis)))
+    timeout  = scaled(Span(40, Seconds)),
+    interval = scaled(Span(50, Millis)))
 
   implicit val emptyHC: HeaderCarrier = HeaderCarrier()
   lazy val webdriverUrl = s"http://localhost:${port.toString}"
