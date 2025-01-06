@@ -41,7 +41,7 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.Result
-import play.api.test.{DefaultTestServerFactory, RunningServer}
+import play.api.test.{TestServerFactory, DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import uk.gov.hmrc.http.HeaderCarrier
@@ -104,22 +104,22 @@ trait ItSpec
     "auditing.enabled" -> true,
     "auditing.traceRequests" -> false)
 
-  def injector: Injector = fakeApplication().injector
+  def injector: Injector = app.injector
 
   def status(of: Result): Int = of.header.status
 
-  override implicit protected lazy val runningServer: RunningServer =
-    TestServerFactory.start(app)
-
-  object TestServerFactory extends DefaultTestServerFactory {
+  object CustomTestServerFactory extends DefaultTestServerFactory {
     override protected def serverConfig(app: Application): ServerConfig = {
       val sc = ServerConfig(port    = Some(testServerPort), sslPort = Some(0), mode = Mode.Test, rootDir = app.path)
       sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
     }
   }
 
+  override protected def testServerFactory: TestServerFactory = CustomTestServerFactory
+
   override def beforeEach(): Unit = {
     super.beforeEach()
+
     //this is added to stop the logs getting filled with wiremock errors for implicit audit events.
     AuditConnectorStub.stubImplicitAuditEvents
     ()
