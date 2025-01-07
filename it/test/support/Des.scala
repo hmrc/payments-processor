@@ -44,9 +44,7 @@ object Des {
           .withStatus(status)
           .withBody(responseBody)
           .withFixedDelay(delayMillis))
-        .willSetStateTo(WireMockStub.nextState(sequence))
-
-    )
+        .willSetStateTo(WireMockStub.nextState(sequence)))
   }
 
 }

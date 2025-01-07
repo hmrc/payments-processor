@@ -110,12 +110,13 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
     }
   }
 
-  Seq[ProcessingStatus](ProcessingStatus.Duplicate,
-                        ProcessingStatus.Cancelled,
-                        ProcessingStatus.Ignored,
-                        ProcessingStatus.Deferred,
-                        ProcessingStatus.PermanentlyFailed,
-                        ProcessingStatus.Succeeded).foreach { status =>
+  Seq[ProcessingStatus](
+    ProcessingStatus.Duplicate,
+    ProcessingStatus.Cancelled,
+    ProcessingStatus.Ignored,
+    ProcessingStatus.Deferred,
+    ProcessingStatus.PermanentlyFailed,
+    ProcessingStatus.Succeeded).foreach { status =>
       s"Pull a request with a status of ${status.toString} should not find anything, we have waited" in {
         val workItem = repo.pushNew(PaymentsProcessData.chargeRefNotificationWorkItem, dateTime).futureValue
         repo.markAs(workItem.id, status).futureValue should be(true)

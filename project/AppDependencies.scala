@@ -19,8 +19,8 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapVersion = "8.4.0"
-  val hmrcMongoVersion = "1.7.0"
+  val bootstrapVersion = "9.6.0"
+  val hmrcMongoVersion = "2.3.0"
   val enumeratumVersion = "1.7.0"
   val pegdownVersion = "1.6.0"
 
@@ -30,7 +30,7 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "bootstrap-backend-play-30"          % bootstrapVersion,
     "com.beachape"      %% "enumeratum"                         % enumeratumVersion,
     "com.beachape"      %% "enumeratum-play-json"               % enumeratumVersion,
-    "org.typelevel"     %% "cats-core"                          % "2.10.0"
+    "org.typelevel"     %% "cats-core"                          % "2.12.0"
   // format: ON
   )
 
@@ -40,11 +40,4 @@ object AppDependencies {
     "org.pegdown"            %  "pegdown"                   % pegdownVersion,
   // format: ON
   ).map(_ % Test)
-
-  val itTest: Seq[ModuleID] = Seq(
-    // format: OFF
-    "uk.gov.hmrc"            %% "bootstrap-test-play-30"    % bootstrapVersion,
-    "org.pegdown"            %  "pegdown"                   % pegdownVersion,
-  // format: ON
-  ).map(_ % "it")
 }

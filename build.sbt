@@ -1,16 +1,17 @@
 import sbt.Tests.{Group, SubProcess}
+import uk.gov.hmrc.DefaultBuildSettings
 
 val appName = "payments-processor"
 
-scalaVersion := "2.13.12"
+ThisBuild / majorVersion := 1
+ThisBuild / scalaVersion := "2.13.12"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
-  .settings(scalaVersion := "2.13.10")
   .settings(
     majorVersion := 0,
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test ++ AppDependencies.itTest,
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     Compile / scalacOptions -= "utf8"
@@ -30,16 +31,14 @@ lazy val microservice = Project(appName, file("."))
   //
   // test related settings
   .settings(Test / unmanagedSourceDirectories := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common"))
-  .settings(
-    IntegrationTest / Keys.fork := true,
-    Defaults.itSettings,
-    IntegrationTest / unmanagedSourceDirectories += baseDirectory(_ / "it").value,
-    IntegrationTest / unmanagedSourceDirectories += baseDirectory(_ / "test-common").value,
-    IntegrationTest / parallelExecution := false,
-    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value)
-  )
-  .configs(IntegrationTest)
   .settings(resolvers += Resolver.jcenterRepo)
+
+
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test")
+  .settings(DefaultBuildSettings.itSettings())
+  .settings(libraryDependencies ++= AppDependencies.test)
 
 lazy val scalaCompilerOptions = Seq(
   "-Xfatal-warnings",
@@ -63,6 +62,3 @@ lazy val scalaCompilerOptions = Seq(
   "-Wconf:src=routes/.*:s"
 )
 
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests.map { test =>
-  Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
-}

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package pp.controllers.chargeref
 
 import com.github.tomakehurst.wiremock.client.WireMock.{patchRequestedFor, postRequestedFor, urlEqualTo, verify}
@@ -24,12 +40,12 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
       .updated("mibops.poller.enabled", "true")
       .updated("sendAllToDes", "false")
 
-  private def verifySuccess(response:        HttpResponse,
-                            checkTpsBackend: Boolean      = false,
-                            backendCount:    Int          = 1,
-                            checkPngr:       Boolean      = false,
-                            checkMib:        Boolean      = false
-  ): Unit = {
+  private def verifySuccess(
+      response:        HttpResponse,
+      checkTpsBackend: Boolean      = false,
+      backendCount:    Int          = 1,
+      checkPngr:       Boolean      = false,
+      checkMib:        Boolean      = false): Unit = {
     response.status shouldBe 200
     verify(0, postRequestedFor(urlEqualTo(Des.endpoint)))
     if (checkPngr) verify(1, postRequestedFor(urlEqualTo(Pngr.endpoint)))
@@ -39,8 +55,7 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
   Seq[(PaymentItemId, TaxType, ChargeRefNotificationPcipalRequest, ChargeRefNotificationRequest)](
     (p800PaymentItemId, p800, p800PcipalNotification, p800ChargeRefNotificationRequest),
     (mibPaymentItemId, mib, mibPcipalNotification, mibChargeRefNotificationRequest),
-    (pngrPaymentItemId, pngr, pngrPcipalNotification, pngrChargeRefNotificationRequest)
-  ).foreach { fixture =>
+    (pngrPaymentItemId, pngr, pngrPcipalNotification, pngrChargeRefNotificationRequest)).foreach { fixture =>
       val paymentItemId = fixture._1
       val taxType = fixture._2
       val pcipalNotification = fixture._3
@@ -64,8 +79,7 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
           }
           AuditConnectorStub.verifyEventAudited(
             auditType  = "PciPalNotificationSuccess",
-            auditEvent = Json.obj("chargeRefNotificationPcipalRequest" -> Json.toJson(pcipalNotification)).as[JsObject]
-          )
+            auditEvent = Json.obj("chargeRefNotificationPcipalRequest" -> Json.toJson(pcipalNotification)).as[JsObject])
         }
       }
 
