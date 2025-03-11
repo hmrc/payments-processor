@@ -1,6 +1,6 @@
 import play.sbt.routes.RoutesKeys.routes
-import sbt._
-import sbt.Keys._
+import sbt.*
+import sbt.Keys.*
 import wartremover.Wart
 import wartremover.WartRemover.autoImport.{Warts, wartremoverErrors, wartremoverExcluded}
 
@@ -26,14 +26,6 @@ object WartRemoverSettings {
         Wart.Null,
         Wart.NonUnitStatements,
         Wart.PublicInference
-      ),
-      IntegrationTest / compile / wartremoverErrors --= Seq(
-        Wart.Any,
-        Wart.GlobalExecutionContext,
-        Wart.IterableOps,
-        Wart.NonUnitStatements,
-        Wart.AsInstanceOf,
-        Wart.IsInstanceOf
       ),
       wartremoverExcluded ++= (
         (baseDirectory.value ** "*.sc").get ++

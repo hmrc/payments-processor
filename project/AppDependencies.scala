@@ -14,30 +14,27 @@
  * limitations under the License.
  */
 
-import play.core.PlayVersion
-import sbt._
+import sbt.*
 
 object AppDependencies {
 
-  val bootstrapVersion = "9.6.0"
-  val hmrcMongoVersion = "2.3.0"
-  val enumeratumVersion = "1.7.0"
-  val pegdownVersion = "1.6.0"
+  val bootstrapVersion = "9.11.0"
+  val hmrcMongoVersion = "2.6.0"
+  val enumeratumVersion = "1.8.2"
 
   val compile: Seq[ModuleID] = Seq(
     // format: OFF
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-work-item-repo-play-30"  % hmrcMongoVersion,
     "uk.gov.hmrc"       %% "bootstrap-backend-play-30"          % bootstrapVersion,
-    "com.beachape"      %% "enumeratum"                         % enumeratumVersion,
+    "com.beachape"      %% "enumeratum-play"                    % enumeratumVersion,
     "com.beachape"      %% "enumeratum-play-json"               % enumeratumVersion,
-    "org.typelevel"     %% "cats-core"                          % "2.12.0"
+    "org.typelevel"     %% "cats-core"                          % "2.13.0"
   // format: ON
   )
 
   val test: Seq[ModuleID] = Seq(
     // format: OFF
-    "uk.gov.hmrc"            %% "bootstrap-test-play-30"    % bootstrapVersion,
-    "org.pegdown"            %  "pegdown"                   % pegdownVersion,
+    "uk.gov.hmrc"            %% "bootstrap-test-play-30"    % bootstrapVersion
   // format: ON
   ).map(_ % Test)
 }
