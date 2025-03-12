@@ -41,7 +41,7 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.Result
-import play.api.test.{TestServerFactory, DefaultTestServerFactory, RunningServer}
+import play.api.test.{DefaultTestServerFactory, TestServerFactory}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import uk.gov.hmrc.http.HeaderCarrier
