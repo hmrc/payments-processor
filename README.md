@@ -23,7 +23,7 @@ If poller.enabled is set to false, failed requests will not be retried, failed r
 
 ### Running Locally
 
-You only need to run payments-processor: `sm --start PAYMENTS_PROCESSOR`
+You only need to run payments-processor: `sm2 --start PAYMENTS_PROCESSOR`
 
 *make sure you have mongo running
 

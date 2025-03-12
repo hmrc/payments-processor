@@ -1,10 +1,9 @@
-import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings
 
 val appName = "payments-processor"
 
 ThisBuild / majorVersion := 1
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "2.13.16"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
@@ -18,10 +17,10 @@ lazy val microservice = Project(appName, file("."))
   )
   // compiler flags, linting/code quality tools
   .settings(scalacOptions ++= scalaCompilerOptions)
-  .settings(ScalariformSettings.scalariformSettings: _*)
-  .settings(WartRemoverSettings.wartRemoverSettings: _*)
-  .settings(SbtUpdatesSettings.sbtUpdatesSettings: _*)
-  .settings(ScoverageSettings.scoverageSettings: _*)
+  .settings(ScalariformSettings.scalariformSettings *)
+  .settings(WartRemoverSettings.wartRemoverSettings *)
+  .settings(SbtUpdatesSettings.sbtUpdatesSettings *)
+  .settings(ScoverageSettings.scoverageSettings *)
   //
   // play related settings
   .settings(
@@ -61,4 +60,3 @@ lazy val scalaCompilerOptions = Seq(
   "-Wconf:cat=unused-imports&src=routes/.*:s",
   "-Wconf:src=routes/.*:s"
 )
-
