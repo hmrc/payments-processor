@@ -30,8 +30,6 @@ lazy val microservice = Project(appName, file("."))
   //
   // test related settings
   .settings(Test / unmanagedSourceDirectories := Seq(baseDirectory.value / "test", baseDirectory.value / "test-common"))
-  .settings(resolvers += Resolver.jcenterRepo)
-
 
 lazy val it = project
   .enablePlugins(PlayScala)
