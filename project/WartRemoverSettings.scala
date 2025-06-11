@@ -1,12 +1,12 @@
 import play.sbt.routes.RoutesKeys.routes
-import sbt.*
+import sbt.{Def, *}
 import sbt.Keys.*
 import wartremover.Wart
 import wartremover.WartRemover.autoImport.{Warts, wartremoverErrors, wartremoverExcluded}
 
 object WartRemoverSettings {
 
-  lazy val wartRemoverSettings =
+  lazy val wartRemoverSettings: Seq[Def.Setting[?]] =
     Seq(
       (Compile / compile / wartremoverErrors) ++= Warts.allBut(
         Wart.DefaultArguments,
