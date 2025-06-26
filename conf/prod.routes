@@ -3,4 +3,4 @@
 ->         /                          health.Routes
 ->         /                          definition.Routes
 
-POST       /send-card-payments        pp.controllers.ChargeRefControllerPciPal.sendCardPaymentsNotificationPciPal()
+POST       /send-card-payments        pp.controllers.external.ChargeRefControllerPciPal.sendCardPaymentsNotificationPciPal()

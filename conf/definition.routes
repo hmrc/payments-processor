@@ -1,2 +1,2 @@
-GET        /api/definition            pp.controllers.ApiDocumentationController.definition()
-GET        /api/conf/:version/*file   pp.controllers.ApiDocumentationController.conf(version, file)
+GET        /api/definition            pp.controllers.api.ApiDocumentationController.definition()
+GET        /api/conf/:version/*file   pp.controllers.api.ApiDocumentationController.conf(version, file)
