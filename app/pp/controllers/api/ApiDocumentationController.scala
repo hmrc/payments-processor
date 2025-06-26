@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pp.controllers
+package pp.controllers.api
 
 import controllers.Assets
 import play.api.mvc.{Action, AnyContent, ControllerComponents}

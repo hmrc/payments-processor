@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package pp.controllers
+package pp.controllers.external
 
 import cats.implicits.catsSyntaxEq
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.api.{Configuration, Logger}
 import pp.config.{ChargeRefQueueConfig, MibOpsQueueConfig, PngrsQueueConfig}
 import pp.connectors.{MibConnector, PngrConnector, TpsPaymentsBackendConnector}
+import pp.controllers.HeaderValidator
 import pp.controllers.retries.{ChargeRefDesRetries, MibRetries, PngrRetries}
 import pp.model.StatusTypes.validated
 import pp.model.mods.ModsPaymentCallBackRequest
