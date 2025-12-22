@@ -48,7 +48,7 @@ trait PngrRetries extends Results with CanEqualInstance {
         case e: UpstreamErrorResponse if e.statusCode === 404 =>
           Future.failed(new BadGatewayException(e.message))
         case e                                                =>
-          if (pngrQueueConfig.queueEnabled) {
+          if pngrQueueConfig.queueEnabled then {
             logger.debug("Queue enabled")
             pngrService
               .sendPngrToWorkItemRepo(pngrStatusUpdate)

@@ -46,9 +46,8 @@ class MibOpsService @Inject() (
   def sendWorkItem(workItem: WorkItem[MibOpsMyWorkItem]): Future[Unit] = {
 
     logger.debug("inside sendWorkItemToMibOps")
-    for {
-      _ <- mibConnector.paymentCallback(workItem.item.modsPaymentCallBackRequest)
-    } yield ()
+    for _ <- mibConnector.paymentCallback(workItem.item.modsPaymentCallBackRequest)
+    yield ()
 
   }
 

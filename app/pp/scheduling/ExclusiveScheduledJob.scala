@@ -26,7 +26,7 @@ trait ExclusiveScheduledJob extends ScheduledJob {
   def executeInMutex(implicit ec: ExecutionContext): Future[this.Result]
 
   final def execute(implicit ec: ExecutionContext): Future[Result] =
-    if (mutex.tryAcquire()) {
+    if mutex.tryAcquire() then {
       Try(executeInMutex) match {
         case Success(f) => f andThen { case _ => mutex.release() }
         case Failure(e) => Future.successful(mutex.release()).flatMap(_ => Future.failed(e))

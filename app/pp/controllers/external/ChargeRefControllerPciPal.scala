@@ -81,30 +81,30 @@ class ChargeRefControllerPciPal @Inject() (
     }
 
     def sendToDesIfValidatedAndConfigured(taxType: TaxType): Future[Status] =
-      if (notification.Status === validated && (sendAllToDes || taxType.sendToDes)) {
+      if notification.Status === validated && (sendAllToDes || taxType.sendToDes) then {
         processChargeRefNotificationRequest(toChargeRefNotificationRequest(notification, taxType))
       } else Future successful Ok
 
     def sendStatusUpdateToPngrIfConfigured(taxType: TaxType): Future[Status] =
-      if (taxType === TaxTypes.pngr) {
+      if taxType === TaxTypes.pngr then {
         sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
       } else Future successful Ok
 
     def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
-      if (taxType === TaxTypes.mib && notification.Status === validated) {
-        for {
+      if taxType === TaxTypes.mib && notification.Status === validated then {
+        for
           amendmentRef            <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
           modsPayload              = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef.amendmentReference)
           statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
-        } yield statusFromPaymentUpdate
+        yield statusFromPaymentUpdate
       } else Future successful Ok
 
-    for {
+    for
       taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
       _       <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)
       _       <- sendToDesIfValidatedAndConfigured(taxType)
       _       <- sendStatusUpdateToPngrIfConfigured(taxType)
       _       <- sendStatusUpdateToMibIfConfigured(taxType)
-    } yield Ok
+    yield Ok
   }
 }

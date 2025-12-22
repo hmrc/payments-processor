@@ -58,7 +58,8 @@ object ChargeRefNotificationPcipalRequest {
   ): PngrStatusUpdateRequest =
     PngrStatusUpdateRequest(
       chargeRefNotificationPciPalRequest.ChargeReference,
-      if (chargeRefNotificationPciPalRequest.Status == validated) PngrStatusTypes.Successful else PngrStatusTypes.Failed
+      if chargeRefNotificationPciPalRequest.Status == validated then PngrStatusTypes.Successful
+      else PngrStatusTypes.Failed
     )
 
 }

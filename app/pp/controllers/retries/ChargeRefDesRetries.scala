@@ -52,7 +52,7 @@ trait ChargeRefDesRetries extends Results with CanEqualInstance {
         case e: UpstreamErrorResponse if e.statusCode === 409 =>
           Future.failed(e)
         case e                                                =>
-          if (chargeRefQueueConfig.queueEnabled) {
+          if chargeRefQueueConfig.queueEnabled then {
             logger.debug("Queue enabled")
             chargeRefService
               .sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest)
@@ -75,7 +75,7 @@ trait ChargeRefDesRetries extends Results with CanEqualInstance {
     logger.debug("sendCardPaymentsNotification")
 
     val sendChargeRef: Boolean = sendAllToDes || chargeRefNotificationRequest.taxType.sendToDes
-    if (sendChargeRef) {
+    if sendChargeRef then {
       processChargeRefNotificationRequest(chargeRefNotificationRequest)
     } else {
       logger.debug(

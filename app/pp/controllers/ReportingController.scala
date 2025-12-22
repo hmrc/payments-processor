@@ -58,20 +58,20 @@ class ReportingController @Inject() (
     logger.debug("count")
     taxType match {
       case TaxTypes.pngr =>
-        for {
+        for
           m <- pngrMongoRepo.findAll()
           i  = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
-        } yield Ok(Json.toJson(i))
+        yield Ok(Json.toJson(i))
       case TaxTypes.p800 =>
-        for {
+        for
           m <- chargeRefNotificationMongoRepo.findAll()
           i  = m.map(m2 => Item(m2.item.createdOn, m2.item.chargeRefNumber, m2.failureCount, m2.status.toString))
-        } yield Ok(Json.toJson(i))
+        yield Ok(Json.toJson(i))
       case TaxTypes.mib  =>
-        for {
+        for
           m <- mibOpsMongoRepo.findAll()
           i  = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
-        } yield Ok(Json.toJson(i))
+        yield Ok(Json.toJson(i))
       case _             => throw new RuntimeException(s"taxType ${taxType.entryName} not supported")
     }
   }

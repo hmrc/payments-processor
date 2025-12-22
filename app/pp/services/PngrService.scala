@@ -47,9 +47,8 @@ class PngrService @Inject() (
 
     logger.debug("inside sendWorkItemToPngr")
     val statusUpdate = PngrStatusUpdateRequest(workItem.item.reference, workItem.item.status)
-    for {
-      _ <- pngrConnector.updateWithStatus(statusUpdate)
-    } yield ()
+    for _ <- pngrConnector.updateWithStatus(statusUpdate)
+    yield ()
 
   }
 

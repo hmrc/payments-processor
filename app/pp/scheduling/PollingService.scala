@@ -47,7 +47,7 @@ abstract class PollingService[P <: MyWorkItemFields](
 
   def callExecutor(name: String)(implicit ec: ExecutionContext): Cancellable =
     actorSystem.scheduler.scheduleWithFixedDelay(initialDelay, interval) { () =>
-      if (queueConfig.pollerEnabled) {
+      if queueConfig.pollerEnabled then {
         executor(name)
       } else {
         logger.warn(s"$name: Poller enabled is false")

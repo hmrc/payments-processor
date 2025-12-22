@@ -49,9 +49,8 @@ class ChargeRefService @Inject() (
       chargeRefNotificationWorkItem.item.chargeRefNumber,
       chargeRefNotificationWorkItem.item.amountPaid
     )
-    for {
-      _ <- desConnector.sendCardPaymentsNotification(desChargeRef)
-    } yield ()
+    for _ <- desConnector.sendCardPaymentsNotification(desChargeRef)
+    yield ()
 
   }
 

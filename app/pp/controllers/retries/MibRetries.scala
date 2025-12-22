@@ -48,7 +48,7 @@ trait MibRetries extends Results with CanEqualInstance {
         case e: UpstreamErrorResponse if e.statusCode === 404 =>
           Future.failed(new BadGatewayException(e.message))
         case e                                                =>
-          if (mibOpsQueueConfig.queueEnabled) {
+          if mibOpsQueueConfig.queueEnabled then {
             logger.debug("Queue enabled")
             mibOpsService
               .sendMibOpsToWorkItemRepo(modsPaymentCallBackRequest)

@@ -46,8 +46,7 @@ trait HeaderValidator extends Results with Status {
     override protected def executionContext: ExecutionContext = ec
 
     def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =
-      if (rules(request.headers.get("Accept")))
-        block(request)
+      if rules(request.headers.get("Accept")) then block(request)
       else {
         val response = ErrorResponse(NOT_ACCEPTABLE, Constants.acceptHeaderMissing)
         Future.successful(NotAcceptable(Json.toJson(response)))

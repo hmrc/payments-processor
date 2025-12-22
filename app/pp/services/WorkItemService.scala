@@ -71,13 +71,13 @@ trait WorkItemService[P <: MyWorkItemFields] {
     def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[P]]): Future[Seq[WorkItem[P]]] = {
 
       def retrieveWorkItem(count: Int): Future[Option[WorkItem[P]]] =
-        if (count === queueConfig.pollLimit) Future successful None
+        if count === queueConfig.pollLimit then Future successful None
         else repo.pullOutstanding
 
       retrieveWorkItem(count).flatMap {
         case None           => Future successful sentWorkItems
         case Some(workItem) =>
-          if (isAvailable(workItem.item)) {
+          if isAvailable(workItem.item) then {
             processThenMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
               sendNotificationIfFound(count + 1, workItems)
             }
