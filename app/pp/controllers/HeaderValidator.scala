@@ -19,8 +19,8 @@ package pp.controllers
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
 import cats.implicits.catsSyntaxEq
+import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex
@@ -32,21 +32,25 @@ trait HeaderValidator extends Results with Status {
 
   private def validateContentType(contentType: String): Boolean = contentType === "json"
 
-  private def matchHeader(header: String): Option[Match] = new Regex("""^application/vnd[.]{1}hmrc[.]{1}(.*?)[+]{1}(.*)$""", "version", "contenttype") findFirstMatchIn header
+  private def matchHeader(header: String): Option[Match] =
+    new Regex("""^application/vnd[.]{1}hmrc[.]{1}(.*?)[+]{1}(.*)$""", "version", "contenttype") findFirstMatchIn header
 
-  def acceptHeaderValidationRules(header: Option[String]): Boolean = header flatMap (a => matchHeader(a) map (res => validateContentType(res.group("contenttype")) && validateVersion(res.group("version")))) getOrElse false
+  def acceptHeaderValidationRules(header: Option[String]): Boolean = header flatMap (a =>
+    matchHeader(a) map (res => validateContentType(res.group("contenttype")) && validateVersion(res.group("version")))
+  ) getOrElse false
 
-  def validateAccept(rules: Option[String] => Boolean, parse: PlayBodyParsers)(implicit ec: ExecutionContext): ActionBuilder[Request, AnyContent] = new ActionBuilder[Request, AnyContent] {
-    override def parser: BodyParser[AnyContent] = parse.defaultBodyParser
+  def validateAccept(rules: Option[String] => Boolean, parse: PlayBodyParsers)(implicit
+    ec: ExecutionContext
+  ): ActionBuilder[Request, AnyContent] = new ActionBuilder[Request, AnyContent] {
+    override def parser: BodyParser[AnyContent]               = parse.defaultBodyParser
     override protected def executionContext: ExecutionContext = ec
 
-    def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
+    def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =
       if (rules(request.headers.get("Accept")))
         block(request)
       else {
         val response = ErrorResponse(NOT_ACCEPTABLE, Constants.acceptHeaderMissing)
         Future.successful(NotAcceptable(Json.toJson(response)))
       }
-    }
   }
 }

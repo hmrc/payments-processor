@@ -30,23 +30,28 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ChargeRefController @Inject() (
-    cc:                       ControllerComponents,
-    val chargeRefService:     ChargeRefService,
-    val chargeRefQueueConfig: ChargeRefQueueConfig,
-    val pngrQueueConfig:      PngrsQueueConfig,
-    val configuration:        Configuration,
-    val pngrService:          PngrService,
-    val pngrConnector:        PngrConnector,
-    val mibOpsService:        MibOpsService,
-    val mibOpsQueueConfig:    MibOpsQueueConfig,
-    val mibConnector:         MibConnector
-)
-  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator with ChargeRefDesRetries with PngrRetries with MibRetries {
+  cc:                       ControllerComponents,
+  val chargeRefService:     ChargeRefService,
+  val chargeRefQueueConfig: ChargeRefQueueConfig,
+  val pngrQueueConfig:      PngrsQueueConfig,
+  val configuration:        Configuration,
+  val pngrService:          PngrService,
+  val pngrConnector:        PngrConnector,
+  val mibOpsService:        MibOpsService,
+  val mibOpsQueueConfig:    MibOpsQueueConfig,
+  val mibConnector:         MibConnector
+)(implicit val executionContext: ExecutionContext)
+    extends BackendController(cc)
+    with HeaderValidator
+    with ChargeRefDesRetries
+    with PngrRetries
+    with MibRetries {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def sendCardPaymentsNotification(): Action[ChargeRefNotificationRequest] = Action.async(parse.json[ChargeRefNotificationRequest]) { implicit request =>
-    logger.debug("sendCardPaymentsNotification")
-    sendCardPaymentsNotification(request.body)
-  }
+  def sendCardPaymentsNotification(): Action[ChargeRefNotificationRequest] =
+    Action.async(parse.json[ChargeRefNotificationRequest]) { implicit request =>
+      logger.debug("sendCardPaymentsNotification")
+      sendCardPaymentsNotification(request.body)
+    }
 }

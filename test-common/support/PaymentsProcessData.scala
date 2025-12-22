@@ -36,39 +36,51 @@ object PaymentsProcessData {
 
   private val clock: Clock = systemUTC()
 
-  val reference = "JE231111B"
+  val reference             = "JE231111B"
   val chargeReferenceNumber = "XQ002610015768"
-  val mibReference = "reference"
+  val mibReference          = "reference"
 
   val p800PaymentItemId: PaymentItemId = PaymentItemId("p800-48c978bb-64b6-4a00-a1f1-51e267d84f91")
-  val mibPaymentItemId: PaymentItemId = PaymentItemId("mib-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+  val mibPaymentItemId: PaymentItemId  = PaymentItemId("mib-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pngrPaymentItemId: PaymentItemId = PaymentItemId("pngr-48c978bb-64b6-4a00-a1f1-51e267d84f91")
 
-  val pngrStatusUpdateRequest: PngrStatusUpdateRequest = PngrStatusUpdateRequest("chargeref", PngrStatusTypes.Successful)
+  val pngrStatusUpdateRequest: PngrStatusUpdateRequest =
+    PngrStatusUpdateRequest("chargeref", PngrStatusTypes.Successful)
 
   val modsPaymentCallBackRequestWithAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest(
-    chargeReference    = mibReference,
+    chargeReference = mibReference,
     amendmentReference = Some(1)
   )
 
   val modsPaymentCallBackRequestWithoutAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest(
-    chargeReference    = mibReference,
+    chargeReference = mibReference,
     amendmentReference = None
   )
 
   private val pciPalSessionId = PcipalSessionId("48c978bb")
 
-  val chargeRefNotificationWorkItem: ChargeRefNotificationMyWorkItem = ChargeRefNotificationMyWorkItem(now(clock), now(clock).minusSeconds(100), p800.entryName, chargeReferenceNumber, 100.12, OPS)
+  val chargeRefNotificationWorkItem: ChargeRefNotificationMyWorkItem = ChargeRefNotificationMyWorkItem(
+    now(clock),
+    now(clock).minusSeconds(100),
+    p800.entryName,
+    chargeReferenceNumber,
+    100.12,
+    OPS
+  )
 
-  val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest = chargeref.ChargeRefNotificationDesRequest(p800.entryName, chargeReferenceNumber, 100.11)
+  val chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest =
+    chargeref.ChargeRefNotificationDesRequest(p800.entryName, chargeReferenceNumber, 100.11)
 
-  val p800ChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(p800, chargeReferenceNumber, 100.11, OPS)
+  val p800ChargeRefNotificationRequest: ChargeRefNotificationRequest =
+    chargeref.ChargeRefNotificationRequest(p800, chargeReferenceNumber, 100.11, OPS)
 
-  val mibChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(mib, chargeReferenceNumber, 100.11, OPS)
+  val mibChargeRefNotificationRequest: ChargeRefNotificationRequest =
+    chargeref.ChargeRefNotificationRequest(mib, chargeReferenceNumber, 100.11, OPS)
 
-  val pngrChargeRefNotificationRequest: ChargeRefNotificationRequest = chargeref.ChargeRefNotificationRequest(pngr, chargeReferenceNumber, 100.11, OPS)
+  val pngrChargeRefNotificationRequest: ChargeRefNotificationRequest =
+    chargeref.ChargeRefNotificationRequest(pngr, chargeReferenceNumber, 100.11, OPS)
 
-  //language=JSON
+  // language=JSON
   val chargeRefNotificationDesRequestJson: JsValue = parse(
     s"""{
        "taxType" : "p800",
@@ -76,10 +88,9 @@ object PaymentsProcessData {
        "amountPaid" : 100.11
        }
      """.stripMargin
-
   )
 
-  //language=JSON
+  // language=JSON
   val chargeRefNotificationRequestJson: JsValue = parse(
     s"""{
        "taxType" : "p800",
@@ -88,10 +99,9 @@ object PaymentsProcessData {
        "origin" : "OPS"
        }
      """.stripMargin
-
   )
 
-  //language=JSON
+  // language=JSON
   val wrongFormatChargeRefNotificationRequestJson: JsValue = parse(
     s"""{
        "taxType" : "p800",
@@ -101,10 +111,9 @@ object PaymentsProcessData {
        "extraField" : "Extar Value"
        }
      """.stripMargin
-
   )
 
-  //language=JSON
+  // language=JSON
   val pngrStatusUpdateRequestJson: JsValue = parse(
     s"""{
        "reference" : "chargeref",
@@ -113,32 +122,29 @@ object PaymentsProcessData {
      """.stripMargin
   )
 
-  //language=JSON
-  val modsPaymentCallbackRequestWithAmendmentRefJson: JsValue = parse(
-    s"""
+  // language=JSON
+  val modsPaymentCallbackRequestWithAmendmentRefJson: JsValue = parse(s"""
         {
           "chargeReference": "reference",
           "amendmentReference": 1
         }""".stripMargin)
 
-  //language=JSON
-  val modsPaymentCallbackRequestWithoutAmendmentRefJson: JsValue = parse(
-    s"""
+  // language=JSON
+  val modsPaymentCallbackRequestWithoutAmendmentRefJson: JsValue = parse(s"""
         {
           "chargeReference": "reference"
         }""".stripMargin)
 
-  //language=JSON
-  val chargeRefNotificationPciPalRequestJson: JsValue = parse(
-    s"""{
+  // language=JSON
+  val chargeRefNotificationPciPalRequestJson: JsValue = parse(s"""{
             "HoD": "B",
-            "TaxReference": "${reference}",
+            "TaxReference": "$reference",
             "Amount": 100.11,
             "Commission": 1.23,
             "CardType": "VISA",
             "Status": "${validated.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
-            "TransactionReference": "${chargeReferenceNumber}",
+            "TransactionReference": "$chargeReferenceNumber",
             "paymentItemId": "${p800PaymentItemId.value}",
             "ChargeReference": "chargeRef",
             "ReferenceNumber": "3000000000",
@@ -166,9 +172,8 @@ object PaymentsProcessData {
     "1234"
   )
 
-  //language=JSON
-  def definition(endpointsEnabled: Boolean, status: String): JsValue = parse(
-    s"""{
+  // language=JSON
+  def definition(endpointsEnabled: Boolean, status: String): JsValue = parse(s"""{
                                   "scopes":[],
                                   "api": {
                                     "name": "Charge Ref Notification",
@@ -178,7 +183,7 @@ object PaymentsProcessData {
                                     "versions": [
                                       {
                                         "version": "1.0",
-                                        "status": "${status}",
+                                        "status": "$status",
                                         "endpointsEnabled": ${endpointsEnabled.toString},
                                         "access": {
                                           "type": "PRIVATE",

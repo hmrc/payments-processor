@@ -3,7 +3,7 @@ import uk.gov.hmrc.DefaultBuildSettings
 val appName = "payments-processor"
 
 ThisBuild / majorVersion := 1
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "2.13.17"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
@@ -17,7 +17,7 @@ lazy val microservice = Project(appName, file("."))
   )
   // compiler flags, linting/code quality tools
   .settings(scalacOptions ++= scalaCompilerOptions)
-  .settings(ScalariformSettings.scalariformSettings *)
+  .settings(scalafmtOnCompile := true)
   .settings(WartRemoverSettings.wartRemoverSettings *)
   .settings(SbtUpdatesSettings.sbtUpdatesSettings *)
   .settings(ScoverageSettings.scoverageSettings *)

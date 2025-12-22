@@ -23,12 +23,13 @@ import pp.model.{MyWorkItemFields, Origin}
 import java.time.LocalDateTime
 
 final case class MibOpsMyWorkItem(
-    createdOn:                  LocalDateTime,
-    availableUntil:             LocalDateTime,
-    taxType:                    String,
-    origin:                     Origin,
-    reference:                  String,
-    modsPaymentCallBackRequest: ModsPaymentCallBackRequest) extends MyWorkItemFields {
+  createdOn:                  LocalDateTime,
+  availableUntil:             LocalDateTime,
+  taxType:                    String,
+  origin:                     Origin,
+  reference:                  String,
+  modsPaymentCallBackRequest: ModsPaymentCallBackRequest
+) extends MyWorkItemFields {
 
   override def toString: String =
     s"MibWorkItem for chargeReference ${modsPaymentCallBackRequest.chargeReference} ... " +

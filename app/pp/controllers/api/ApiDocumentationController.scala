@@ -31,8 +31,8 @@ class ApiDocumentationController @Inject() (assets: Assets, cc: ControllerCompon
     assets.at("/public/api", "definition.json")
 
   def conf(
-      version: String,
-      file:    String
+    version: String,
+    file:    String
   ): Action[AnyContent] =
     assets.at(s"/public/api/conf/$version", file)
 

@@ -29,20 +29,20 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class MibController @Inject() (
-    cc:                    ControllerComponents,
-    val mibOpsQueueConfig: MibOpsQueueConfig,
-    val configuration:     Configuration,
-    val mibOpsService:     MibOpsService,
-    val mibConnector:      MibConnector
-
-)
-  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with MibRetries {
+  cc:                    ControllerComponents,
+  val mibOpsQueueConfig: MibOpsQueueConfig,
+  val configuration:     Configuration,
+  val mibOpsService:     MibOpsService,
+  val mibConnector:      MibConnector
+)(implicit val executionContext: ExecutionContext)
+    extends BackendController(cc)
+    with MibRetries {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def paymentCallBack(): Action[ModsPaymentCallBackRequest] = Action.async(parse.json[ModsPaymentCallBackRequest]) { implicit request =>
-    logger.debug("sendStatusUpdateToMib")
-    sendPaymentUpdateToMib(request.body)
+  def paymentCallBack(): Action[ModsPaymentCallBackRequest] = Action.async(parse.json[ModsPaymentCallBackRequest]) {
+    implicit request =>
+      logger.debug("sendStatusUpdateToMib")
+      sendPaymentUpdateToMib(request.body)
   }
 }
-

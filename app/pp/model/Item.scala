@@ -26,8 +26,6 @@ final case class Item(createdOn: LocalDateTime, reference: String, failureCount:
 
 object Item {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val itemFormat: OFormat[Item] = {
+  implicit val itemFormat: OFormat[Item] =
     Json.format[Item]
-  }
 }
-

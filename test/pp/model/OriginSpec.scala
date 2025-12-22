@@ -24,7 +24,7 @@ import support.{RichMatchers, UnitSpec}
 class OriginSpec extends UnitSpec with RichMatchers {
   "Origins should de/serialize" in {
     val origins: List[(String, Origin)] = List[(String, Origin)](
-      "OPS" -> OPS,
+      "OPS"     -> OPS,
       "PCI_PAL" -> PCI_PAL
     )
 
@@ -37,4 +37,3 @@ class OriginSpec extends UnitSpec with RichMatchers {
     }
   }
 }
-

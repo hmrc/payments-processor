@@ -25,7 +25,7 @@ class PngrStatusTypesSpec extends UnitSpec with RichMatchers {
   "de/serialize PngrStatusTypes" in {
 
     val pngrStatusTypes: List[(String, PngrStatusType)] = List[(String, PngrStatusType)](
-      "Failed" -> PngrStatusTypes.Failed,
+      "Failed"     -> PngrStatusTypes.Failed,
       "Successful" -> PngrStatusTypes.Successful
     )
 

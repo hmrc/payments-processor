@@ -22,12 +22,11 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class PngrsQueueConfig @Inject() (val configuration: Configuration) extends QueueConfig {
-  //All Configs need these
-  val prefix = "pngr"
+  // All Configs need these
+  val prefix         = "pngr"
   val collectionName = "pngr-notifications"
 
-  //Specific to this config
+  // Specific to this config
   val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
 
 }
-

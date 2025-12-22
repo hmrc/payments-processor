@@ -26,10 +26,12 @@ import pp.services.ChargeRefService
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ChargeRefNotificationPollingService @Inject() (actorSystem: ActorSystem,
-                                                     queueConfig: ChargeRefQueueConfig, workItemService: ChargeRefService)(
-    implicit
-    ec: ExecutionContext) extends PollingService[ChargeRefNotificationMyWorkItem](actorSystem, queueConfig, workItemService) {
+class ChargeRefNotificationPollingService @Inject() (
+  actorSystem:     ActorSystem,
+  queueConfig:     ChargeRefQueueConfig,
+  workItemService: ChargeRefService
+)(implicit ec: ExecutionContext)
+    extends PollingService[ChargeRefNotificationMyWorkItem](actorSystem, queueConfig, workItemService) {
 
   override def name: String = "ChargeRefNotificationPollingService"
 

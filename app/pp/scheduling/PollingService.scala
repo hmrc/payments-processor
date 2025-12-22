@@ -27,15 +27,16 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements")) // for line 42: `callExecutor(name)`
-abstract class PollingService[P <: MyWorkItemFields](val actorSystem:     ActorSystem,
-                                                     val queueConfig:     QueueConfig,
-                                                     val workItemService: WorkItemService[P])(
-    implicit
-    ec: ExecutionContext) extends ExclusiveScheduledJob {
+abstract class PollingService[P <: MyWorkItemFields](
+  val actorSystem:     ActorSystem,
+  val queueConfig:     QueueConfig,
+  val workItemService: WorkItemService[P]
+)(implicit ec: ExecutionContext)
+    extends ExclusiveScheduledJob {
 
   lazy val initialDelay: FiniteDuration = queueConfig.pollerInitialDelay
-  lazy val interval: FiniteDuration = queueConfig.pollerInterval
-  private val logger: Logger = Logger(this.getClass.getSimpleName)
+  lazy val interval: FiniteDuration     = queueConfig.pollerInterval
+  private val logger: Logger            = Logger(this.getClass.getSimpleName)
 
   logger.debug(s"Starting $name, Initial delay: ${initialDelay.toString()}, Polling interval: ${interval.toString()}")
 
@@ -44,22 +45,20 @@ abstract class PollingService[P <: MyWorkItemFields](val actorSystem:     ActorS
   override def executeInMutex(implicit ec: ExecutionContext): Future[Result] =
     workItemService.retrieveWorkItems.map(items => Result(s"$name: Processed ${items.size.toString} items"))
 
-  def callExecutor(name: String)(implicit ec: ExecutionContext): Cancellable = {
-    actorSystem.scheduler.scheduleWithFixedDelay(initialDelay, interval) (() => {
+  def callExecutor(name: String)(implicit ec: ExecutionContext): Cancellable =
+    actorSystem.scheduler.scheduleWithFixedDelay(initialDelay, interval) { () =>
       if (queueConfig.pollerEnabled) {
         executor(name)
       } else {
         logger.warn(s"$name: Poller enabled is false")
       }
-    })
-  }
+    }
 
-  def executor(name: String)(implicit ec: ExecutionContext): Unit = {
-    execute.onComplete({
+  def executor(name: String)(implicit ec: ExecutionContext): Unit =
+    execute.onComplete {
       case Success(Result(res)) =>
         logger.debug(res)
-      case Failure(throwable) =>
+      case Failure(throwable)   =>
         logger.error(s"$name: Exception completing work item", throwable)
-    })
-  }
+    }
 }

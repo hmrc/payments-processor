@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import pp.connectors.ResponseReadsThrowingException.readResponse
 import pp.model.mods.ModsPaymentCallBackRequest
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class MibConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
 
-  private def serviceURL: String = s"${servicesConfig.baseUrl("merchandise-in-baggage")}/declare-commercial-goods/payment-callback"
+  private def serviceURL: String =
+    s"${servicesConfig.baseUrl("merchandise-in-baggage")}/declare-commercial-goods/payment-callback"
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 

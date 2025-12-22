@@ -23,12 +23,13 @@ import pp.model.{MyWorkItemFields, Origin}
 import java.time.LocalDateTime
 
 final case class PngrMyWorkItem(
-    createdOn:      LocalDateTime,
-    availableUntil: LocalDateTime,
-    taxType:        String,
-    origin:         Origin,
-    reference:      String,
-    status:         PngrStatusType) extends MyWorkItemFields {
+  createdOn:      LocalDateTime,
+  availableUntil: LocalDateTime,
+  taxType:        String,
+  origin:         Origin,
+  reference:      String,
+  status:         PngrStatusType
+) extends MyWorkItemFields {
 
   override def toString: String =
     s"PngrWorkItem for chargeReference $reference ... " +

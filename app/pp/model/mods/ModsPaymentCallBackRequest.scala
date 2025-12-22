@@ -19,8 +19,8 @@ package pp.model.mods
 import play.api.libs.json._
 
 final case class ModsPaymentCallBackRequest(
-    chargeReference:    String,
-    amendmentReference: Option[Int]
+  chargeReference:    String,
+  amendmentReference: Option[Int]
 )
 
 object ModsPaymentCallBackRequest {

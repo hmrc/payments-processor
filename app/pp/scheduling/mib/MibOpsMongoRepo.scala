@@ -27,11 +27,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class MibOpsMongoRepo @Inject() (
-    mongoComponent: MongoComponent,
-    configuration:  Configuration,
-    queueConfig:    MibOpsQueueConfig
-)(implicit ec: ExecutionContext) extends NotificationRepo[MibOpsMyWorkItem](
-  mongoComponent = mongoComponent,
-  configuration  = configuration,
-  queueConfig    = queueConfig)
-
+  mongoComponent: MongoComponent,
+  configuration:  Configuration,
+  queueConfig:    MibOpsQueueConfig
+)(implicit ec: ExecutionContext)
+    extends NotificationRepo[MibOpsMyWorkItem](
+      mongoComponent = mongoComponent,
+      configuration = configuration,
+      queueConfig = queueConfig
+    )

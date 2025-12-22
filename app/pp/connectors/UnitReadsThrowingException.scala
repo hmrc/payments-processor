@@ -16,28 +16,27 @@
 
 package pp.connectors
 
-import uk.gov.hmrc.http.HttpReads.Implicits.{readRaw, readEitherOf, throwOnFailure}
+import uk.gov.hmrc.http.HttpReads.Implicits.{readEitherOf, readRaw, throwOnFailure}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse, UpstreamErrorResponse}
 
 object UnitReadsThrowingException {
 
-  /**
-   * It's a backward compatible implementation of readUnit which throws exception
-   * if the http responds status is 5xx or 4xx.
-   *
-   * Use it by shadowing `readUnit` from import uk.gov.hmrc.http.HttpReads.Implicits.readUnit
-   *
-   * Example:
-   * {{{
-   *   import uk.gov.hmrc.http.HttpReads.Implicits._
-   *   //TIP: don't rename it. It shadows an implicit reads from uk.gov.hmrc.http.HttpReads.Implicits.readUnit
-   *   implicit val readUnit: HttpReads[Unit] = UnitReadsThrowingException.readUnit
-   * }}}
-   *
-   */
+  /** It's a backward compatible implementation of readUnit which throws exception if the http responds status is 5xx or
+    * 4xx.
+    *
+    * Use it by shadowing `readUnit` from import uk.gov.hmrc.http.HttpReads.Implicits.readUnit
+    *
+    * Example:
+    * {{{
+    *   import uk.gov.hmrc.http.HttpReads.Implicits._
+    *   //TIP: don't rename it. It shadows an implicit reads from uk.gov.hmrc.http.HttpReads.Implicits.readUnit
+    *   implicit val readUnit: HttpReads[Unit] = UnitReadsThrowingException.readUnit
+    * }}}
+    */
   implicit val readUnit: HttpReads[Unit] = {
     val eitherHttpResponseReads: HttpReads[Either[UpstreamErrorResponse, HttpResponse]] = readEitherOf[HttpResponse]
-    val eitherUnitReads: HttpReads[Either[UpstreamErrorResponse, Unit]] = eitherHttpResponseReads.map(x => x.map(_ => ()))
+    val eitherUnitReads: HttpReads[Either[UpstreamErrorResponse, Unit]]                 =
+      eitherHttpResponseReads.map(x => x.map(_ => ()))
     throwOnFailure(eitherUnitReads)
   }
 

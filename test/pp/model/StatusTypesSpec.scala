@@ -25,7 +25,7 @@ class StatusTypesSpec extends UnitSpec {
 
     val statusTypes: List[(String, StatusType)] = List[(String, StatusType)](
       "validated" -> StatusTypes.validated,
-      "failed" -> StatusTypes.failed
+      "failed"    -> StatusTypes.failed
     )
 
     statusTypes.foreach { tt =>
@@ -35,4 +35,3 @@ class StatusTypesSpec extends UnitSpec {
     }
   }
 }
-

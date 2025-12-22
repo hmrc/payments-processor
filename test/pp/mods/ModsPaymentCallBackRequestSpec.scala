@@ -25,12 +25,16 @@ class ModsPaymentCallBackRequestSpec extends UnitSpec with RichMatchers {
 
   "to json" in {
     Json.toJson(modsPaymentCallBackRequestWithAmendmentRef) shouldBe modsPaymentCallbackRequestWithAmendmentRefJson
-    Json.toJson(modsPaymentCallBackRequestWithoutAmendmentRef) shouldBe modsPaymentCallbackRequestWithoutAmendmentRefJson
+    Json.toJson(
+      modsPaymentCallBackRequestWithoutAmendmentRef
+    ) shouldBe modsPaymentCallbackRequestWithoutAmendmentRefJson
   }
 
   "from json" in {
-    modsPaymentCallbackRequestWithAmendmentRefJson.as[ModsPaymentCallBackRequest] shouldBe modsPaymentCallBackRequestWithAmendmentRef
-    modsPaymentCallbackRequestWithoutAmendmentRefJson.as[ModsPaymentCallBackRequest] shouldBe modsPaymentCallBackRequestWithoutAmendmentRef
+    modsPaymentCallbackRequestWithAmendmentRefJson
+      .as[ModsPaymentCallBackRequest] shouldBe modsPaymentCallBackRequestWithAmendmentRef
+    modsPaymentCallbackRequestWithoutAmendmentRefJson
+      .as[ModsPaymentCallBackRequest] shouldBe modsPaymentCallBackRequestWithoutAmendmentRef
   }
 
 }

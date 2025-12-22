@@ -37,14 +37,16 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit execution
     val _ = auditConnector.sendExtendedEvent(
       ExtendedDataEvent(
         auditSource = auditSource,
-        auditType   = a.auditType,
-        eventId     = UUID.randomUUID().toString,
-        tags        = hc.toAuditTags(),
-        detail      = Json.toJson(a)
+        auditType = a.auditType,
+        eventId = UUID.randomUUID().toString,
+        tags = hc.toAuditTags(),
+        detail = Json.toJson(a)
       )
     )
   }
 
-  def auditPcipalNotificationEvent(notificationPcipalRequest: ChargeRefNotificationPcipalRequest)(implicit headerCarrier: HeaderCarrier): Unit =
+  def auditPcipalNotificationEvent(notificationPcipalRequest: ChargeRefNotificationPcipalRequest)(implicit
+    headerCarrier: HeaderCarrier
+  ): Unit =
     audit(PcipalNotificationAuditEvent(notificationPcipalRequest))
 }

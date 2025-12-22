@@ -27,12 +27,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PngrMongoRepo @Inject() (
-    mongoComponent: MongoComponent,
-    configuration:  Configuration,
-    queueConfig:    PngrsQueueConfig)
-  (implicit ec: ExecutionContext)
-  extends NotificationRepo[PngrMyWorkItem](
-    mongoComponent = mongoComponent,
-    configuration  = configuration,
-    queueConfig    = queueConfig)
-
+  mongoComponent: MongoComponent,
+  configuration:  Configuration,
+  queueConfig:    PngrsQueueConfig
+)(implicit ec: ExecutionContext)
+    extends NotificationRepo[PngrMyWorkItem](
+      mongoComponent = mongoComponent,
+      configuration = configuration,
+      queueConfig = queueConfig
+    )

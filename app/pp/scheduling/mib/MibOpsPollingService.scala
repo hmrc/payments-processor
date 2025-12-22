@@ -26,10 +26,12 @@ import pp.services.MibOpsService
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class MibOpsPollingService @Inject() (actorSystem: ActorSystem,
-                                      queueConfig: MibOpsQueueConfig, workItemService: MibOpsService)(
-    implicit
-    ec: ExecutionContext) extends PollingService[MibOpsMyWorkItem](actorSystem, queueConfig, workItemService) {
+class MibOpsPollingService @Inject() (
+  actorSystem:     ActorSystem,
+  queueConfig:     MibOpsQueueConfig,
+  workItemService: MibOpsService
+)(implicit ec: ExecutionContext)
+    extends PollingService[MibOpsMyWorkItem](actorSystem, queueConfig, workItemService) {
 
   override def name: String = "MibOpsPollingService"
 
