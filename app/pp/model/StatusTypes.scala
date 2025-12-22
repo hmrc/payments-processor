@@ -32,7 +32,7 @@ object StatusType {
   implicit val eq: Eq[StatusType]                          = Eq.fromUniversalEquals
 }
 
-sealed trait StatusType extends EnumEntry
+sealed trait StatusType extends EnumEntry derives CanEqual
 
 object StatusTypes extends Enum[StatusType] {
 

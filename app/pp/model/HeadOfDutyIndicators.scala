@@ -31,7 +31,7 @@ object HeadOfDutyIndicator {
   implicit val headOfDutyBinder: PathBindable[HeadOfDutyIndicator]  = valueClassBinder(_.toString)
 }
 
-sealed trait HeadOfDutyIndicator extends EnumEntry
+sealed trait HeadOfDutyIndicator extends EnumEntry derives CanEqual
 
 object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
   def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString === code)

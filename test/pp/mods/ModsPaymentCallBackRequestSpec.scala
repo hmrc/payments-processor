@@ -18,6 +18,7 @@ package pp.mods
 
 import play.api.libs.json.Json
 import pp.model.mods.ModsPaymentCallBackRequest
+import support.Givens.canEqualJsValue
 import support.PaymentsProcessData.{modsPaymentCallBackRequestWithAmendmentRef, modsPaymentCallBackRequestWithoutAmendmentRef, modsPaymentCallbackRequestWithAmendmentRefJson, modsPaymentCallbackRequestWithoutAmendmentRefJson}
 import support.{RichMatchers, UnitSpec}
 

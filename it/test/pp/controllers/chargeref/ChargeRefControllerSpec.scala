@@ -38,15 +38,15 @@ trait ChargeRefControllerSpec extends ItSpec {
   protected def numberOfQueuedNotifications: Long = repo.countAll().futureValue
 
   def aSynchronousEndpointWhenTheDesNotificationSucceeds(): Unit = {
-      def verifySuccess(
-          response:        HttpResponse,
-          checkDes:        Boolean      = true,
-          checkTpsBackend: Boolean      = false): Assertion = {
-        response.status shouldBe 200
-        if (checkDes) verify(1, postRequestedFor(urlEqualTo(Des.endpoint)))
-        if (checkTpsBackend) verify(1, patchRequestedFor(urlEqualTo(TpsPaymentsBackend.updateEndpoint)))
-        numberOfQueuedNotifications shouldBe 0
-      }
+    def verifySuccess(
+                       response: HttpResponse,
+                       checkDes: Boolean = true,
+                       checkTpsBackend: Boolean = false): Assertion = {
+      response.status shouldBe 200
+      if (checkDes) verify(1, postRequestedFor(urlEqualTo(Des.endpoint)))
+      if (checkTpsBackend) verify(1, patchRequestedFor(urlEqualTo(TpsPaymentsBackend.updateEndpoint)))
+      numberOfQueuedNotifications shouldBe 0
+    }
 
     "return Ok for a POST to the internal endpoint /send-card-payments-notification" when {
       "the Des call succeeds with OK" in {
@@ -60,7 +60,7 @@ trait ChargeRefControllerSpec extends ItSpec {
       }
     }
 
-    s"return Ok for a POST to the public api /send-card-payments" when {
+    "return Ok for a POST to the public api /send-card-payments" when {
       "the Des call succeeds with OK, status=complete" in {
         Des.cardPaymentsNotificationSucceeds()
         TpsPaymentsBackend.getTaxTypeOk(p800PaymentItemId, p800)

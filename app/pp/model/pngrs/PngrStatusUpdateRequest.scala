@@ -18,7 +18,7 @@ package pp.model.pngrs
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusType)
+final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusType) derives CanEqual
 
 object PngrStatusUpdateRequest {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

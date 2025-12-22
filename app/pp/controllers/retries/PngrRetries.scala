@@ -28,7 +28,7 @@ import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait PngrRetries extends Results {
+trait PngrRetries extends Results with CanEqualInstance {
 
   val logger: Logger
   val pngrQueueConfig: PngrsQueueConfig
@@ -44,7 +44,7 @@ trait PngrRetries extends Results {
       .map(_ => Ok)
       .recoverWith {
         case e: UpstreamErrorResponse if e.statusCode === 400 =>
-          Future.failed(new BadRequestException(e.getMessage()))
+          Future.failed(new BadRequestException(e.getMessage))
         case e: UpstreamErrorResponse if e.statusCode === 404 =>
           Future.failed(new BadGatewayException(e.message))
         case e                                                =>

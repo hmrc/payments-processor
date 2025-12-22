@@ -31,5 +31,5 @@ trait ScheduledJob {
 
   def interval: FiniteDuration
 
-  override def toString = s"$name after ${initialDelay.toString()} every ${interval.toString()}"
+  override def toString: String = s"$name after ${initialDelay.toString()} every ${interval.toString()}"
 }

@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, HttpReads, HttpRespons
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 @Singleton
 class TestConnector @Inject() (httpClient: HttpClientV2)(implicit executionContext: ExecutionContext) {

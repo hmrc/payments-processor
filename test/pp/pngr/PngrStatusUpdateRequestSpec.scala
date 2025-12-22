@@ -18,6 +18,7 @@ package pp.pngr
 
 import play.api.libs.json.Json
 import pp.model.pngrs.PngrStatusUpdateRequest
+import support.Givens.canEqualJsValue
 import support.PaymentsProcessData.{pngrStatusUpdateRequest, pngrStatusUpdateRequestJson}
 import support.UnitSpec
 

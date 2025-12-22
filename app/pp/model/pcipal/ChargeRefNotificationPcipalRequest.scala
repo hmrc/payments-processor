@@ -36,7 +36,7 @@ final case class ChargeRefNotificationPcipalRequest(
   ChargeReference:      String = "",
   ReferenceNumber:      String,
   CardLast4:            String
-)
+) derives CanEqual
 
 object ChargeRefNotificationPcipalRequest {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

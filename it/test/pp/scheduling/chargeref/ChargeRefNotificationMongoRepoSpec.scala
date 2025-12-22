@@ -21,6 +21,7 @@ import pp.model.TaxTypes
 import pp.model.wokitems.ChargeRefNotificationMyWorkItem
 import support.{ItSpec, PaymentsProcessData}
 import uk.gov.hmrc.mongo.workitem._
+import org.mongodb.scala.ObservableFuture
 
 class ChargeRefNotificationMongoRepoSpec extends ItSpec {
 

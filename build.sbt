@@ -3,7 +3,7 @@ import uk.gov.hmrc.DefaultBuildSettings
 val appName = "payments-processor"
 
 ThisBuild / majorVersion := 1
-ThisBuild / scalaVersion := "2.13.17"
+ThisBuild / scalaVersion := "3.3.7"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
@@ -38,23 +38,18 @@ lazy val it = project
   .settings(libraryDependencies ++= AppDependencies.test)
 
 lazy val scalaCompilerOptions = Seq(
+  "-language:implicitConversions",
+  "-language:reflectiveCalls",
+  "-language:strictEquality",
   "-Xfatal-warnings",
-  "-Xlint:-missing-interpolator,_",
-  "-Xlint:adapted-args",
-  "-Ywarn-unused:implicits",
-  "-Ywarn-unused:imports",
-  "-Ywarn-unused:locals",
-  "-Ywarn-unused:params",
-  "-Ywarn-unused:patvars",
-  "-Ywarn-unused:privates",
-  "-Ywarn-value-discard",
-  "-Ywarn-dead-code",
+  "-Wunused:implicits",
+  "-Wunused:imports",
+  "-Wunused:locals",
+  "-Wunused:params",
+  "-Wunused:patvars",
+  "-Wunused:privates",
   "-deprecation",
   "-feature",
   "-unchecked",
-  "-language:implicitConversions",
-  "-language:reflectiveCalls",
-  // required in place of silencer plugin
-  "-Wconf:cat=unused-imports&src=routes/.*:s",
   "-Wconf:src=routes/.*:s"
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package pp.model.chargeref
+package pp.controllers.retries
 
-import play.api.libs.json._
-import pp.model.{Origin, TaxType}
+import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
-final case class ChargeRefNotificationRequest(
-  taxType:         TaxType,
-  chargeRefNumber: String,
-  amountPaid:      BigDecimal,
-  origin:          Origin
-) derives CanEqual
-
-object ChargeRefNotificationRequest {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
+trait CanEqualInstance {
+  given CanEqual[ProcessingStatus, ProcessingStatus] = CanEqual.derived
 }

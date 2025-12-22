@@ -32,7 +32,7 @@ object ProcessingStatusOps {
   implicit val statusBinder: PathBindable[ProcessingStatusOps]      = valueClassBinder(_.toString)
 }
 
-sealed abstract class ProcessingStatusOps extends EnumEntry {
+sealed abstract class ProcessingStatusOps extends EnumEntry derives CanEqual {
   val processingStatus: uk.gov.hmrc.mongo.workitem.ProcessingStatus
 }
 

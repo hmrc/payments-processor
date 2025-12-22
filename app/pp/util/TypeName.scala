@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package pp.model.chargeref
+package pp.util
 
-import play.api.libs.json._
-import pp.model.{Origin, TaxType}
+import scala.quoted.{Expr, Quotes, Type}
 
-final case class ChargeRefNotificationRequest(
-  taxType:         TaxType,
-  chargeRefNumber: String,
-  amountPaid:      BigDecimal,
-  origin:          Origin
-) derives CanEqual
+object TypeName:
 
-object ChargeRefNotificationRequest {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
-}
+  inline def of[A]: String = ${ impl[A] }
+
+  def impl[A](using Type[A], Quotes): Expr[String] =
+    Expr(Type.show[A])

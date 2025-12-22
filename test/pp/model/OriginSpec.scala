@@ -20,6 +20,7 @@ import play.api.libs.json.JsString
 import play.api.libs.json.Json.toJson
 import pp.model.Origins.{OPS, PCI_PAL}
 import support.{RichMatchers, UnitSpec}
+import support.Givens.canEqualJsValue
 
 class OriginSpec extends UnitSpec with RichMatchers {
   "Origins should de/serialize" in {

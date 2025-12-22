@@ -31,7 +31,7 @@ object PngrStatusType {
   implicit val statusBinder: PathBindable[PngrStatusType]      = valueClassBinder(_.toString)
 }
 
-sealed abstract class PngrStatusType extends EnumEntry
+sealed abstract class PngrStatusType extends EnumEntry derives CanEqual
 
 object PngrStatusTypes extends Enum[PngrStatusType] {
 

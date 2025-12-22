@@ -26,7 +26,7 @@ import cats.Eq
 import java.util.Locale
 import scala.collection.immutable
 
-sealed abstract class TaxType extends EnumEntry {
+sealed abstract class TaxType extends EnumEntry derives CanEqual {
   val sendToDes: Boolean = true
   val tpsValue: String   = entryName.toUpperCase(Locale.UK)
 }
@@ -88,7 +88,7 @@ object TaxTypes extends Enum[TaxType] {
 
   case object `corporation-tax` extends TaxType
 
-  final case object p800 extends TaxType {
+  case object p800 extends TaxType {
     override val sendToDes: Boolean = false
   }
 

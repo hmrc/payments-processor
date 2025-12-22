@@ -21,7 +21,7 @@ import play.api.libs.json._
 final case class ModsPaymentCallBackRequest(
   chargeReference:    String,
   amendmentReference: Option[Int]
-)
+) derives CanEqual
 
 object ModsPaymentCallBackRequest {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

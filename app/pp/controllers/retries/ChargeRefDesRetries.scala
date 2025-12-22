@@ -27,7 +27,7 @@ import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 import scala.concurrent.{ExecutionContext, Future}
 import cats.implicits.catsSyntaxEq
 
-trait ChargeRefDesRetries extends Results {
+trait ChargeRefDesRetries extends Results with CanEqualInstance {
 
   val logger: Logger
   val chargeRefService: ChargeRefService

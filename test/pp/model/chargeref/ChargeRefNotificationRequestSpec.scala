@@ -17,6 +17,7 @@
 package pp.model.chargeref
 
 import play.api.libs.json.Json.toJson
+import support.Givens.canEqualJsValue
 import support.PaymentsProcessData.{chargeRefNotificationRequestJson, p800ChargeRefNotificationRequest}
 import support.UnitSpec
 
