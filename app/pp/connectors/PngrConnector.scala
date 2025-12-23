@@ -21,14 +21,16 @@ import play.api.libs.json.Json
 import pp.connectors.ResponseReadsThrowingException.readResponse
 import pp.model.pngrs.PngrStatusUpdateRequest
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PngrConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
+class PngrConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit
+  ec: ExecutionContext
+) {
 
   private val serviceURL: String = s"${servicesConfig.baseUrl("bc-passengers-declarations")}/bc-passengers-declarations"
 

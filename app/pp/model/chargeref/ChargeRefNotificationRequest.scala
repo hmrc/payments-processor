@@ -20,14 +20,13 @@ import play.api.libs.json._
 import pp.model.{Origin, TaxType}
 
 final case class ChargeRefNotificationRequest(
-    taxType:         TaxType,
-    chargeRefNumber: String,
-    amountPaid:      BigDecimal,
-    origin:          Origin
+  taxType:         TaxType,
+  chargeRefNumber: String,
+  amountPaid:      BigDecimal,
+  origin:          Origin
 )
 
 object ChargeRefNotificationRequest {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
 }
-

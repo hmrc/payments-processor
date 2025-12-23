@@ -30,4 +30,3 @@ class ChargeRefNotificationRequestSpec extends UnitSpec {
     chargeRefNotificationRequestJson.as[ChargeRefNotificationRequest] shouldBe p800ChargeRefNotificationRequest
   }
 }
-

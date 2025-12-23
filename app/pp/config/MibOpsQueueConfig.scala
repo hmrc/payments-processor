@@ -22,9 +22,8 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class MibOpsQueueConfig @Inject() (val configuration: Configuration) extends QueueConfig {
-  //All Configs need these
-  val prefix = "mibops"
+  // All Configs need these
+  val prefix         = "mibops"
   val collectionName = "mibops"
 
 }
-

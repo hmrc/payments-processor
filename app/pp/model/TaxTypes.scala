@@ -28,18 +28,18 @@ import scala.collection.immutable
 
 sealed abstract class TaxType extends EnumEntry {
   val sendToDes: Boolean = true
-  val tpsValue: String = entryName.toUpperCase(Locale.UK)
+  val tpsValue: String   = entryName.toUpperCase(Locale.UK)
 }
 
 object TaxType {
-  implicit val format: Format[TaxType] = EnumFormat(TaxTypes)
+  implicit val format: Format[TaxType]                  = EnumFormat(TaxTypes)
   implicit val pathBinder: QueryStringBindable[TaxType] = bindableA(_.toString)
-  implicit val taxTypeBinder: PathBindable[TaxType] = valueClassBinder(_.toString)
-  implicit val eq: Eq[TaxType] = Eq.fromUniversalEquals
+  implicit val taxTypeBinder: PathBindable[TaxType]     = valueClassBinder(_.toString)
+  implicit val eq: Eq[TaxType]                          = Eq.fromUniversalEquals
 }
 
 object TaxTypes extends Enum[TaxType] {
-  //As per DES API ....
+  // As per DES API ....
   case object NLIJ extends TaxType
 
   case object CDSX extends TaxType
@@ -48,7 +48,7 @@ object TaxTypes extends Enum[TaxType] {
 
   case object P302 extends TaxType
 
-  //As per standard OPS TaxTypes ....
+  // As per standard OPS TaxTypes ....
 
   case object `self-assessment` extends TaxType
 
@@ -58,35 +58,30 @@ object TaxTypes extends Enum[TaxType] {
 
   case object epaye extends TaxType
 
-  /**
-   * Machine Game Duty
-   */
+  /** Machine Game Duty
+    */
   case object `mg-duty` extends TaxType
 
-  /**
-   * Merchandise in Baggage
-   */
+  /** Merchandise in Baggage
+    */
 
   case object mib extends TaxType {
     override val sendToDes: Boolean = false
   }
 
-  /**
-   * Other tax types
-   */
+  /** Other tax types
+    */
 
   case object other extends TaxType
 
-  /**
-   * Stamp Duty Land Tax (Sdlt)
-   */
+  /** Stamp Duty Land Tax (Sdlt)
+    */
   case object `stamp-duty` extends TaxType
 
   case object class2NationalInsurance extends TaxType
 
-  /**
-   * Passengers
-   */
+  /** Passengers
+    */
   case object pngr extends TaxType {
     override val sendToDes: Boolean = false
   }
@@ -97,23 +92,20 @@ object TaxTypes extends Enum[TaxType] {
     override val sendToDes: Boolean = false
   }
 
-  /**
-   * Northern Ireland
-   */
+  /** Northern Ireland
+    */
 
   case object ni extends TaxType
 
   case object parcels extends TaxType
 
-  /**
-   * Insurance Premium Tax
-   */
+  /** Insurance Premium Tax
+    */
 
   case object insurancePremium extends TaxType
 
-  /**
-   * class3NationalInsurance
-   */
+  /** class3NationalInsurance
+    */
 
   case object class3NationalInsurance extends TaxType
 

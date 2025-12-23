@@ -32,15 +32,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PngrService @Inject() (
-    val repo:        PngrMongoRepo,
-    val queueConfig: PngrsQueueConfig,
-    pngrConnector:   PngrConnector,
-    val clock:       Clock
-)(implicit val executionContext: ExecutionContext) extends WorkItemService[PngrMyWorkItem] with Results {
+  val repo:        PngrMongoRepo,
+  val queueConfig: PngrsQueueConfig,
+  pngrConnector:   PngrConnector,
+  val clock:       Clock
+)(implicit val executionContext: ExecutionContext)
+    extends WorkItemService[PngrMyWorkItem]
+    with Results {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  //These are all specific to pngr processing
+  // These are all specific to pngr processing
   def sendWorkItem(workItem: WorkItem[PngrMyWorkItem]): Future[Unit] = {
 
     logger.debug("inside sendWorkItemToPngr")
@@ -53,10 +55,16 @@ class PngrService @Inject() (
 
   def sendPngrToWorkItemRepo(pngrStatusUpdate: PngrStatusUpdateRequest): Future[WorkItem[PngrMyWorkItem]] = {
     logger.debug("inside sendCardPaymentsNotificationAsync")
-    val time = LocalDateTime.now(clock)
+    val time          = LocalDateTime.now(clock)
     val localDateTime = repo.now()
-    val workItem = wokitems.PngrMyWorkItem(time, availableUntil(time), TaxTypes.pngr.entryName, Origins.PCI_PAL,
-                                           pngrStatusUpdate.reference, pngrStatusUpdate.status)
+    val workItem      = wokitems.PngrMyWorkItem(
+      time,
+      availableUntil(time),
+      TaxTypes.pngr.entryName,
+      Origins.PCI_PAL,
+      pngrStatusUpdate.reference,
+      pngrStatusUpdate.status
+    )
     repo.pushNew(workItem, localDateTime)
 
   }

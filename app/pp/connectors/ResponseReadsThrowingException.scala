@@ -20,6 +20,7 @@ import uk.gov.hmrc.http.{HttpReads, HttpReadsInstances, HttpResponse}
 
 object ResponseReadsThrowingException {
 
-  implicit val readResponse: HttpReads[HttpResponse] = HttpReadsInstances.throwOnFailure(HttpReadsInstances.readEitherOf(HttpReadsInstances.readRaw))
+  implicit val readResponse: HttpReads[HttpResponse] =
+    HttpReadsInstances.throwOnFailure(HttpReadsInstances.readEitherOf(HttpReadsInstances.readRaw))
 
 }

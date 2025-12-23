@@ -19,7 +19,8 @@ package pp.model.audit
 import play.api.libs.json.{Json, OWrites}
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 
-final case class PcipalNotificationAuditEvent(chargeRefNotificationPcipalRequest: ChargeRefNotificationPcipalRequest) extends AuditDetail {
+final case class PcipalNotificationAuditEvent(chargeRefNotificationPcipalRequest: ChargeRefNotificationPcipalRequest)
+    extends AuditDetail {
   val auditType = "PciPalNotificationSuccess"
 }
 

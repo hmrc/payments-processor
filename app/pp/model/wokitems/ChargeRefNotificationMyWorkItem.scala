@@ -22,12 +22,13 @@ import pp.model.{MyWorkItemFields, Origin}
 import java.time.LocalDateTime
 
 final case class ChargeRefNotificationMyWorkItem(
-    createdOn:       LocalDateTime,
-    availableUntil:  LocalDateTime,
-    taxType:         String,
-    chargeRefNumber: String,
-    amountPaid:      BigDecimal,
-    origin:          Origin) extends MyWorkItemFields {
+  createdOn:       LocalDateTime,
+  availableUntil:  LocalDateTime,
+  taxType:         String,
+  chargeRefNumber: String,
+  amountPaid:      BigDecimal,
+  origin:          Origin
+) extends MyWorkItemFields {
 
   override def toString: String =
     s"ChargeRefNotificationWorkItem for chargeReference $chargeRefNumber ... " +

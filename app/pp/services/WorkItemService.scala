@@ -49,7 +49,8 @@ trait WorkItemService[P <: MyWorkItemFields] {
 
   def markAsPermFailed(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]] = {
     logger.warn(s"payments-processor: Failed to process workitem ${workItem.item.toString}")
-    repo.markAs(workItem.id, ProcessingStatus.PermanentlyFailed)
+    repo
+      .markAs(workItem.id, ProcessingStatus.PermanentlyFailed)
       .map(_ => acc :+ workItem)
   }
 
@@ -59,38 +60,35 @@ trait WorkItemService[P <: MyWorkItemFields] {
     sendWorkItem(workItem)
       .map(_ => repo.completeAndDelete(workItem.id))
       .map(_ => acc :+ workItem)
-      .recoverWith {
-        case _ =>
-          repo.markAs(workItem.id, ProcessingStatus.Failed).map(_ => acc)
+      .recoverWith { case _ =>
+        repo.markAs(workItem.id, ProcessingStatus.Failed).map(_ => acc)
       }
   }
 
   def retrieveWorkItems: Future[Seq[WorkItem[P]]] = {
 
-      @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
-      def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[P]]): Future[Seq[WorkItem[P]]] = {
+    @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
+    def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[P]]): Future[Seq[WorkItem[P]]] = {
 
-          def retrieveWorkItem(count: Int): Future[Option[WorkItem[P]]] = {
-            if (count === queueConfig.pollLimit) Future successful None
-            else repo.pullOutstanding
-          }
+      def retrieveWorkItem(count: Int): Future[Option[WorkItem[P]]] =
+        if (count === queueConfig.pollLimit) Future successful None
+        else repo.pullOutstanding
 
-        retrieveWorkItem(count).flatMap {
-          case None => Future successful sentWorkItems
-          case Some(workItem) =>
-            if (isAvailable(workItem.item)) {
-              processThenMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
-                sendNotificationIfFound(count + 1, workItems)
-              }
-            } else {
-              markAsPermFailed(sentWorkItems, workItem).flatMap { workItems =>
-                sendNotificationIfFound(count + 1, workItems)
-              }
+      retrieveWorkItem(count).flatMap {
+        case None           => Future successful sentWorkItems
+        case Some(workItem) =>
+          if (isAvailable(workItem.item)) {
+            processThenMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
+              sendNotificationIfFound(count + 1, workItems)
             }
-        }
+          } else {
+            markAsPermFailed(sentWorkItems, workItem).flatMap { workItems =>
+              sendNotificationIfFound(count + 1, workItems)
+            }
+          }
       }
+    }
 
     sendNotificationIfFound(0, Seq.empty)
   }
 }
-

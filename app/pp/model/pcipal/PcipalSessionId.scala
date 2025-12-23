@@ -22,11 +22,11 @@ import play.api.mvc.{PathBindable, QueryStringBindable}
 import pp.controllers.ValueClassBinder.{bindableA, valueClassBinder}
 
 final case class PcipalSessionId(
-    value: String
+  value: String
 )
 
 object PcipalSessionId {
-  implicit val format: Format[PcipalSessionId] = implicitly[Format[String]].inmap(PcipalSessionId(_), _.value)
-  implicit val binder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
+  implicit val format: Format[PcipalSessionId]                  = implicitly[Format[String]].inmap(PcipalSessionId(_), _.value)
+  implicit val binder: PathBindable[PcipalSessionId]            = valueClassBinder(_.value)
   implicit val pathBinder: QueryStringBindable[PcipalSessionId] = bindableA(_.toString)
 }

@@ -30,20 +30,21 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class PngrUpdateController @Inject() (
-    cc:                  ControllerComponents,
-    val pngrQueueConfig: PngrsQueueConfig,
-    val configuration:   Configuration,
-    val pngrService:     PngrService,
-    val pngrConnector:   PngrConnector
-
-)
-  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator with PngrRetries {
+  cc:                  ControllerComponents,
+  val pngrQueueConfig: PngrsQueueConfig,
+  val configuration:   Configuration,
+  val pngrService:     PngrService,
+  val pngrConnector:   PngrConnector
+)(implicit val executionContext: ExecutionContext)
+    extends BackendController(cc)
+    with HeaderValidator
+    with PngrRetries {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def sendStatusUpdateToPngr(): Action[PngrStatusUpdateRequest] = Action.async(parse.json[PngrStatusUpdateRequest]) { implicit request =>
-    logger.debug("sendStatusUpdateToPngr")
-    sendStatusUpdateToPngr(request.body)
+  def sendStatusUpdateToPngr(): Action[PngrStatusUpdateRequest] = Action.async(parse.json[PngrStatusUpdateRequest]) {
+    implicit request =>
+      logger.debug("sendStatusUpdateToPngr")
+      sendStatusUpdateToPngr(request.body)
   }
 }
-

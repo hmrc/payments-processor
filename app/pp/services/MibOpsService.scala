@@ -32,15 +32,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MibOpsService @Inject() (
-    val repo:        MibOpsMongoRepo,
-    val queueConfig: MibOpsQueueConfig,
-    mibConnector:    MibConnector,
-    val clock:       Clock
-)(implicit val executionContext: ExecutionContext) extends WorkItemService[MibOpsMyWorkItem] with Results {
+  val repo:        MibOpsMongoRepo,
+  val queueConfig: MibOpsQueueConfig,
+  mibConnector:    MibConnector,
+  val clock:       Clock
+)(implicit val executionContext: ExecutionContext)
+    extends WorkItemService[MibOpsMyWorkItem]
+    with Results {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  //These are all specific to mods processing
+  // These are all specific to mods processing
   def sendWorkItem(workItem: WorkItem[MibOpsMyWorkItem]): Future[Unit] = {
 
     logger.debug("inside sendWorkItemToMibOps")
@@ -50,16 +52,18 @@ class MibOpsService @Inject() (
 
   }
 
-  def sendMibOpsToWorkItemRepo(modsPaymentCallBackRequest: ModsPaymentCallBackRequest): Future[WorkItem[MibOpsMyWorkItem]] = {
+  def sendMibOpsToWorkItemRepo(
+    modsPaymentCallBackRequest: ModsPaymentCallBackRequest
+  ): Future[WorkItem[MibOpsMyWorkItem]] = {
     logger.debug("inside sendCardPaymentsNotificationAsync")
-    val time = LocalDateTime.now(clock)
-    val localDateTime = repo.now()
+    val time                       = LocalDateTime.now(clock)
+    val localDateTime              = repo.now()
     val workItem: MibOpsMyWorkItem = MibOpsMyWorkItem(
-      createdOn                  = time,
-      availableUntil             = availableUntil(time),
-      taxType                    = TaxTypes.mib.entryName,
-      origin                     = Origins.OPS,
-      reference                  = modsPaymentCallBackRequest.chargeReference,
+      createdOn = time,
+      availableUntil = availableUntil(time),
+      taxType = TaxTypes.mib.entryName,
+      origin = Origins.OPS,
+      reference = modsPaymentCallBackRequest.chargeReference,
       modsPaymentCallBackRequest = modsPaymentCallBackRequest
     )
     repo.pushNew(workItem, localDateTime)

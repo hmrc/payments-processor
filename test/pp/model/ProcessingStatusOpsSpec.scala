@@ -24,9 +24,9 @@ class ProcessingStatusOpsSpec extends UnitSpec with RichMatchers {
   "de/serialize ProcessingStatusOps" in {
 
     val processingStatusOps: List[(String, ProcessingStatusOps)] = List[(String, ProcessingStatusOps)](
-      "ToDo" -> ProcessingStatusOpsValues.ToDo,
+      "ToDo"              -> ProcessingStatusOpsValues.ToDo,
       "PermanentlyFailed" -> ProcessingStatusOpsValues.PermanentlyFailed,
-      "Failed" -> ProcessingStatusOpsValues.Failed
+      "Failed"            -> ProcessingStatusOpsValues.Failed
     )
 
     ProcessingStatusOpsValues.values.toSet shouldBe processingStatusOps.map(tt => tt._2).toSet
@@ -39,4 +39,3 @@ class ProcessingStatusOpsSpec extends UnitSpec with RichMatchers {
   }
 
 }
-

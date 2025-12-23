@@ -23,12 +23,11 @@ import play.api.libs.json._
 import play.api.mvc.PathBindable
 
 final case class PaymentItemId(
-    value: String
+  value: String
 )
 
 object PaymentItemId {
-  implicit val format: Format[PaymentItemId] = implicitly[Format[String]].inmap(PaymentItemId(_), _.value)
+  implicit val format: Format[PaymentItemId]                = implicitly[Format[String]].inmap(PaymentItemId(_), _.value)
   implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
-  def fresh: PaymentItemId = PaymentItemId(ObjectId.get().toHexString)
+  def fresh: PaymentItemId                                  = PaymentItemId(ObjectId.get().toHexString)
 }
-

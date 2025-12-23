@@ -34,9 +34,11 @@ trait QueueConfig {
 
   lazy val pollLimit: Int = configuration.underlying.getInt(s"$prefix.poller.pollLimit")
 
-  lazy val pollerInitialDelay: FiniteDuration = FiniteDuration(configuration.underlying.getDuration(s"$prefix.poller.initialDelay").toNanos, TimeUnit.NANOSECONDS)
+  lazy val pollerInitialDelay: FiniteDuration =
+    FiniteDuration(configuration.underlying.getDuration(s"$prefix.poller.initialDelay").toNanos, TimeUnit.NANOSECONDS)
 
-  lazy val pollerInterval: FiniteDuration = FiniteDuration(configuration.underlying.getDuration(s"$prefix.poller.interval").toNanos, TimeUnit.NANOSECONDS)
+  lazy val pollerInterval: FiniteDuration =
+    FiniteDuration(configuration.underlying.getDuration(s"$prefix.poller.interval").toNanos, TimeUnit.NANOSECONDS)
 
   lazy val pollerEnabled: Boolean = configuration.underlying.getBoolean(s"$prefix.poller.enabled")
 
@@ -44,7 +46,8 @@ trait QueueConfig {
 
   lazy val retryAfterProperty: String = s"$prefix.queue.retryAfter"
 
-  lazy val ttl: FiniteDuration = FiniteDuration(configuration.underlying.getDuration(s"$prefix.queue.ttl").toNanos, TimeUnit.NANOSECONDS)
+  lazy val ttl: FiniteDuration =
+    FiniteDuration(configuration.underlying.getDuration(s"$prefix.queue.ttl").toNanos, TimeUnit.NANOSECONDS)
 
   lazy val queueAvailableFor: Duration = configuration.underlying.getDuration(s"$prefix.queue.available.for")
 

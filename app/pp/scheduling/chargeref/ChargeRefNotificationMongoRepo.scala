@@ -27,11 +27,12 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ChargeRefNotificationMongoRepo @Inject() (
-    mongoComponent: MongoComponent,
-    configuration:  Configuration,
-    queueConfig:    ChargeRefQueueConfig
-)(implicit ec: ExecutionContext) extends NotificationRepo[ChargeRefNotificationMyWorkItem](
-  mongoComponent = mongoComponent,
-  configuration  = configuration,
-  queueConfig    = queueConfig)
-
+  mongoComponent: MongoComponent,
+  configuration:  Configuration,
+  queueConfig:    ChargeRefQueueConfig
+)(implicit ec: ExecutionContext)
+    extends NotificationRepo[ChargeRefNotificationMyWorkItem](
+      mongoComponent = mongoComponent,
+      configuration = configuration,
+      queueConfig = queueConfig
+    )

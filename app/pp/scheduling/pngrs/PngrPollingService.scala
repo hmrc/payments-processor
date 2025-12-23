@@ -26,10 +26,12 @@ import pp.services.PngrService
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class PngrPollingService @Inject() (actorSystem: ActorSystem,
-                                    queueConfig: PngrsQueueConfig, workItemService: PngrService)(
-    implicit
-    ec: ExecutionContext) extends PollingService[PngrMyWorkItem](actorSystem, queueConfig, workItemService) {
+class PngrPollingService @Inject() (
+  actorSystem:     ActorSystem,
+  queueConfig:     PngrsQueueConfig,
+  workItemService: PngrService
+)(implicit ec: ExecutionContext)
+    extends PollingService[PngrMyWorkItem](actorSystem, queueConfig, workItemService) {
 
   override def name: String = "PngrPollingService"
 

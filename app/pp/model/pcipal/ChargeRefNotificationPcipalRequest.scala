@@ -24,36 +24,41 @@ import pp.model.chargeref.ChargeRefNotificationRequest
 import pp.model.pngrs.{PngrStatusTypes, PngrStatusUpdateRequest}
 
 final case class ChargeRefNotificationPcipalRequest(
-    HoD:                  HeadOfDutyIndicator,
-    TaxReference:         String,
-    Amount:               BigDecimal,
-    Commission:           BigDecimal,
-    CardType:             String,
-    Status:               StatusType,
-    PCIPalSessionId:      PcipalSessionId,
-    TransactionReference: String,
-    paymentItemId:        PaymentItemId,
-    ChargeReference:      String              = "",
-    ReferenceNumber:      String,
-    CardLast4:            String
+  HoD:                  HeadOfDutyIndicator,
+  TaxReference:         String,
+  Amount:               BigDecimal,
+  Commission:           BigDecimal,
+  CardType:             String,
+  Status:               StatusType,
+  PCIPalSessionId:      PcipalSessionId,
+  TransactionReference: String,
+  paymentItemId:        PaymentItemId,
+  ChargeReference:      String = "",
+  ReferenceNumber:      String,
+  CardLast4:            String
 )
 
 object ChargeRefNotificationPcipalRequest {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ChargeRefNotificationPcipalRequest] = Json.format[ChargeRefNotificationPcipalRequest]
 
-  def toChargeRefNotificationRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest, taxType: TaxType): ChargeRefNotificationRequest = {
+  def toChargeRefNotificationRequest(
+    chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest,
+    taxType:                            TaxType
+  ): ChargeRefNotificationRequest =
     chargeref.ChargeRefNotificationRequest(
-      taxType         = taxType,
+      taxType = taxType,
       chargeRefNumber = chargeRefNotificationPciPalRequest.ChargeReference,
-      amountPaid      = chargeRefNotificationPciPalRequest.Amount,
-      origin          = PCI_PAL
+      amountPaid = chargeRefNotificationPciPalRequest.Amount,
+      origin = PCI_PAL
     )
-  }
 
-  def toPngrStatusUpdateRequest(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): PngrStatusUpdateRequest = {
-    PngrStatusUpdateRequest(chargeRefNotificationPciPalRequest.ChargeReference,
-      if (chargeRefNotificationPciPalRequest.Status == validated) PngrStatusTypes.Successful else PngrStatusTypes.Failed)
-  }
+  def toPngrStatusUpdateRequest(
+    chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest
+  ): PngrStatusUpdateRequest =
+    PngrStatusUpdateRequest(
+      chargeRefNotificationPciPalRequest.ChargeReference,
+      if (chargeRefNotificationPciPalRequest.Status == validated) PngrStatusTypes.Successful else PngrStatusTypes.Failed
+    )
 
 }

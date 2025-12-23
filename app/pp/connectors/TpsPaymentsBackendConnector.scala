@@ -23,20 +23,24 @@ import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 import pp.model.{PaymentItemId, TaxType, TaxTypes}
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
+class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit
+  ec: ExecutionContext
+) {
 
   private val serviceURL: String = s"${servicesConfig.baseUrl("tps-payments-backend")}/tps-payments-backend"
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def updateWithPcipalData(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def updateWithPcipalData(
+    chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest
+  )(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     val url: String = s"$serviceURL/update-with-pcipal-data"
     logger.debug(s"""calling tps-payments-updateWithPcipalSessionId find with url $url""")
     httpClient
@@ -51,10 +55,14 @@ class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClientV2, servicesC
       .execute[HttpResponse]
       .map(_.json.as[String])
       .map { taxTypeUpperCase =>
-        TaxTypes.withNameInsensitiveOption(taxTypeUpperCase).getOrElse(throw new RuntimeException(s"Unknown tax type $taxTypeUpperCase"))
+        TaxTypes
+          .withNameInsensitiveOption(taxTypeUpperCase)
+          .getOrElse(throw new RuntimeException(s"Unknown tax type $taxTypeUpperCase"))
       }
 
-  def getModsAmendmentReference(paymentItemId: PaymentItemId)(implicit hc: HeaderCarrier): Future[ModsPaymentCallBackRequest] = {
+  def getModsAmendmentReference(
+    paymentItemId: PaymentItemId
+  )(implicit hc: HeaderCarrier): Future[ModsPaymentCallBackRequest] = {
     val url: String = s"$serviceURL/payment-items/${paymentItemId.value}/mods-amendment-ref"
     logger.debug(s"""calling tps-payments-modsAmendmentRef with url $url""")
     httpClient

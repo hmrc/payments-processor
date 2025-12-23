@@ -30,46 +30,60 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ChargeRefService @Inject() (
-    desConnector:    DesConnector,
-    val repo:        ChargeRefNotificationMongoRepo,
-    val clock:       Clock,
-    val queueConfig: ChargeRefQueueConfig
-)(implicit val executionContext: ExecutionContext) extends WorkItemService[ChargeRefNotificationMyWorkItem] {
+  desConnector:    DesConnector,
+  val repo:        ChargeRefNotificationMongoRepo,
+  val clock:       Clock,
+  val queueConfig: ChargeRefQueueConfig
+)(implicit val executionContext: ExecutionContext)
+    extends WorkItemService[ChargeRefNotificationMyWorkItem] {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  //These are all specific to charge reference processing
+  // These are all specific to charge reference processing
 
   def sendWorkItem(chargeRefNotificationWorkItem: WorkItem[ChargeRefNotificationMyWorkItem]): Future[Unit] = {
 
     logger.debug("inside sendWorkItemToDes")
-    val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationWorkItem.item.taxType.take(4),
-                                                       chargeRefNotificationWorkItem.item.chargeRefNumber,
-                                                       chargeRefNotificationWorkItem.item.amountPaid)
+    val desChargeRef = ChargeRefNotificationDesRequest(
+      chargeRefNotificationWorkItem.item.taxType.take(4),
+      chargeRefNotificationWorkItem.item.chargeRefNumber,
+      chargeRefNotificationWorkItem.item.amountPaid
+    )
     for {
       _ <- desConnector.sendCardPaymentsNotification(desChargeRef)
     } yield ()
 
   }
 
-  def sendCardPaymentsNotificationSync(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[Unit] = {
+  def sendCardPaymentsNotificationSync(
+    chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest
+  ): Future[Unit] = {
     logger.debug("inside sendCardPaymentsNotificationSync")
 
-    val desChargeRef = ChargeRefNotificationDesRequest(chargeRefNotificationPciPalRequest.taxType.entryName.take(4),
-                                                       chargeRefNotificationPciPalRequest.chargeRefNumber,
-                                                       chargeRefNotificationPciPalRequest.amountPaid)
+    val desChargeRef = ChargeRefNotificationDesRequest(
+      chargeRefNotificationPciPalRequest.taxType.entryName.take(4),
+      chargeRefNotificationPciPalRequest.chargeRefNumber,
+      chargeRefNotificationPciPalRequest.amountPaid
+    )
 
     desConnector.sendCardPaymentsNotification(desChargeRef)
   }
 
-  def sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest): Future[WorkItem[ChargeRefNotificationMyWorkItem]] = {
+  def sendCardPaymentsNotificationToWorkItemRepo(
+    chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest
+  ): Future[WorkItem[ChargeRefNotificationMyWorkItem]] = {
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
 
     val localDateTime = repo.now()
-    val workItem = ChargeRefNotificationMyWorkItem(time, availableUntil(time), chargeRefNotificationPciPalRequest.taxType.entryName.take(4),
-                                                   chargeRefNotificationPciPalRequest.chargeRefNumber,
-                                                   chargeRefNotificationPciPalRequest.amountPaid, chargeRefNotificationPciPalRequest.origin)
+    val workItem      = ChargeRefNotificationMyWorkItem(
+      time,
+      availableUntil(time),
+      chargeRefNotificationPciPalRequest.taxType.entryName.take(4),
+      chargeRefNotificationPciPalRequest.chargeRefNumber,
+      chargeRefNotificationPciPalRequest.amountPaid,
+      chargeRefNotificationPciPalRequest.origin
+    )
 
     repo.pushNew(workItem, localDateTime)
 

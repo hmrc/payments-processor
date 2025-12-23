@@ -29,12 +29,12 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import scala.concurrent.ExecutionContext
 @Singleton
 class ReportingController @Inject() (
-    cc:                             ControllerComponents,
-    pngrMongoRepo:                  PngrMongoRepo,
-    chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
-    mibOpsMongoRepo:                MibOpsMongoRepo
-)
-  (implicit val executionContext: ExecutionContext) extends BackendController(cc) {
+  cc:                             ControllerComponents,
+  pngrMongoRepo:                  PngrMongoRepo,
+  chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
+  mibOpsMongoRepo:                MibOpsMongoRepo
+)(implicit val executionContext: ExecutionContext)
+    extends BackendController(cc) {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -45,9 +45,12 @@ class ReportingController @Inject() (
         pngrMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case TaxTypes.p800 =>
         chargeRefNotificationMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
-      case TaxTypes.mib =>
+      case TaxTypes.mib  =>
         mibOpsMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
-      case _ => throw new RuntimeException(s"taxType ${taxType.entryName} not supported, processingState ${processingState.toString} not supported")
+      case _             =>
+        throw new RuntimeException(
+          s"taxType ${taxType.entryName} not supported, processingState ${processingState.toString} not supported"
+        )
     }
   }
 
@@ -57,21 +60,20 @@ class ReportingController @Inject() (
       case TaxTypes.pngr =>
         for {
           m <- pngrMongoRepo.findAll()
-          i = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
+          i  = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
         } yield Ok(Json.toJson(i))
       case TaxTypes.p800 =>
         for {
           m <- chargeRefNotificationMongoRepo.findAll()
-          i = m.map(m2 => Item(m2.item.createdOn, m2.item.chargeRefNumber, m2.failureCount, m2.status.toString))
+          i  = m.map(m2 => Item(m2.item.createdOn, m2.item.chargeRefNumber, m2.failureCount, m2.status.toString))
         } yield Ok(Json.toJson(i))
-      case TaxTypes.mib =>
+      case TaxTypes.mib  =>
         for {
           m <- mibOpsMongoRepo.findAll()
-          i = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
+          i  = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
         } yield Ok(Json.toJson(i))
-      case _ => throw new RuntimeException(s"taxType ${taxType.entryName} not supported")
+      case _             => throw new RuntimeException(s"taxType ${taxType.entryName} not supported")
     }
   }
 
 }
-

@@ -37,20 +37,24 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class ChargeRefControllerPciPal @Inject() (
-    cc:                          ControllerComponents,
-    val chargeRefService:        ChargeRefService,
-    val chargeRefQueueConfig:    ChargeRefQueueConfig,
-    val pngrQueueConfig:         PngrsQueueConfig,
-    tpsPaymentsBackendConnector: TpsPaymentsBackendConnector,
-    val configuration:           Configuration,
-    val pngrService:             PngrService,
-    val pngrConnector:           PngrConnector,
-    val mibOpsService:           MibOpsService,
-    val mibOpsQueueConfig:       MibOpsQueueConfig,
-    val mibConnector:            MibConnector,
-    auditService:                AuditService
-)
-  (implicit val executionContext: ExecutionContext) extends BackendController(cc) with HeaderValidator with ChargeRefDesRetries with PngrRetries with MibRetries {
+  cc:                          ControllerComponents,
+  val chargeRefService:        ChargeRefService,
+  val chargeRefQueueConfig:    ChargeRefQueueConfig,
+  val pngrQueueConfig:         PngrsQueueConfig,
+  tpsPaymentsBackendConnector: TpsPaymentsBackendConnector,
+  val configuration:           Configuration,
+  val pngrService:             PngrService,
+  val pngrConnector:           PngrConnector,
+  val mibOpsService:           MibOpsService,
+  val mibOpsQueueConfig:       MibOpsQueueConfig,
+  val mibConnector:            MibConnector,
+  auditService:                AuditService
+)(implicit val executionContext: ExecutionContext)
+    extends BackendController(cc)
+    with HeaderValidator
+    with ChargeRefDesRetries
+    with PngrRetries
+    with MibRetries {
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -63,43 +67,44 @@ class ChargeRefControllerPciPal @Inject() (
     } match {
       case Success(Some(chargeRefNotificationPcipalRequest)) =>
         logger.debug(s"sendCardPaymentsNotificationPciPal for ${chargeRefNotificationPcipalRequest.toString}")
-        logger.info(s"Notification received from Pcipal, payment status: [ ${chargeRefNotificationPcipalRequest.Status.toString} ]")
+        logger.info(
+          s"Notification received from Pcipal, payment status: [ ${chargeRefNotificationPcipalRequest.Status.toString} ]"
+        )
         auditService.auditPcipalNotificationEvent(chargeRefNotificationPcipalRequest)
         chargeRefNotificationPcipalRequest
-      case Success(None) =>
+      case Success(None)                                     =>
         logger.error(s"Received notification from PciPal but could not parse as json")
         throw new RuntimeException(s"Received notification from PciPal but could not parse as json")
-      case Failure(exception) =>
+      case Failure(exception)                                =>
         logger.error(s"Received notification from PciPal but could not read body. Exception ${exception.toString}")
         throw new RuntimeException("Received notification from PciPal but could not read body ", exception)
     }
 
-      def sendToDesIfValidatedAndConfigured(taxType: TaxType): Future[Status] = {
-        if (notification.Status === validated && (sendAllToDes || taxType.sendToDes)) {
-          processChargeRefNotificationRequest(toChargeRefNotificationRequest(notification, taxType))
-        } else Future successful Ok
-      }
+    def sendToDesIfValidatedAndConfigured(taxType: TaxType): Future[Status] =
+      if (notification.Status === validated && (sendAllToDes || taxType.sendToDes)) {
+        processChargeRefNotificationRequest(toChargeRefNotificationRequest(notification, taxType))
+      } else Future successful Ok
 
-      def sendStatusUpdateToPngrIfConfigured(taxType: TaxType): Future[Status] =
-        if (taxType === TaxTypes.pngr) {
-          sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
-        } else Future successful Ok
+    def sendStatusUpdateToPngrIfConfigured(taxType: TaxType): Future[Status] =
+      if (taxType === TaxTypes.pngr) {
+        sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
+      } else Future successful Ok
 
-      def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
-        if (taxType === TaxTypes.mib && notification.Status === validated) {
-          for {
-            amendmentRef <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
-            modsPayload = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef.amendmentReference)
-            statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
-          } yield statusFromPaymentUpdate
-        } else Future successful Ok
+    def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
+      if (taxType === TaxTypes.mib && notification.Status === validated) {
+        for {
+          amendmentRef            <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
+          modsPayload              = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef.amendmentReference)
+          statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
+        } yield statusFromPaymentUpdate
+      } else Future successful Ok
 
     for {
       taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
-      _ <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)
-      _ <- sendToDesIfValidatedAndConfigured(taxType)
-      _ <- sendStatusUpdateToPngrIfConfigured(taxType)
-      _ <- sendStatusUpdateToMibIfConfigured(taxType)
+      _       <- tpsPaymentsBackendConnector.updateWithPcipalData(notification)
+      _       <- sendToDesIfValidatedAndConfigured(taxType)
+      _       <- sendStatusUpdateToPngrIfConfigured(taxType)
+      _       <- sendStatusUpdateToMibIfConfigured(taxType)
     } yield Ok
   }
 }

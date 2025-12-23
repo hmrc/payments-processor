@@ -31,32 +31,33 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
 abstract class NotificationRepo[A](
-    mongoComponent: MongoComponent,
-    configuration:  Configuration,
-    queueConfig:    QueueConfig
-)(implicit ec: ExecutionContext, format: OFormat[A]) extends WorkItemRepository[A](
-  collectionName = queueConfig.collectionName,
-  mongoComponent = mongoComponent,
-  itemFormat     = format,
-  extraIndexes   = NotificationRepo.indexes(queueConfig.ttl),
-  workItemFields = WorkItemFields.default.copy(availableAt = "availableAt")
-) {
+  mongoComponent: MongoComponent,
+  configuration:  Configuration,
+  queueConfig:    QueueConfig
+)(implicit ec: ExecutionContext, format: OFormat[A])
+    extends WorkItemRepository[A](
+      collectionName = queueConfig.collectionName,
+      mongoComponent = mongoComponent,
+      itemFormat = format,
+      extraIndexes = NotificationRepo.indexes(queueConfig.ttl),
+      workItemFields = WorkItemFields.default.copy(availableAt = "availableAt")
+    ) {
 
-  lazy val retryIntervalMillis: Long = configuration.getMillis(queueConfig.retryAfterProperty)
+  lazy val retryIntervalMillis: Long               = configuration.getMillis(queueConfig.retryAfterProperty)
   override lazy val inProgressRetryAfter: Duration = Duration.ofMillis(retryIntervalMillis)
 
   def pullOutstanding: Future[Option[WorkItem[A]]] =
     super.pullOutstanding(now().minusMillis(retryIntervalMillis.toInt), now())
 
-  def failed(id: ObjectId): Future[Boolean] = {
+  def failed(id: ObjectId): Future[Boolean] =
     markAs(id, ProcessingStatus.Failed)
-  }
 
   override def now(): Instant =
     Instant.now()
 
   def findAll(): Future[List[WorkItem[A]]] =
-    collection.find()
+    collection
+      .find()
       .toFuture()
       .map(_.toList)
 
@@ -74,7 +75,7 @@ abstract class NotificationRepo[A](
 object NotificationRepo {
   def indexes(ttlInSeconds: FiniteDuration): Seq[IndexModel] = Seq(
     IndexModel(
-      keys         = Indexes.ascending("receivedAtTime"),
+      keys = Indexes.ascending("receivedAtTime"),
       indexOptions = IndexOptions().name("receivedAtTime").expireAfter(ttlInSeconds.toSeconds, TimeUnit.SECONDS)
     )
   )

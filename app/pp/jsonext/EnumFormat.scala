@@ -27,7 +27,8 @@ object EnumFormat {
         e.withNameOption(value)
           .map[JsResult[T]](JsSuccess(_))
           .getOrElse(JsError(s"Enum Error: No Value for $value"))
-      case _ => JsError("Can only parse String")
+      case _               => JsError("Can only parse String")
     },
-    Writes(v => JsString(v.entryName)))
+    Writes(v => JsString(v.entryName))
+  )
 }
