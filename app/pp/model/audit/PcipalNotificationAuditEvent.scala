@@ -24,4 +24,4 @@ final case class PcipalNotificationAuditEvent(chargeRefNotificationPcipalRequest
   val auditType = "PciPalNotificationSuccess"
 
 object PcipalNotificationAuditEvent:
-  implicit val writes: OWrites[PcipalNotificationAuditEvent] = Json.writes[PcipalNotificationAuditEvent]
+  given writes: OWrites[PcipalNotificationAuditEvent] = Json.writes[PcipalNotificationAuditEvent]

@@ -24,7 +24,7 @@ object ValueClassBinder:
 
   def valueClassBinder[A: Reads](
     fromAtoString: A => String
-  )(implicit stringBinder: PathBindable[String]): PathBindable[A] =
+  )(using stringBinder: PathBindable[String]): PathBindable[A] =
 
     def parseString(str: String): Either[String, A] =
       JsString(str).validate[A] match

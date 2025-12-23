@@ -31,10 +31,10 @@ sealed abstract class TaxType extends EnumEntry derives CanEqual:
   val tpsValue: String   = entryName.toUpperCase(Locale.UK)
 
 object TaxType:
-  implicit val format: Format[TaxType]                  = EnumFormat(TaxTypes)
-  implicit val pathBinder: QueryStringBindable[TaxType] = bindableA(_.toString)
-  implicit val taxTypeBinder: PathBindable[TaxType]     = valueClassBinder(_.toString)
-  implicit val eq: Eq[TaxType]                          = Eq.fromUniversalEquals
+  given format: Format[TaxType]                  = EnumFormat(TaxTypes)
+  given pathBinder: QueryStringBindable[TaxType] = bindableA(_.toString)
+  given taxTypeBinder: PathBindable[TaxType]     = valueClassBinder(_.toString)
+  given eq: Eq[TaxType]                          = Eq.fromUniversalEquals
 
 object TaxTypes extends Enum[TaxType]:
   // As per DES API ....

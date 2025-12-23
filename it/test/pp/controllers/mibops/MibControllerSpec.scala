@@ -24,7 +24,7 @@ import support.PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef
 import support.{ItSpec, Mib}
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
-trait MibControllerSpec extends ItSpec {
+trait MibControllerSpec extends ItSpec:
 
   private lazy val repo = injector.instanceOf[MibOpsMongoRepo]
 
@@ -73,5 +73,3 @@ trait MibControllerSpec extends ItSpec {
       }
     }
   }
-
-}

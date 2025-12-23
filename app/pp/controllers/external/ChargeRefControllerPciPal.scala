@@ -49,7 +49,7 @@ class ChargeRefControllerPciPal @Inject() (
   val mibOpsQueueConfig:       MibOpsQueueConfig,
   val mibConnector:            MibConnector,
   auditService:                AuditService
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends BackendController(cc)
     with HeaderValidator
     with ChargeRefDesRetries

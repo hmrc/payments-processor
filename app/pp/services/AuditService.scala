@@ -29,11 +29,11 @@ import java.util.UUID
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuditService @Inject() (auditConnector: AuditConnector)(implicit executionContext: ExecutionContext):
+class AuditService @Inject() (auditConnector: AuditConnector)(using executionContext: ExecutionContext):
 
   private val auditSource: String = "payments-processor"
 
-  private def audit[A <: AuditDetail: Writes](a: A)(implicit hc: HeaderCarrier): Unit =
+  private def audit[A <: AuditDetail: Writes](a: A)(using hc: HeaderCarrier): Unit =
     val _ = auditConnector.sendExtendedEvent(
       ExtendedDataEvent(
         auditSource = auditSource,
@@ -44,7 +44,7 @@ class AuditService @Inject() (auditConnector: AuditConnector)(implicit execution
       )
     )
 
-  def auditPcipalNotificationEvent(notificationPcipalRequest: ChargeRefNotificationPcipalRequest)(implicit
+  def auditPcipalNotificationEvent(notificationPcipalRequest: ChargeRefNotificationPcipalRequest)(using
     headerCarrier: HeaderCarrier
   ): Unit =
     audit(PcipalNotificationAuditEvent(notificationPcipalRequest))

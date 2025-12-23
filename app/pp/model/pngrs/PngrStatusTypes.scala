@@ -26,9 +26,9 @@ import cats.syntax.eq.catsSyntaxEq
 import scala.collection.immutable
 
 object PngrStatusType:
-  implicit val format: Format[PngrStatusType]                  = EnumFormat(PngrStatusTypes)
-  implicit val pathBinder: QueryStringBindable[PngrStatusType] = bindableA(_.toString)
-  implicit val statusBinder: PathBindable[PngrStatusType]      = valueClassBinder(_.toString)
+  given format: Format[PngrStatusType]                  = EnumFormat(PngrStatusTypes)
+  given pathBinder: QueryStringBindable[PngrStatusType] = bindableA(_.toString)
+  given statusBinder: PathBindable[PngrStatusType]      = valueClassBinder(_.toString)
 
 sealed abstract class PngrStatusType extends EnumEntry derives CanEqual
 

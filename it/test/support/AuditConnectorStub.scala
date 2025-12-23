@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.JsObject
 import play.mvc.Http.Status
 
-object AuditConnectorStub {
+object AuditConnectorStub:
 
   val auditUrl: String = "/write/audit"
 
@@ -55,5 +55,3 @@ object AuditConnectorStub {
           .withRequestBody(equalToJson(s"""{"auditType": "${at}"}""", true, true)))
     }
   }
-
-}

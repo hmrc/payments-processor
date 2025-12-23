@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PngrConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit
+class PngrConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(using
   ec: ExecutionContext
 ):
 
@@ -38,7 +38,7 @@ class PngrConnector @Inject() (httpClient: HttpClientV2, servicesConfig: Service
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def updateWithStatus(statusUpdate: PngrStatusUpdateRequest): Future[HttpResponse] =
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+    given hc: HeaderCarrier = HeaderCarrier()
 
     val url: String = s"$serviceURL/update-payment"
     logger.debug(s"""c $url""")

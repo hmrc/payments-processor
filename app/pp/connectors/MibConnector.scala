@@ -29,7 +29,7 @@ import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class MibConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext):
+class MibConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(using ec: ExecutionContext):
 
   private def serviceURL: String =
     s"${servicesConfig.baseUrl("merchandise-in-baggage")}/declare-commercial-goods/payment-callback"
@@ -38,7 +38,7 @@ class MibConnector @Inject() (httpClient: HttpClientV2, servicesConfig: Services
 
   def paymentCallback(modsPaymentCallBackRequest: ModsPaymentCallBackRequest): Future[HttpResponse] =
     logger.debug(s"paymentCallback with url $serviceURL")
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+    given hc: HeaderCarrier = HeaderCarrier()
     httpClient
       .post(url"$serviceURL")
       .withBody(Json.toJson(modsPaymentCallBackRequest))

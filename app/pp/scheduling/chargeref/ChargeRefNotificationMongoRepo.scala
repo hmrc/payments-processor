@@ -30,7 +30,7 @@ class ChargeRefNotificationMongoRepo @Inject() (
   mongoComponent: MongoComponent,
   configuration:  Configuration,
   queueConfig:    ChargeRefQueueConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends NotificationRepo[ChargeRefNotificationMyWorkItem](
       mongoComponent = mongoComponent,
       configuration = configuration,

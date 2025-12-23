@@ -22,7 +22,7 @@ import support.Givens.canEqualJsValue
 import support.PaymentsProcessData.{pngrStatusUpdateRequest, pngrStatusUpdateRequestJson}
 import support.UnitSpec
 
-class PngrStatusUpdateRequestSpec extends UnitSpec {
+class PngrStatusUpdateRequestSpec extends UnitSpec:
 
   "to json" in {
     Json.toJson(pngrStatusUpdateRequest) shouldBe pngrStatusUpdateRequestJson
@@ -31,4 +31,3 @@ class PngrStatusUpdateRequestSpec extends UnitSpec {
   "from json" in {
     pngrStatusUpdateRequestJson.as[PngrStatusUpdateRequest] shouldBe pngrStatusUpdateRequest
   }
-}

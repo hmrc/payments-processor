@@ -20,7 +20,7 @@ import play.api.libs.json.{JsString, Json}
 import support.UnitSpec
 import support.Givens.canEqualJsValue
 
-class StatusTypesSpec extends UnitSpec {
+class StatusTypesSpec extends UnitSpec:
 
   "de/serialize TaxTypes" in {
 
@@ -35,4 +35,3 @@ class StatusTypesSpec extends UnitSpec {
       jsValue.as[StatusType] shouldBe tt._2 withClue s"deserialize ${tt.toString}"
     }
   }
-}

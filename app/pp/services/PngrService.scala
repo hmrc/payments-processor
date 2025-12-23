@@ -36,7 +36,7 @@ class PngrService @Inject() (
   val queueConfig: PngrsQueueConfig,
   pngrConnector:   PngrConnector,
   val clock:       Clock
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends WorkItemService[PngrMyWorkItem]
     with Results:
 

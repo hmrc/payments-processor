@@ -33,7 +33,7 @@ trait ChargeRefDesRetries extends Results with CanEqualInstance:
   val chargeRefService: ChargeRefService
   val chargeRefQueueConfig: ChargeRefQueueConfig
   val configuration: Configuration
-  implicit val executionContext: ExecutionContext
+  given executionContext: ExecutionContext
 
   val sendAllToDes: Boolean = configuration.underlying.getBoolean("sendAllToDes")
 

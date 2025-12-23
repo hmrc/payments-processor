@@ -35,7 +35,7 @@ trait MibRetries extends Results with CanEqualInstance:
   val mibConnector: MibConnector
   val mibOpsService: MibOpsService
 
-  implicit val executionContext: ExecutionContext
+  given executionContext: ExecutionContext
 
   def sendPaymentUpdateToMib(modsPaymentCallBackRequest: ModsPaymentCallBackRequest): Future[Status] =
     logger.debug("sendPaymentUpdateToMib")

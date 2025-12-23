@@ -38,4 +38,4 @@ final case class PngrMyWorkItem(
 
 object PngrMyWorkItem:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[PngrMyWorkItem] = Json.format[PngrMyWorkItem]
+  given format: OFormat[PngrMyWorkItem] = Json.format[PngrMyWorkItem]

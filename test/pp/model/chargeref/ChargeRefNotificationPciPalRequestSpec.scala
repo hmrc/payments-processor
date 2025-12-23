@@ -22,7 +22,7 @@ import support.Givens.canEqualJsValue
 import support.PaymentsProcessData.{chargeRefNotificationPciPalRequestJson, p800PcipalNotification}
 import support.UnitSpec
 
-class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
+class ChargeRefNotificationPciPalRequestSpec extends UnitSpec:
 
   "to json" in {
     Json.toJson(p800PcipalNotification) shouldBe chargeRefNotificationPciPalRequestJson
@@ -31,4 +31,3 @@ class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
   "from json" in {
     chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe p800PcipalNotification
   }
-}

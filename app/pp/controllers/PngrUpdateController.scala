@@ -35,7 +35,7 @@ class PngrUpdateController @Inject() (
   val configuration:   Configuration,
   val pngrService:     PngrService,
   val pngrConnector:   PngrConnector
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends BackendController(cc)
     with HeaderValidator
     with PngrRetries:

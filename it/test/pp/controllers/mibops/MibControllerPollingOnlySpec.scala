@@ -21,7 +21,7 @@ import pp.services.MibOpsService
 import support.Mib
 import support.PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef
 
-class MibControllerPollingOnlySpec extends MibControllerSpec {
+class MibControllerPollingOnlySpec extends MibControllerSpec:
 
   private lazy val mibService = injector.instanceOf[MibOpsService]
 
@@ -51,5 +51,3 @@ class MibControllerPollingOnlySpec extends MibControllerSpec {
       }
     }
   }
-
-}

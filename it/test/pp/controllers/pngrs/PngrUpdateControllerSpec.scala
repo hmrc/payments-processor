@@ -26,7 +26,7 @@ import support.PaymentsProcessData.{pngrPaymentItemId, pngrStatusUpdateRequest}
 import support.{ItSpec, Pngr, TpsPaymentsBackend}
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
-trait PngrUpdateControllerSpec extends ItSpec {
+trait PngrUpdateControllerSpec extends ItSpec:
 
   private lazy val repo = injector.instanceOf[PngrMongoRepo]
 
@@ -82,5 +82,3 @@ trait PngrUpdateControllerSpec extends ItSpec {
       }
     }
   }
-
-}

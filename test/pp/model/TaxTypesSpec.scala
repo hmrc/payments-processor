@@ -20,7 +20,7 @@ import play.api.libs.json.{JsString, Json}
 import support.{RichMatchers, UnitSpec}
 import support.Givens.canEqualJsValue
 
-class TaxTypesSpec extends UnitSpec with RichMatchers {
+class TaxTypesSpec extends UnitSpec with RichMatchers:
 
   "de/serialize TaxTypes" in {
 
@@ -70,5 +70,3 @@ class TaxTypesSpec extends UnitSpec with RichMatchers {
       jsValue.as[TaxType] shouldBe tt._2 withClue s"deserialize ${tt.toString}"
     }
   }
-
-}

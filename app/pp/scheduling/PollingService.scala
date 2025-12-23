@@ -31,7 +31,7 @@ abstract class PollingService[P <: MyWorkItemFields](
   val actorSystem:     ActorSystem,
   val queueConfig:     QueueConfig,
   val workItemService: WorkItemService[P]
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends ExclusiveScheduledJob:
 
   lazy val initialDelay: FiniteDuration = queueConfig.pollerInitialDelay
@@ -42,16 +42,16 @@ abstract class PollingService[P <: MyWorkItemFields](
 
   callExecutor(name)
 
-  override def executeInMutex(implicit ec: ExecutionContext): Future[Result] =
+  override def executeInMutex(using ec: ExecutionContext): Future[Result] =
     workItemService.retrieveWorkItems.map(items => Result(s"$name: Processed ${items.size.toString} items"))
 
-  def callExecutor(name: String)(implicit ec: ExecutionContext): Cancellable =
+  def callExecutor(name: String)(using ec: ExecutionContext): Cancellable =
     actorSystem.scheduler.scheduleWithFixedDelay(initialDelay, interval) { () =>
       if queueConfig.pollerEnabled then executor(name)
       else logger.warn(s"$name: Poller enabled is false")
     }
 
-  def executor(name: String)(implicit ec: ExecutionContext): Unit =
+  def executor(name: String)(using ec: ExecutionContext): Unit =
     execute.onComplete {
       case Success(Result(res)) =>
         logger.debug(res)

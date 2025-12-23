@@ -38,4 +38,4 @@ final case class MibOpsMyWorkItem(
 
 object MibOpsMyWorkItem:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[MibOpsMyWorkItem] = Json.format[MibOpsMyWorkItem]
+  given format: OFormat[MibOpsMyWorkItem] = Json.format[MibOpsMyWorkItem]

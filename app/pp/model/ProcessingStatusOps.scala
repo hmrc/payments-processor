@@ -27,9 +27,9 @@ import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 import scala.collection.immutable
 
 object ProcessingStatusOps:
-  implicit val format: Format[ProcessingStatusOps]                  = EnumFormat(ProcessingStatusOpsValues)
-  implicit val pathBinder: QueryStringBindable[ProcessingStatusOps] = bindableA(_.toString)
-  implicit val statusBinder: PathBindable[ProcessingStatusOps]      = valueClassBinder(_.toString)
+  given format: Format[ProcessingStatusOps]                  = EnumFormat(ProcessingStatusOpsValues)
+  given pathBinder: QueryStringBindable[ProcessingStatusOps] = bindableA(_.toString)
+  given statusBinder: PathBindable[ProcessingStatusOps]      = valueClassBinder(_.toString)
 
 sealed abstract class ProcessingStatusOps extends EnumEntry derives CanEqual:
   val processingStatus: uk.gov.hmrc.mongo.workitem.ProcessingStatus

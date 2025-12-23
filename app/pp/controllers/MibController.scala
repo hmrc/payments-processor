@@ -34,7 +34,7 @@ class MibController @Inject() (
   val configuration:     Configuration,
   val mibOpsService:     MibOpsService,
   val mibConnector:      MibConnector
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends BackendController(cc)
     with MibRetries:
 

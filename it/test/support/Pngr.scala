@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 
-object Pngr {
+object Pngr:
 
   val endpoint = "/bc-passengers-declarations/update-payment"
   val errorMessage = "pngr failed"
@@ -43,5 +43,3 @@ object Pngr {
           .withFixedDelay(delayMillis))
         .willSetStateTo(WireMockStub.nextState(sequence)))
   }
-
-}

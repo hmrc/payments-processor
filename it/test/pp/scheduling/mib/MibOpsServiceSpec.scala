@@ -29,7 +29,7 @@ import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
 import java.time.{Clock, LocalDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class MibOpsServiceSpec extends ItSpec {
+class MibOpsServiceSpec extends ItSpec:
   private lazy val repo = injector.instanceOf[MibOpsMongoRepo]
   private lazy val mibConnector = injector.instanceOf[MibConnector]
   private lazy val queueConfig = injector.instanceOf[MibOpsQueueConfig]
@@ -95,5 +95,3 @@ class MibOpsServiceSpec extends ItSpec {
       }
     }
   }
-}
-

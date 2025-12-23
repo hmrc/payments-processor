@@ -7,13 +7,15 @@ object ScoverageSettings {
     val excludedFiles = Seq(
       """<empty>""",
       """Reverse.*""",
-      """.*models.*""",
+      """.*model.*""",
       """.*.template.*""",
       """.*components.*""",
       """.*Routes.*""",
       """.*Link.*""",
       """.*TestOnly.scala""",
-      """.*JourneyLogger.scala"""
+      """.*JourneyLogger.scala""",
+      """.*api.*""",
+      """.*util.*"""
     ).mkString("", ";", ";")
 
     val excludedPackages = Seq(

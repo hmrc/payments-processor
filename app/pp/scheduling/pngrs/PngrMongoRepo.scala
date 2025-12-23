@@ -30,7 +30,7 @@ class PngrMongoRepo @Inject() (
   mongoComponent: MongoComponent,
   configuration:  Configuration,
   queueConfig:    PngrsQueueConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends NotificationRepo[PngrMyWorkItem](
       mongoComponent = mongoComponent,
       configuration = configuration,

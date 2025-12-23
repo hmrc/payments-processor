@@ -22,7 +22,7 @@ import play.api.libs.json.Json.toJson
 import pp.model.mods.ModsPaymentCallBackRequest
 import pp.model.{PaymentItemId, TaxType}
 
-object TpsPaymentsBackend {
+object TpsPaymentsBackend:
 
   private val basePath: String = "/tps-payments-backend"
 
@@ -61,4 +61,3 @@ object TpsPaymentsBackend {
 
   def getAmendmentRefNotFound(paymentItemId: PaymentItemId): StubMapping =
     stubFor(get(urlEqualTo(getModsAmendmentRefEndpoint(paymentItemId))).willReturn(aResponse().withStatus(404)))
-}

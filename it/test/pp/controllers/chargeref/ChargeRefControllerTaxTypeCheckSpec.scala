@@ -27,7 +27,7 @@ import support.PaymentsProcessData._
 import support._
 import uk.gov.hmrc.http.HttpResponse
 
-class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
+class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec:
 
   override def configMap: Map[String, Any] =
     super
@@ -93,5 +93,3 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
         }
       }
     }
-
-}

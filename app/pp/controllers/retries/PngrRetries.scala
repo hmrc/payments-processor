@@ -35,7 +35,7 @@ trait PngrRetries extends Results with CanEqualInstance:
   val pngrConnector: PngrConnector
   val pngrService: PngrService
 
-  implicit val executionContext: ExecutionContext
+  given executionContext: ExecutionContext
 
   def sendStatusUpdateToPngr(pngrStatusUpdate: PngrStatusUpdateRequest): Future[Status] =
     logger.debug("sendToPngr")

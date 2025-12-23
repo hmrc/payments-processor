@@ -28,7 +28,7 @@ import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
 import java.time.Clock
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ChargeRefServiceSpec extends ItSpec {
+class ChargeRefServiceSpec extends ItSpec:
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
   private lazy val desConnector = injector.instanceOf[DesConnector]
   private lazy val queueConfig = injector.instanceOf[ChargeRefQueueConfig]
@@ -136,4 +136,3 @@ class ChargeRefServiceSpec extends ItSpec {
       }
     }
   }
-}

@@ -23,7 +23,7 @@ import pp.model.TaxTypes.NLIJ
 import pp.model.chargeref
 import support._
 
-class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
+class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec:
   override def configMap: Map[String, Any] = super.configMap.updated("chargeref.queue.enabled", "true")
 
   "the ChargeRefController" when {
@@ -53,5 +53,3 @@ class ChargeRefControllerQueuingOnlySpec extends ChargeRefControllerSpec {
       }
     }
   }
-
-}

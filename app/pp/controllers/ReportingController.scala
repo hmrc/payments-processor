@@ -33,7 +33,7 @@ class ReportingController @Inject() (
   pngrMongoRepo:                  PngrMongoRepo,
   chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
   mibOpsMongoRepo:                MibOpsMongoRepo
-)(implicit val executionContext: ExecutionContext)
+)(using executionContext: ExecutionContext)
     extends BackendController(cc):
 
   val logger: Logger = Logger(this.getClass.getSimpleName)

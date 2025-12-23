@@ -21,7 +21,7 @@ import play.api.http.Status
 import support.PaymentsProcessData.pngrStatusUpdateRequest
 import support.Pngr
 
-class PngrUpdateControllerQueuingAndPollingEnabledSpec extends PngrUpdateControllerSpec {
+class PngrUpdateControllerQueuingAndPollingEnabledSpec extends PngrUpdateControllerSpec:
 
   override def configMap: Map[String, Any] =
     super
@@ -57,4 +57,3 @@ class PngrUpdateControllerQueuingAndPollingEnabledSpec extends PngrUpdateControl
       verify(3, postRequestedFor(urlEqualTo("/bc-passengers-declarations/update-payment")))
     }
   }
-}

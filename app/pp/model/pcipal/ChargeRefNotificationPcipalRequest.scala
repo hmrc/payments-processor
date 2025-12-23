@@ -40,7 +40,7 @@ final case class ChargeRefNotificationPcipalRequest(
 
 object ChargeRefNotificationPcipalRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationPcipalRequest] = Json.format[ChargeRefNotificationPcipalRequest]
+  given format: OFormat[ChargeRefNotificationPcipalRequest] = Json.format[ChargeRefNotificationPcipalRequest]
 
   def toChargeRefNotificationRequest(
     chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest,

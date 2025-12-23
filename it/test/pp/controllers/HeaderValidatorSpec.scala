@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class HeaderValidatorSpec extends ItSpec with HeaderValidator {
+class HeaderValidatorSpec extends ItSpec with HeaderValidator:
 
   private lazy val parse = injector.instanceOf[PlayBodyParsers]
 
@@ -75,5 +75,3 @@ class HeaderValidatorSpec extends ItSpec with HeaderValidator {
     errorResponse.message shouldBe Constants.acceptHeaderMissing
 
   }
-
-}

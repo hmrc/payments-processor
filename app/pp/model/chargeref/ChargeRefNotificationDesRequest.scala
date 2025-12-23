@@ -23,4 +23,4 @@ final case class ChargeRefNotificationDesRequest(taxType: String, chargeRefNumbe
 
 object ChargeRefNotificationDesRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationDesRequest] = Json.format[ChargeRefNotificationDesRequest]
+  given format: OFormat[ChargeRefNotificationDesRequest] = Json.format[ChargeRefNotificationDesRequest]

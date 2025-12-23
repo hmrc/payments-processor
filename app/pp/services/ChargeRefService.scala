@@ -34,7 +34,7 @@ class ChargeRefService @Inject() (
   val repo:        ChargeRefNotificationMongoRepo,
   val clock:       Clock,
   val queueConfig: ChargeRefQueueConfig
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends WorkItemService[ChargeRefNotificationMyWorkItem]:
 
   val logger: Logger = Logger(this.getClass.getSimpleName)

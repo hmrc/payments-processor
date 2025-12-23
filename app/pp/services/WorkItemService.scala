@@ -32,7 +32,7 @@ trait WorkItemService[P <: MyWorkItemFields]:
 
   val repo: NotificationRepo[P]
 
-  implicit val executionContext: ExecutionContext
+  given executionContext: ExecutionContext
 
   val logger: Logger
 

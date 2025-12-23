@@ -26,9 +26,9 @@ import cats.syntax.eq.catsSyntaxEq
 import scala.collection.immutable
 
 object HeadOfDutyIndicator:
-  implicit val format: Format[HeadOfDutyIndicator]                  = EnumFormat(HeadOfDutyIndicators)
-  implicit val pathBinder: QueryStringBindable[HeadOfDutyIndicator] = bindableA(_.toString)
-  implicit val headOfDutyBinder: PathBindable[HeadOfDutyIndicator]  = valueClassBinder(_.toString)
+  given format: Format[HeadOfDutyIndicator]                  = EnumFormat(HeadOfDutyIndicators)
+  given pathBinder: QueryStringBindable[HeadOfDutyIndicator] = bindableA(_.toString)
+  given headOfDutyBinder: PathBindable[HeadOfDutyIndicator]  = valueClassBinder(_.toString)
 
 sealed trait HeadOfDutyIndicator extends EnumEntry derives CanEqual
 

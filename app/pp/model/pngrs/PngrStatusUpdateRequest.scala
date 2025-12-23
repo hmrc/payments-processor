@@ -22,4 +22,4 @@ final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusTy
 
 object PngrStatusUpdateRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[PngrStatusUpdateRequest] = Json.format[PngrStatusUpdateRequest]
+  given format: OFormat[PngrStatusUpdateRequest] = Json.format[PngrStatusUpdateRequest]

@@ -21,7 +21,7 @@ import pp.model.pngrs.{PngrStatusType, PngrStatusTypes}
 import support.{RichMatchers, UnitSpec}
 import support.Givens.canEqualJsValue
 
-class PngrStatusTypesSpec extends UnitSpec with RichMatchers {
+class PngrStatusTypesSpec extends UnitSpec with RichMatchers:
 
   "de/serialize PngrStatusTypes" in {
 
@@ -38,4 +38,3 @@ class PngrStatusTypesSpec extends UnitSpec with RichMatchers {
       jsValue.as[PngrStatusType] shouldBe tt._2 withClue s"deserialize ${tt.toString}"
     }
   }
-}

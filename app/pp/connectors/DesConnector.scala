@@ -32,7 +32,7 @@ class DesConnector @Inject() (
   servicesConfig: ServicesConfig,
   httpClient:     HttpClientV2,
   configuration:  Configuration
-)(implicit ec: ExecutionContext):
+)(using ec: ExecutionContext):
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -42,7 +42,7 @@ class DesConnector @Inject() (
   private val serviceEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
   private val chargerefUrl: String       = configuration.underlying.getString("microservice.services.des.chargeref-url")
 
-  implicit val readUnit: HttpReads[Unit] = UnitReadsThrowingException.readUnit
+  given readUnit: HttpReads[Unit] = UnitReadsThrowingException.readUnit
 
   private val desHeaderCarrier: HeaderCarrier =
     HeaderCarrier(authorization = Some(Authorization(s"Bearer $authorizationToken")))
@@ -59,7 +59,7 @@ class DesConnector @Inject() (
   private val regex = """[0-9a-zA-Z{À-˿'}\\ &`'^]{1,16}"""
 
   def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[Unit] =
-    implicit val hc: HeaderCarrier = desHeaderCarrier
+    given hc: HeaderCarrier = desHeaderCarrier
 
     val sendChargeRefUrl: String = s"$serviceURL$chargerefUrl"
     logger.debug(

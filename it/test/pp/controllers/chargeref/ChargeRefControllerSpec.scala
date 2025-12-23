@@ -26,7 +26,7 @@ import support.PaymentsProcessData.{p800ChargeRefNotificationRequest, p800Paymen
 import support.{Des, ItSpec, TpsPaymentsBackend}
 import uk.gov.hmrc.http.{HttpResponse, UpstreamErrorResponse}
 
-trait ChargeRefControllerSpec extends ItSpec {
+trait ChargeRefControllerSpec extends ItSpec:
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
 
   override def beforeEach(): Unit = {
@@ -174,4 +174,3 @@ trait ChargeRefControllerSpec extends ItSpec {
       }
     }
   }
-}

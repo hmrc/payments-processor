@@ -27,6 +27,6 @@ final case class PaymentItemId(
 )
 
 object PaymentItemId:
-  implicit val format: Format[PaymentItemId]                = implicitly[Format[String]].inmap(PaymentItemId(_), _.value)
-  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
-  def fresh: PaymentItemId                                  = PaymentItemId(ObjectId.get().toHexString)
+  given format: Format[PaymentItemId]                = implicitly[Format[String]].inmap(PaymentItemId(_), _.value)
+  given journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
+  def fresh: PaymentItemId                           = PaymentItemId(ObjectId.get().toHexString)

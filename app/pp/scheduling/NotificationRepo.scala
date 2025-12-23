@@ -34,7 +34,7 @@ abstract class NotificationRepo[A](
   mongoComponent: MongoComponent,
   configuration:  Configuration,
   queueConfig:    QueueConfig
-)(implicit ec: ExecutionContext, format: OFormat[A])
+)(using ec: ExecutionContext, format: OFormat[A])
     extends WorkItemRepository[A](
       collectionName = queueConfig.collectionName,
       mongoComponent = mongoComponent,

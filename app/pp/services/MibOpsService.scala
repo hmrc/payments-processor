@@ -36,7 +36,7 @@ class MibOpsService @Inject() (
   val queueConfig: MibOpsQueueConfig,
   mibConnector:    MibConnector,
   val clock:       Clock
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends WorkItemService[MibOpsMyWorkItem]
     with Results:
 

@@ -39,7 +39,7 @@ trait HeaderValidator extends Results with Status:
     matchHeader(a) map (res => validateContentType(res.group("contenttype")) && validateVersion(res.group("version")))
   ) getOrElse false
 
-  def validateAccept(rules: Option[String] => Boolean, parse: PlayBodyParsers)(implicit
+  def validateAccept(rules: Option[String] => Boolean, parse: PlayBodyParsers)(using
     ec: ExecutionContext
   ): ActionBuilder[Request, AnyContent] = new ActionBuilder[Request, AnyContent]:
     override def parser: BodyParser[AnyContent]               = parse.defaultBodyParser

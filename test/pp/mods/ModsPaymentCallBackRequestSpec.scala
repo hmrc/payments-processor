@@ -22,7 +22,7 @@ import support.Givens.canEqualJsValue
 import support.PaymentsProcessData.{modsPaymentCallBackRequestWithAmendmentRef, modsPaymentCallBackRequestWithoutAmendmentRef, modsPaymentCallbackRequestWithAmendmentRefJson, modsPaymentCallbackRequestWithoutAmendmentRefJson}
 import support.{RichMatchers, UnitSpec}
 
-class ModsPaymentCallBackRequestSpec extends UnitSpec with RichMatchers {
+class ModsPaymentCallBackRequestSpec extends UnitSpec with RichMatchers:
 
   "to json" in {
     Json.toJson(modsPaymentCallBackRequestWithAmendmentRef) shouldBe modsPaymentCallbackRequestWithAmendmentRefJson
@@ -37,5 +37,3 @@ class ModsPaymentCallBackRequestSpec extends UnitSpec with RichMatchers {
     modsPaymentCallbackRequestWithoutAmendmentRefJson
       .as[ModsPaymentCallBackRequest] shouldBe modsPaymentCallBackRequestWithoutAmendmentRef
   }
-
-}

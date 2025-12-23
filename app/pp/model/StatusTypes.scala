@@ -26,10 +26,10 @@ import play.api.mvc.{PathBindable, QueryStringBindable}
 import scala.collection.immutable
 
 object StatusType:
-  implicit val format: Format[StatusType]                  = EnumFormat(StatusTypes)
-  implicit val pathBinder: QueryStringBindable[StatusType] = bindableA(_.toString)
-  implicit val statusBinder: PathBindable[StatusType]      = valueClassBinder(_.toString)
-  implicit val eq: Eq[StatusType]                          = Eq.fromUniversalEquals
+  given format: Format[StatusType]                  = EnumFormat(StatusTypes)
+  given pathBinder: QueryStringBindable[StatusType] = bindableA(_.toString)
+  given statusBinder: PathBindable[StatusType]      = valueClassBinder(_.toString)
+  given eq: Eq[StatusType]                          = Eq.fromUniversalEquals
 
 sealed trait StatusType extends EnumEntry derives CanEqual
 

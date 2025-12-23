@@ -37,4 +37,4 @@ final case class ChargeRefNotificationMyWorkItem(
 
 object ChargeRefNotificationMyWorkItem:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationMyWorkItem] = Json.format[ChargeRefNotificationMyWorkItem]
+  given format: OFormat[ChargeRefNotificationMyWorkItem] = Json.format[ChargeRefNotificationMyWorkItem]

@@ -40,7 +40,7 @@ class ChargeRefController @Inject() (
   val mibOpsService:        MibOpsService,
   val mibOpsQueueConfig:    MibOpsQueueConfig,
   val mibConnector:         MibConnector
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends BackendController(cc)
     with HeaderValidator
     with ChargeRefDesRetries

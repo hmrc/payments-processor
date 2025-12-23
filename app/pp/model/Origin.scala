@@ -27,8 +27,8 @@ import scala.collection.immutable
 sealed abstract class Origin extends EnumEntry derives CanEqual {}
 
 object Origin:
-  implicit val format: Format[Origin]                  = EnumFormat(Origins)
-  implicit val pathBinder: QueryStringBindable[Origin] = bindableA(_.toString)
+  given format: Format[Origin]                  = EnumFormat(Origins)
+  given pathBinder: QueryStringBindable[Origin] = bindableA(_.toString)
 
 object Origins extends Enum[Origin]:
 
