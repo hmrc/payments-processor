@@ -54,7 +54,7 @@ class ChargeRefControllerPciPal @Inject() (
     with HeaderValidator
     with ChargeRefDesRetries
     with PngrRetries
-    with MibRetries {
+    with MibRetries:
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -64,7 +64,7 @@ class ChargeRefControllerPciPal @Inject() (
 
     val notification = Try {
       request.body.asJson.map(_.as[ChargeRefNotificationPcipalRequest])
-    } match {
+    } match
       case Success(Some(chargeRefNotificationPcipalRequest)) =>
         logger.debug(s"sendCardPaymentsNotificationPciPal for ${chargeRefNotificationPcipalRequest.toString}")
         logger.info(
@@ -78,26 +78,24 @@ class ChargeRefControllerPciPal @Inject() (
       case Failure(exception)                                =>
         logger.error(s"Received notification from PciPal but could not read body. Exception ${exception.toString}")
         throw new RuntimeException("Received notification from PciPal but could not read body ", exception)
-    }
 
     def sendToDesIfValidatedAndConfigured(taxType: TaxType): Future[Status] =
-      if notification.Status === validated && (sendAllToDes || taxType.sendToDes) then {
+      if notification.Status === validated && (sendAllToDes || taxType.sendToDes) then
         processChargeRefNotificationRequest(toChargeRefNotificationRequest(notification, taxType))
-      } else Future successful Ok
+      else Future successful Ok
 
     def sendStatusUpdateToPngrIfConfigured(taxType: TaxType): Future[Status] =
-      if taxType === TaxTypes.pngr then {
-        sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
-      } else Future successful Ok
+      if taxType === TaxTypes.pngr then sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
+      else Future successful Ok
 
     def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
-      if taxType === TaxTypes.mib && notification.Status === validated then {
+      if taxType === TaxTypes.mib && notification.Status === validated then
         for
           amendmentRef            <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
           modsPayload              = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef.amendmentReference)
           statusFromPaymentUpdate <- sendPaymentUpdateToMib(modsPayload)
         yield statusFromPaymentUpdate
-      } else Future successful Ok
+      else Future successful Ok
 
     for
       taxType <- tpsPaymentsBackendConnector.getTaxType(notification.paymentItemId)
@@ -107,4 +105,3 @@ class ChargeRefControllerPciPal @Inject() (
       _       <- sendStatusUpdateToMibIfConfigured(taxType)
     yield Ok
   }
-}

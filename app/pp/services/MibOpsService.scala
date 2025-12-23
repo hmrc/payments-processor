@@ -38,22 +38,20 @@ class MibOpsService @Inject() (
   val clock:       Clock
 )(implicit val executionContext: ExecutionContext)
     extends WorkItemService[MibOpsMyWorkItem]
-    with Results {
+    with Results:
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   // These are all specific to mods processing
-  def sendWorkItem(workItem: WorkItem[MibOpsMyWorkItem]): Future[Unit] = {
+  def sendWorkItem(workItem: WorkItem[MibOpsMyWorkItem]): Future[Unit] =
 
     logger.debug("inside sendWorkItemToMibOps")
     for _ <- mibConnector.paymentCallback(workItem.item.modsPaymentCallBackRequest)
     yield ()
 
-  }
-
   def sendMibOpsToWorkItemRepo(
     modsPaymentCallBackRequest: ModsPaymentCallBackRequest
-  ): Future[WorkItem[MibOpsMyWorkItem]] = {
+  ): Future[WorkItem[MibOpsMyWorkItem]] =
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time                       = LocalDateTime.now(clock)
     val localDateTime              = repo.now()
@@ -66,7 +64,3 @@ class MibOpsService @Inject() (
       modsPaymentCallBackRequest = modsPaymentCallBackRequest
     )
     repo.pushNew(workItem, localDateTime)
-
-  }
-
-}

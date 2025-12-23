@@ -25,20 +25,18 @@ import play.api.mvc.{PathBindable, QueryStringBindable}
 
 import scala.collection.immutable
 
-object StatusType {
+object StatusType:
   implicit val format: Format[StatusType]                  = EnumFormat(StatusTypes)
   implicit val pathBinder: QueryStringBindable[StatusType] = bindableA(_.toString)
   implicit val statusBinder: PathBindable[StatusType]      = valueClassBinder(_.toString)
   implicit val eq: Eq[StatusType]                          = Eq.fromUniversalEquals
-}
 
 sealed trait StatusType extends EnumEntry derives CanEqual
 
-object StatusTypes extends Enum[StatusType] {
+object StatusTypes extends Enum[StatusType]:
 
   case object validated extends StatusType
 
   case object failed extends StatusType
 
   def values: immutable.IndexedSeq[StatusType] = findValues
-}

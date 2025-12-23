@@ -26,7 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
-trait HeaderValidator extends Results with Status {
+trait HeaderValidator extends Results with Status:
 
   private def validateVersion(version: String): Boolean = version === "1.0"
 
@@ -41,15 +41,12 @@ trait HeaderValidator extends Results with Status {
 
   def validateAccept(rules: Option[String] => Boolean, parse: PlayBodyParsers)(implicit
     ec: ExecutionContext
-  ): ActionBuilder[Request, AnyContent] = new ActionBuilder[Request, AnyContent] {
+  ): ActionBuilder[Request, AnyContent] = new ActionBuilder[Request, AnyContent]:
     override def parser: BodyParser[AnyContent]               = parse.defaultBodyParser
     override protected def executionContext: ExecutionContext = ec
 
     def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =
       if rules(request.headers.get("Accept")) then block(request)
-      else {
+      else
         val response = ErrorResponse(NOT_ACCEPTABLE, Constants.acceptHeaderMissing)
         Future.successful(NotAcceptable(Json.toJson(response)))
-      }
-  }
-}

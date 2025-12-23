@@ -31,8 +31,6 @@ class MibOpsPollingService @Inject() (
   queueConfig:     MibOpsQueueConfig,
   workItemService: MibOpsService
 )(implicit ec: ExecutionContext)
-    extends PollingService[MibOpsMyWorkItem](actorSystem, queueConfig, workItemService) {
+    extends PollingService[MibOpsMyWorkItem](actorSystem, queueConfig, workItemService):
 
   override def name: String = "MibOpsPollingService"
-
-}

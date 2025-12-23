@@ -16,6 +16,5 @@
 
 package pp.model.audit
 
-trait AuditDetail {
+trait AuditDetail:
   def auditType: String
-}

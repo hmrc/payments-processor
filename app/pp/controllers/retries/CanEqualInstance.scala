@@ -18,6 +18,5 @@ package pp.controllers.retries
 
 import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
-trait CanEqualInstance {
+trait CanEqualInstance:
   given CanEqual[ProcessingStatus, ProcessingStatus] = CanEqual.derived
-}

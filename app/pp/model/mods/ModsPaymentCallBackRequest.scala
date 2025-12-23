@@ -23,7 +23,6 @@ final case class ModsPaymentCallBackRequest(
   amendmentReference: Option[Int]
 ) derives CanEqual
 
-object ModsPaymentCallBackRequest {
+object ModsPaymentCallBackRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ModsPaymentCallBackRequest] = Json.format[ModsPaymentCallBackRequest]
-}

@@ -32,7 +32,7 @@ class DesConnector @Inject() (
   servicesConfig: ServicesConfig,
   httpClient:     HttpClientV2,
   configuration:  Configuration
-)(implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext):
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -58,7 +58,7 @@ class DesConnector @Inject() (
   // todo remove this once we know what's going on
   private val regex = """[0-9a-zA-Z{À-˿'}\\ &`'^]{1,16}"""
 
-  def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[Unit] = {
+  def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[Unit] =
     implicit val hc: HeaderCarrier = desHeaderCarrier
 
     val sendChargeRefUrl: String = s"$serviceURL$chargerefUrl"
@@ -82,6 +82,3 @@ class DesConnector @Inject() (
       .setHeader(desHeaders: _*)
       .withBody(Json.toJson(chargeRefNotificationDesRequest))
       .execute[Unit]
-  }
-
-}

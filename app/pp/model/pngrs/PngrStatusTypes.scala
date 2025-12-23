@@ -25,15 +25,14 @@ import cats.syntax.eq.catsSyntaxEq
 
 import scala.collection.immutable
 
-object PngrStatusType {
+object PngrStatusType:
   implicit val format: Format[PngrStatusType]                  = EnumFormat(PngrStatusTypes)
   implicit val pathBinder: QueryStringBindable[PngrStatusType] = bindableA(_.toString)
   implicit val statusBinder: PathBindable[PngrStatusType]      = valueClassBinder(_.toString)
-}
 
 sealed abstract class PngrStatusType extends EnumEntry derives CanEqual
 
-object PngrStatusTypes extends Enum[PngrStatusType] {
+object PngrStatusTypes extends Enum[PngrStatusType]:
 
   def forCode(code: String): Option[PngrStatusType] = values.find(_.toString === code)
 
@@ -42,4 +41,3 @@ object PngrStatusTypes extends Enum[PngrStatusType] {
   case object Failed extends PngrStatusType
 
   def values: immutable.IndexedSeq[PngrStatusType] = findValues
-}

@@ -26,16 +26,14 @@ import scala.collection.immutable
 
 sealed abstract class Origin extends EnumEntry derives CanEqual {}
 
-object Origin {
+object Origin:
   implicit val format: Format[Origin]                  = EnumFormat(Origins)
   implicit val pathBinder: QueryStringBindable[Origin] = bindableA(_.toString)
-}
 
-object Origins extends Enum[Origin] {
+object Origins extends Enum[Origin]:
 
   case object OPS extends Origin {}
 
   case object PCI_PAL extends Origin {}
 
   override def values: immutable.IndexedSeq[Origin] = findValues
-}

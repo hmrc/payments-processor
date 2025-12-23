@@ -38,21 +38,19 @@ class PngrService @Inject() (
   val clock:       Clock
 )(implicit val executionContext: ExecutionContext)
     extends WorkItemService[PngrMyWorkItem]
-    with Results {
+    with Results:
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   // These are all specific to pngr processing
-  def sendWorkItem(workItem: WorkItem[PngrMyWorkItem]): Future[Unit] = {
+  def sendWorkItem(workItem: WorkItem[PngrMyWorkItem]): Future[Unit] =
 
     logger.debug("inside sendWorkItemToPngr")
     val statusUpdate = PngrStatusUpdateRequest(workItem.item.reference, workItem.item.status)
     for _ <- pngrConnector.updateWithStatus(statusUpdate)
     yield ()
 
-  }
-
-  def sendPngrToWorkItemRepo(pngrStatusUpdate: PngrStatusUpdateRequest): Future[WorkItem[PngrMyWorkItem]] = {
+  def sendPngrToWorkItemRepo(pngrStatusUpdate: PngrStatusUpdateRequest): Future[WorkItem[PngrMyWorkItem]] =
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time          = LocalDateTime.now(clock)
     val localDateTime = repo.now()
@@ -65,7 +63,3 @@ class PngrService @Inject() (
       pngrStatusUpdate.status
     )
     repo.pushNew(workItem, localDateTime)
-
-  }
-
-}

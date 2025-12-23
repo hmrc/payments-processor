@@ -35,13 +35,13 @@ class ChargeRefService @Inject() (
   val clock:       Clock,
   val queueConfig: ChargeRefQueueConfig
 )(implicit val executionContext: ExecutionContext)
-    extends WorkItemService[ChargeRefNotificationMyWorkItem] {
+    extends WorkItemService[ChargeRefNotificationMyWorkItem]:
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   // These are all specific to charge reference processing
 
-  def sendWorkItem(chargeRefNotificationWorkItem: WorkItem[ChargeRefNotificationMyWorkItem]): Future[Unit] = {
+  def sendWorkItem(chargeRefNotificationWorkItem: WorkItem[ChargeRefNotificationMyWorkItem]): Future[Unit] =
 
     logger.debug("inside sendWorkItemToDes")
     val desChargeRef = ChargeRefNotificationDesRequest(
@@ -52,11 +52,9 @@ class ChargeRefService @Inject() (
     for _ <- desConnector.sendCardPaymentsNotification(desChargeRef)
     yield ()
 
-  }
-
   def sendCardPaymentsNotificationSync(
     chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest
-  ): Future[Unit] = {
+  ): Future[Unit] =
     logger.debug("inside sendCardPaymentsNotificationSync")
 
     val desChargeRef = ChargeRefNotificationDesRequest(
@@ -66,11 +64,10 @@ class ChargeRefService @Inject() (
     )
 
     desConnector.sendCardPaymentsNotification(desChargeRef)
-  }
 
   def sendCardPaymentsNotificationToWorkItemRepo(
     chargeRefNotificationPciPalRequest: ChargeRefNotificationRequest
-  ): Future[WorkItem[ChargeRefNotificationMyWorkItem]] = {
+  ): Future[WorkItem[ChargeRefNotificationMyWorkItem]] =
     logger.debug("inside sendCardPaymentsNotificationAsync")
     val time = LocalDateTime.now(clock)
 
@@ -85,7 +82,3 @@ class ChargeRefService @Inject() (
     )
 
     repo.pushNew(workItem, localDateTime)
-
-  }
-
-}

@@ -26,31 +26,25 @@ import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
 import scala.collection.immutable
 
-object ProcessingStatusOps {
+object ProcessingStatusOps:
   implicit val format: Format[ProcessingStatusOps]                  = EnumFormat(ProcessingStatusOpsValues)
   implicit val pathBinder: QueryStringBindable[ProcessingStatusOps] = bindableA(_.toString)
   implicit val statusBinder: PathBindable[ProcessingStatusOps]      = valueClassBinder(_.toString)
-}
 
-sealed abstract class ProcessingStatusOps extends EnumEntry derives CanEqual {
+sealed abstract class ProcessingStatusOps extends EnumEntry derives CanEqual:
   val processingStatus: uk.gov.hmrc.mongo.workitem.ProcessingStatus
-}
 
-object ProcessingStatusOpsValues extends Enum[ProcessingStatusOps] {
+object ProcessingStatusOpsValues extends Enum[ProcessingStatusOps]:
 
   def forCode(code: String): Option[ProcessingStatusOps] = values.find(_.toString === code)
 
   def values: immutable.IndexedSeq[ProcessingStatusOps] = findValues
 
-  case object PermanentlyFailed extends ProcessingStatusOps {
+  case object PermanentlyFailed extends ProcessingStatusOps:
     val processingStatus: ProcessingStatus = uk.gov.hmrc.mongo.workitem.ProcessingStatus.PermanentlyFailed
-  }
 
-  case object ToDo extends ProcessingStatusOps {
+  case object ToDo extends ProcessingStatusOps:
     val processingStatus: ProcessingStatus = uk.gov.hmrc.mongo.workitem.ProcessingStatus.ToDo
-  }
 
-  case object Failed extends ProcessingStatusOps {
+  case object Failed extends ProcessingStatusOps:
     val processingStatus: ProcessingStatus = uk.gov.hmrc.mongo.workitem.ProcessingStatus.Failed
-  }
-}

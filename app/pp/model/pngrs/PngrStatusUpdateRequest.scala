@@ -20,7 +20,6 @@ import play.api.libs.json.{Json, OFormat}
 
 final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusType) derives CanEqual
 
-object PngrStatusUpdateRequest {
+object PngrStatusUpdateRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[PngrStatusUpdateRequest] = Json.format[PngrStatusUpdateRequest]
-}

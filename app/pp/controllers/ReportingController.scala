@@ -34,13 +34,13 @@ class ReportingController @Inject() (
   chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
   mibOpsMongoRepo:                MibOpsMongoRepo
 )(implicit val executionContext: ExecutionContext)
-    extends BackendController(cc) {
+    extends BackendController(cc):
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def count(taxType: TaxType, processingState: ProcessingStatusOps): Action[AnyContent] = Action.async { _ =>
     logger.debug("count")
-    taxType match {
+    taxType match
       case TaxTypes.pngr =>
         pngrMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case TaxTypes.p800 =>
@@ -51,12 +51,11 @@ class ReportingController @Inject() (
         throw new RuntimeException(
           s"taxType ${taxType.entryName} not supported, processingState ${processingState.toString} not supported"
         )
-    }
   }
 
   def getAll(taxType: TaxType): Action[AnyContent] = Action.async { _ =>
     logger.debug("count")
-    taxType match {
+    taxType match
       case TaxTypes.pngr =>
         for
           m <- pngrMongoRepo.findAll()
@@ -73,7 +72,4 @@ class ReportingController @Inject() (
           i  = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
         yield Ok(Json.toJson(i))
       case _             => throw new RuntimeException(s"taxType ${taxType.entryName} not supported")
-    }
   }
-
-}

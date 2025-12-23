@@ -31,8 +31,6 @@ class PngrPollingService @Inject() (
   queueConfig:     PngrsQueueConfig,
   workItemService: PngrService
 )(implicit ec: ExecutionContext)
-    extends PollingService[PngrMyWorkItem](actorSystem, queueConfig, workItemService) {
+    extends PollingService[PngrMyWorkItem](actorSystem, queueConfig, workItemService):
 
   override def name: String = "PngrPollingService"
-
-}

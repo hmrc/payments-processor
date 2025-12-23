@@ -19,7 +19,7 @@ package pp.jsonext
 import enumeratum.{Enum, EnumEntry}
 import play.api.libs.json._
 
-object EnumFormat {
+object EnumFormat:
 
   def apply[T <: EnumEntry](e: Enum[T]): Format[T] = Format(
     Reads {
@@ -31,4 +31,3 @@ object EnumFormat {
     },
     Writes(v => JsString(v.entryName))
   )
-}

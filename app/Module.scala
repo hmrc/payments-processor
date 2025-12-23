@@ -21,15 +21,12 @@ import pp.scheduling.chargeref.ChargeRefNotificationPollingService
 import pp.scheduling.mib.MibOpsPollingService
 import pp.scheduling.pngrs.PngrPollingService
 
-class Module() extends AbstractModule {
-  override def configure(): Unit = {
+class Module() extends AbstractModule:
+  override def configure(): Unit =
     bind(classOf[ChargeRefNotificationPollingService]).asEagerSingleton()
     bind(classOf[PngrPollingService]).asEagerSingleton()
     bind(classOf[MibOpsPollingService]).asEagerSingleton()
-  }
 
   @Provides
   @Singleton
   def clock(): Clock = Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-
-}

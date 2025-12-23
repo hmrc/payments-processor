@@ -19,7 +19,7 @@ package pp.scheduling
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.FiniteDuration
 
-trait ScheduledJob {
+trait ScheduledJob:
   def name: String
   def execute(implicit ec: ExecutionContext): Future[Result]
 
@@ -32,4 +32,3 @@ trait ScheduledJob {
   def interval: FiniteDuration
 
   override def toString: String = s"$name after ${initialDelay.toString()} every ${interval.toString()}"
-}

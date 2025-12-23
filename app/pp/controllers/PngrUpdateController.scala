@@ -38,7 +38,7 @@ class PngrUpdateController @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends BackendController(cc)
     with HeaderValidator
-    with PngrRetries {
+    with PngrRetries:
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -47,4 +47,3 @@ class PngrUpdateController @Inject() (
       logger.debug("sendStatusUpdateToPngr")
       sendStatusUpdateToPngr(request.body)
   }
-}
