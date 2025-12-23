@@ -16,7 +16,6 @@
 
 package pp.controllers.retries
 
-import cats.implicits.catsSyntaxEq
 import play.api.Logger
 import play.api.mvc.Results
 import pp.config.PngrsQueueConfig
@@ -43,11 +42,11 @@ trait PngrRetries extends Results with CanEqualInstance:
       .updateWithStatus(pngrStatusUpdate)
       .map(_ => Ok)
       .recoverWith:
-      case e: UpstreamErrorResponse if e.statusCode === 400 =>
+      case e: UpstreamErrorResponse if e.statusCode == 400 =>
         Future.failed(new BadRequestException(e.getMessage))
-      case e: UpstreamErrorResponse if e.statusCode === 404 =>
+      case e: UpstreamErrorResponse if e.statusCode == 404 =>
         Future.failed(new BadGatewayException(e.message))
-      case e                                                =>
+      case e                                               =>
         if pngrQueueConfig.queueEnabled then
           logger.debug("Queue enabled")
           pngrService

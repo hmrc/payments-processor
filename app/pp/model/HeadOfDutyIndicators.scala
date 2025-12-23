@@ -21,7 +21,6 @@ import play.api.libs.json.Format
 import play.api.mvc.{PathBindable, QueryStringBindable}
 import pp.controllers.ValueClassBinder._
 import pp.jsonext.EnumFormat
-import cats.syntax.eq.catsSyntaxEq
 
 import scala.collection.immutable
 
@@ -33,7 +32,7 @@ object HeadOfDutyIndicator:
 sealed trait HeadOfDutyIndicator extends EnumEntry derives CanEqual
 
 object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator]:
-  def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString === code)
+  def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString == code)
 
   /** Hod for P800 and Child Benefits
     */

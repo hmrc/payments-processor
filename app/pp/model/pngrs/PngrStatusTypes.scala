@@ -21,7 +21,6 @@ import play.api.libs.json.Format
 import pp.controllers.ValueClassBinder._
 import pp.jsonext.EnumFormat
 import play.api.mvc.{PathBindable, QueryStringBindable}
-import cats.syntax.eq.catsSyntaxEq
 
 import scala.collection.immutable
 
@@ -34,7 +33,7 @@ sealed abstract class PngrStatusType extends EnumEntry derives CanEqual
 
 object PngrStatusTypes extends Enum[PngrStatusType]:
 
-  def forCode(code: String): Option[PngrStatusType] = values.find(_.toString === code)
+  def forCode(code: String): Option[PngrStatusType] = values.find(_.toString == code)
 
   case object Successful extends PngrStatusType
 

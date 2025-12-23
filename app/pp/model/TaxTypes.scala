@@ -21,7 +21,6 @@ import play.api.libs.json.Format
 import play.api.mvc.{PathBindable, QueryStringBindable}
 import pp.controllers.ValueClassBinder._
 import pp.jsonext.EnumFormat
-import cats.Eq
 
 import java.util.Locale
 import scala.collection.immutable
@@ -34,7 +33,6 @@ object TaxType:
   given format: Format[TaxType]                  = EnumFormat(TaxTypes)
   given pathBinder: QueryStringBindable[TaxType] = bindableA(_.toString)
   given taxTypeBinder: PathBindable[TaxType]     = valueClassBinder(_.toString)
-  given eq: Eq[TaxType]                          = Eq.fromUniversalEquals
 
 object TaxTypes extends Enum[TaxType]:
   // As per DES API ....

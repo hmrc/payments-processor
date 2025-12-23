@@ -21,7 +21,6 @@ import pp.config.QueueConfig
 import pp.model.MyWorkItemFields
 import pp.scheduling.NotificationRepo
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
-import cats.syntax.eq.catsSyntaxEq
 
 import java.time.{Clock, LocalDateTime}
 import scala.concurrent.{ExecutionContext, Future}
@@ -68,7 +67,7 @@ trait WorkItemService[P <: MyWorkItemFields]:
     def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[P]]): Future[Seq[WorkItem[P]]] =
 
       def retrieveWorkItem(count: Int): Future[Option[WorkItem[P]]] =
-        if count === queueConfig.pollLimit then Future successful None
+        if count == queueConfig.pollLimit then Future successful None
         else repo.pullOutstanding
 
       retrieveWorkItem(count).flatMap {

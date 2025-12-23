@@ -11,7 +11,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     majorVersion := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     Compile / scalacOptions -= "utf8"
   )

@@ -16,7 +16,6 @@
 
 package pp.model
 
-import cats.Eq
 import enumeratum._
 import play.api.libs.json.Format
 import pp.controllers.ValueClassBinder._
@@ -29,7 +28,6 @@ object StatusType:
   given format: Format[StatusType]                  = EnumFormat(StatusTypes)
   given pathBinder: QueryStringBindable[StatusType] = bindableA(_.toString)
   given statusBinder: PathBindable[StatusType]      = valueClassBinder(_.toString)
-  given eq: Eq[StatusType]                          = Eq.fromUniversalEquals
 
 sealed trait StatusType extends EnumEntry derives CanEqual
 

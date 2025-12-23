@@ -26,7 +26,6 @@ import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamError
 import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
 import scala.concurrent.{ExecutionContext, Future}
-import cats.implicits.catsSyntaxEq
 
 trait MibRetries extends Results with CanEqualInstance:
 
@@ -43,11 +42,11 @@ trait MibRetries extends Results with CanEqualInstance:
       .paymentCallback(modsPaymentCallBackRequest)
       .map(_ => Ok)
       .recoverWith:
-      case e: UpstreamErrorResponse if e.statusCode === 400 =>
+      case e: UpstreamErrorResponse if e.statusCode == 400 =>
         Future.failed(new BadRequestException(e.getMessage()))
-      case e: UpstreamErrorResponse if e.statusCode === 404 =>
+      case e: UpstreamErrorResponse if e.statusCode == 404 =>
         Future.failed(new BadGatewayException(e.message))
-      case e                                                =>
+      case e                                               =>
         if mibOpsQueueConfig.queueEnabled then
           logger.debug("Queue enabled")
           mibOpsService

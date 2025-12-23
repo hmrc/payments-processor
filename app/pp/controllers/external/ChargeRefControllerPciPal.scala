@@ -16,7 +16,6 @@
 
 package pp.controllers.external
 
-import cats.implicits.catsSyntaxEq
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.api.{Configuration, Logger}
 import pp.config.{ChargeRefQueueConfig, MibOpsQueueConfig, PngrsQueueConfig}
@@ -80,16 +79,16 @@ class ChargeRefControllerPciPal @Inject() (
         throw new RuntimeException("Received notification from PciPal but could not read body ", exception)
 
     def sendToDesIfValidatedAndConfigured(taxType: TaxType): Future[Status] =
-      if notification.Status === validated && (sendAllToDes || taxType.sendToDes) then
+      if notification.Status == validated && (sendAllToDes || taxType.sendToDes) then
         processChargeRefNotificationRequest(toChargeRefNotificationRequest(notification, taxType))
       else Future successful Ok
 
     def sendStatusUpdateToPngrIfConfigured(taxType: TaxType): Future[Status] =
-      if taxType === TaxTypes.pngr then sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
+      if taxType == TaxTypes.pngr then sendStatusUpdateToPngr(toPngrStatusUpdateRequest(notification))
       else Future successful Ok
 
     def sendStatusUpdateToMibIfConfigured(taxType: TaxType): Future[Status] =
-      if taxType === TaxTypes.mib && notification.Status === validated then
+      if taxType == TaxTypes.mib && notification.Status == validated then
         for
           amendmentRef            <- tpsPaymentsBackendConnector.getModsAmendmentReference(notification.paymentItemId)
           modsPayload              = ModsPaymentCallBackRequest(notification.ChargeReference, amendmentRef.amendmentReference)

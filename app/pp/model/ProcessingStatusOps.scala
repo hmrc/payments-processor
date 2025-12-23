@@ -21,7 +21,7 @@ import play.api.libs.json.Format
 import play.api.mvc.{PathBindable, QueryStringBindable}
 import pp.controllers.ValueClassBinder._
 import pp.jsonext.EnumFormat
-import cats.implicits.catsSyntaxEq
+
 import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
 import scala.collection.immutable
@@ -36,7 +36,7 @@ sealed abstract class ProcessingStatusOps extends EnumEntry derives CanEqual:
 
 object ProcessingStatusOpsValues extends Enum[ProcessingStatusOps]:
 
-  def forCode(code: String): Option[ProcessingStatusOps] = values.find(_.toString === code)
+  def forCode(code: String): Option[ProcessingStatusOps] = values.find(_.toString == code)
 
   def values: immutable.IndexedSeq[ProcessingStatusOps] = findValues
 
