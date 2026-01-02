@@ -20,11 +20,10 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
 @Singleton
-class ChargeRefQueueConfig @Inject() (val configuration: Configuration) extends QueueConfig {
+class ChargeRefQueueConfig @Inject() (val configuration: Configuration) extends QueueConfig:
   // All Configs need these
   val prefix         = "chargeref"
   val collectionName = "chargeref-notifications"
 
   // Specific to this config
   val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
-}

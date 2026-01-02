@@ -21,12 +21,10 @@ import play.api.Configuration
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class PngrsQueueConfig @Inject() (val configuration: Configuration) extends QueueConfig {
+class PngrsQueueConfig @Inject() (val configuration: Configuration) extends QueueConfig:
   // All Configs need these
   val prefix         = "pngr"
   val collectionName = "pngr-notifications"
 
   // Specific to this config
   val desEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
-
-}

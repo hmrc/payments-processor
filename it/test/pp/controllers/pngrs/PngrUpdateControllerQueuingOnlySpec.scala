@@ -21,7 +21,7 @@ import play.api.http.Status
 import support.PaymentsProcessData.pngrStatusUpdateRequest
 import support.Pngr
 
-class PngrUpdateControllerQueuingOnlySpec extends PngrUpdateControllerSpec {
+class PngrUpdateControllerQueuingOnlySpec extends PngrUpdateControllerSpec:
   override def configMap: Map[String, Any] = super.configMap.updated("pngr.queue.enabled", "true")
 
   "the PngrUpdateController" when {
@@ -45,4 +45,3 @@ class PngrUpdateControllerQueuingOnlySpec extends PngrUpdateControllerSpec {
       }
     }
   }
-}

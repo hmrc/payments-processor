@@ -23,21 +23,22 @@ import pp.model.pngrs.PngrStatusUpdateRequest
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PngrConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit
+class PngrConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(using
   ec: ExecutionContext
-) {
+):
 
   private val serviceURL: String = s"${servicesConfig.baseUrl("bc-passengers-declarations")}/bc-passengers-declarations"
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def updateWithStatus(statusUpdate: PngrStatusUpdateRequest): Future[HttpResponse] = {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+  def updateWithStatus(statusUpdate: PngrStatusUpdateRequest): Future[HttpResponse] =
+    given hc: HeaderCarrier = HeaderCarrier()
 
     val url: String = s"$serviceURL/update-payment"
     logger.debug(s"""c $url""")
@@ -46,6 +47,3 @@ class PngrConnector @Inject() (httpClient: HttpClientV2, servicesConfig: Service
       .post(url"$url")
       .withBody(Json.toJson(statusUpdate))
       .execute[HttpResponse]
-  }
-
-}

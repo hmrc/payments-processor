@@ -25,14 +25,15 @@ import pp.model.{PaymentItemId, TaxType, TaxTypes}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit
+class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(using
   ec: ExecutionContext
-) {
+):
 
   private val serviceURL: String = s"${servicesConfig.baseUrl("tps-payments-backend")}/tps-payments-backend"
 
@@ -40,16 +41,15 @@ class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClientV2, servicesC
 
   def updateWithPcipalData(
     chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest
-  )(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  )(using hc: HeaderCarrier): Future[HttpResponse] =
     val url: String = s"$serviceURL/update-with-pcipal-data"
     logger.debug(s"""calling tps-payments-updateWithPcipalSessionId find with url $url""")
     httpClient
       .patch(url"$url")
       .withBody(Json.toJson(chargeRefNotificationPciPalRequest))
       .execute[HttpResponse]
-  }
 
-  def getTaxType(paymentItemId: PaymentItemId)(implicit hc: HeaderCarrier): Future[TaxType] =
+  def getTaxType(paymentItemId: PaymentItemId)(using hc: HeaderCarrier): Future[TaxType] =
     httpClient
       .get(url"$serviceURL/payment-items/${paymentItemId.value}/tax-type")
       .execute[HttpResponse]
@@ -62,13 +62,10 @@ class TpsPaymentsBackendConnector @Inject() (httpClient: HttpClientV2, servicesC
 
   def getModsAmendmentReference(
     paymentItemId: PaymentItemId
-  )(implicit hc: HeaderCarrier): Future[ModsPaymentCallBackRequest] = {
+  )(using hc: HeaderCarrier): Future[ModsPaymentCallBackRequest] =
     val url: String = s"$serviceURL/payment-items/${paymentItemId.value}/mods-amendment-ref"
     logger.debug(s"""calling tps-payments-modsAmendmentRef with url $url""")
     httpClient
       .get(url"$url")
       .execute[HttpResponse]
       .map(_.json.as[ModsPaymentCallBackRequest])
-  }
-
-}

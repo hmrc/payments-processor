@@ -22,7 +22,7 @@ import play.api.Configuration
 
 import scala.concurrent.duration.FiniteDuration
 
-trait QueueConfig {
+trait QueueConfig:
 
   val prefix: String
 
@@ -50,5 +50,3 @@ trait QueueConfig {
     FiniteDuration(configuration.underlying.getDuration(s"$prefix.queue.ttl").toNanos, TimeUnit.NANOSECONDS)
 
   lazy val queueAvailableFor: Duration = configuration.underlying.getDuration(s"$prefix.queue.available.for")
-
-}

@@ -23,7 +23,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class ApiDocumentationController @Inject() (assets: Assets, cc: ControllerComponents) extends BackendController(cc) {
+class ApiDocumentationController @Inject() (assets: Assets, cc: ControllerComponents) extends BackendController(cc):
 
   // NOTE: This must follow DocumentationController from play-hmrc-api
   // See https://github.com/hmrc/play-hmrc-api/blob/main/src/main/play-28/uk/gov/hmrc/api/controllers/DocumentationController.scala
@@ -35,5 +35,3 @@ class ApiDocumentationController @Inject() (assets: Assets, cc: ControllerCompon
     file:    String
   ): Action[AnyContent] =
     assets.at(s"/public/api/conf/$version", file)
-
-}

@@ -24,24 +24,22 @@ import pp.model.mods.ModsPaymentCallBackRequest
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class MibConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) {
+class MibConnector @Inject() (httpClient: HttpClientV2, servicesConfig: ServicesConfig)(using ec: ExecutionContext):
 
   private def serviceURL: String =
     s"${servicesConfig.baseUrl("merchandise-in-baggage")}/declare-commercial-goods/payment-callback"
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
-  def paymentCallback(modsPaymentCallBackRequest: ModsPaymentCallBackRequest): Future[HttpResponse] = {
+  def paymentCallback(modsPaymentCallBackRequest: ModsPaymentCallBackRequest): Future[HttpResponse] =
     logger.debug(s"paymentCallback with url $serviceURL")
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+    given hc: HeaderCarrier = HeaderCarrier()
     httpClient
       .post(url"$serviceURL")
       .withBody(Json.toJson(modsPaymentCallBackRequest))
       .execute[HttpResponse]
-  }
-
-}

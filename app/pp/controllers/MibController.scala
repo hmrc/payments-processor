@@ -34,9 +34,9 @@ class MibController @Inject() (
   val configuration:     Configuration,
   val mibOpsService:     MibOpsService,
   val mibConnector:      MibConnector
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends BackendController(cc)
-    with MibRetries {
+    with MibRetries:
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -45,4 +45,3 @@ class MibController @Inject() (
       logger.debug("sendStatusUpdateToMib")
       sendPaymentUpdateToMib(request.body)
   }
-}

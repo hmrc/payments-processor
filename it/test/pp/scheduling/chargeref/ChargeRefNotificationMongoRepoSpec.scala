@@ -21,8 +21,9 @@ import pp.model.TaxTypes
 import pp.model.wokitems.ChargeRefNotificationMyWorkItem
 import support.{ItSpec, PaymentsProcessData}
 import uk.gov.hmrc.mongo.workitem._
+import org.mongodb.scala.ObservableFuture
 
-class ChargeRefNotificationMongoRepoSpec extends ItSpec {
+class ChargeRefNotificationMongoRepoSpec extends ItSpec:
 
   private lazy val repo = injector.instanceOf[ChargeRefNotificationMongoRepo]
   private val dateTime = repo.now()
@@ -188,5 +189,3 @@ class ChargeRefNotificationMongoRepoSpec extends ItSpec {
   private def collectionSize: Long = {
     repo.countAll().futureValue
   }
-
-}

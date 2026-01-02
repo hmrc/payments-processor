@@ -21,7 +21,7 @@ import play.api.http.Status
 import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 import support._
 
-class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControllerSpec {
+class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControllerSpec:
   override def configMap: Map[String, Any] =
     super
       .configMap
@@ -59,4 +59,3 @@ class ChargeRefControllerQueuingAndPollingEnabledSpec extends ChargeRefControlle
       }
     }
   }
-}

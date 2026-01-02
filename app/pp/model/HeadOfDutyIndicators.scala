@@ -21,20 +21,18 @@ import play.api.libs.json.Format
 import play.api.mvc.{PathBindable, QueryStringBindable}
 import pp.controllers.ValueClassBinder._
 import pp.jsonext.EnumFormat
-import cats.syntax.eq.catsSyntaxEq
 
 import scala.collection.immutable
 
-object HeadOfDutyIndicator {
-  implicit val format: Format[HeadOfDutyIndicator]                  = EnumFormat(HeadOfDutyIndicators)
-  implicit val pathBinder: QueryStringBindable[HeadOfDutyIndicator] = bindableA(_.toString)
-  implicit val headOfDutyBinder: PathBindable[HeadOfDutyIndicator]  = valueClassBinder(_.toString)
-}
+object HeadOfDutyIndicator:
+  given format: Format[HeadOfDutyIndicator]                  = EnumFormat(HeadOfDutyIndicators)
+  given pathBinder: QueryStringBindable[HeadOfDutyIndicator] = bindableA(_.toString)
+  given headOfDutyBinder: PathBindable[HeadOfDutyIndicator]  = valueClassBinder(_.toString)
 
-sealed trait HeadOfDutyIndicator extends EnumEntry
+sealed trait HeadOfDutyIndicator extends EnumEntry derives CanEqual
 
-object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
-  def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString === code)
+object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator]:
+  def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString == code)
 
   /** Hod for P800 and Child Benefits
     */
@@ -77,4 +75,3 @@ object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
   case object C extends HeadOfDutyIndicator
 
   def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
-}

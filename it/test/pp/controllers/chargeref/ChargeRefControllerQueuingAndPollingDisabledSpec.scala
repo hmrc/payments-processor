@@ -16,7 +16,7 @@
 
 package pp.controllers.chargeref
 
-class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec {
+class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControllerSpec:
 
   "the ChargeRefController card payments endpoints" when {
     "queuing is disabled" should {
@@ -28,5 +28,3 @@ class ChargeRefControllerQueuingAndPollingDisabledSpec extends ChargeRefControll
       behave like aSynchronousEndpointWhenTheDesNotificationFailsWithIncorrectJsonCall()
     }
   }
-
-}

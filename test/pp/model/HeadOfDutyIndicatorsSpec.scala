@@ -18,10 +18,11 @@ package pp.model
 
 import play.api.libs.json.JsString
 import play.api.libs.json.Json.toJson
-import pp.model.HeadOfDutyIndicators._
+import pp.model.HeadOfDutyIndicators.*
+import support.Givens.canEqualJsValue
 import support.{RichMatchers, UnitSpec}
 
-class HeadOfDutyIndicatorsSpec extends UnitSpec with RichMatchers {
+class HeadOfDutyIndicatorsSpec extends UnitSpec with RichMatchers:
   "HeadOfDutyIndicators should de/serialize" in {
     val headOfDutyIndicators: List[(String, HeadOfDutyIndicator)] = List[(String, HeadOfDutyIndicator)](
       "B" -> B,
@@ -45,4 +46,3 @@ class HeadOfDutyIndicatorsSpec extends UnitSpec with RichMatchers {
         .as[HeadOfDutyIndicator] shouldBe headOfDutyIndicator._2 withClue s"deserialize ${headOfDutyIndicator.toString()}"
     }
   }
-}

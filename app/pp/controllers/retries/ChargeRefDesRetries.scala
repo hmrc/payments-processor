@@ -25,65 +25,55 @@ import uk.gov.hmrc.http.{BadGatewayException, BadRequestException, UpstreamError
 import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
 import scala.concurrent.{ExecutionContext, Future}
-import cats.implicits.catsSyntaxEq
 
-trait ChargeRefDesRetries extends Results {
+trait ChargeRefDesRetries extends Results with CanEqualInstance:
 
   val logger: Logger
   val chargeRefService: ChargeRefService
   val chargeRefQueueConfig: ChargeRefQueueConfig
   val configuration: Configuration
-  implicit val executionContext: ExecutionContext
+  given executionContext: ExecutionContext
 
   val sendAllToDes: Boolean = configuration.underlying.getBoolean("sendAllToDes")
 
   def processChargeRefNotificationRequest(
     chargeRefNotificationRequest: ChargeRefNotificationRequest
-  ): Future[Status] = {
+  ): Future[Status] =
     logger.debug("processChargeRefNotificationRequest")
     chargeRefService
       .sendCardPaymentsNotificationSync(chargeRefNotificationRequest)
       .map(_ => Ok)
-      .recoverWith {
-        case e: UpstreamErrorResponse if e.statusCode === 400 =>
-          Future.failed(new BadRequestException(e.getMessage()))
-        case e: UpstreamErrorResponse if e.statusCode === 404 =>
-          Future.failed(new BadGatewayException(e.message))
-        case e: UpstreamErrorResponse if e.statusCode === 409 =>
+      .recoverWith:
+      case e: UpstreamErrorResponse if e.statusCode == 400 =>
+        Future.failed(new BadRequestException(e.getMessage))
+      case e: UpstreamErrorResponse if e.statusCode == 404 =>
+        Future.failed(new BadGatewayException(e.message))
+      case e: UpstreamErrorResponse if e.statusCode == 409 =>
+        Future.failed(e)
+      case e                                               =>
+        if chargeRefQueueConfig.queueEnabled then
+          logger.debug("Queue enabled")
+          chargeRefService
+            .sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest)
+            .map(res =>
+              res.status match {
+                case ProcessingStatus.ToDo => Ok
+                case _                     =>
+                  logger.error("Could not add message to work item repo")
+                  InternalServerError
+              }
+            )
+        else
+          logger.warn("Queue disabled")
           Future.failed(e)
-        case e                                                =>
-          if (chargeRefQueueConfig.queueEnabled) {
-            logger.debug("Queue enabled")
-            chargeRefService
-              .sendCardPaymentsNotificationToWorkItemRepo(chargeRefNotificationRequest)
-              .map(res =>
-                res.status match {
-                  case ProcessingStatus.ToDo => Ok
-                  case _                     =>
-                    logger.error("Could not add message to work item repo")
-                    InternalServerError
-                }
-              )
-          } else {
-            logger.warn("Queue disabled")
-            Future.failed(e)
-          }
-      }
-  }
 
-  def sendCardPaymentsNotification(chargeRefNotificationRequest: ChargeRefNotificationRequest): Future[Status] = {
+  def sendCardPaymentsNotification(chargeRefNotificationRequest: ChargeRefNotificationRequest): Future[Status] =
     logger.debug("sendCardPaymentsNotification")
 
     val sendChargeRef: Boolean = sendAllToDes || chargeRefNotificationRequest.taxType.sendToDes
-    if (sendChargeRef) {
-      processChargeRefNotificationRequest(chargeRefNotificationRequest)
-    } else {
+    if sendChargeRef then processChargeRefNotificationRequest(chargeRefNotificationRequest)
+    else
       logger.debug(
         s"Not sending des notification for ${chargeRefNotificationRequest.taxType.entryName}, ignoreSendChargeRef was ${sendChargeRef.toString}"
       )
       Future.successful(Ok)
-    }
-
-  }
-
-}

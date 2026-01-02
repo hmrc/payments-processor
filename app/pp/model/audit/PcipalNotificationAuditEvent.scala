@@ -20,10 +20,8 @@ import play.api.libs.json.{Json, OWrites}
 import pp.model.pcipal.ChargeRefNotificationPcipalRequest
 
 final case class PcipalNotificationAuditEvent(chargeRefNotificationPcipalRequest: ChargeRefNotificationPcipalRequest)
-    extends AuditDetail {
+    extends AuditDetail:
   val auditType = "PciPalNotificationSuccess"
-}
 
-object PcipalNotificationAuditEvent {
-  implicit val writes: OWrites[PcipalNotificationAuditEvent] = Json.writes[PcipalNotificationAuditEvent]
-}
+object PcipalNotificationAuditEvent:
+  given writes: OWrites[PcipalNotificationAuditEvent] = Json.writes[PcipalNotificationAuditEvent]

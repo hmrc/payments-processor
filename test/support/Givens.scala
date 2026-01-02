@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package pp.model.pngrs
+package support
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{JsResult, JsValue}
 
-final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusType) derives CanEqual
-
-object PngrStatusUpdateRequest:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  given format: OFormat[PngrStatusUpdateRequest] = Json.format[PngrStatusUpdateRequest]
+object Givens:
+  given canEqualJsValue: CanEqual[JsValue, JsValue]             = CanEqual.derived
+  given canEqualJsResult[A]: CanEqual[JsResult[A], JsResult[A]] = CanEqual.derived
+  given canEqualOption[A]: CanEqual[Option[A], Option[A]]       = CanEqual.derived
+  given canEqualList[A]: CanEqual[List[A], List[A]]             = CanEqual.derived

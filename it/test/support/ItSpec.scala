@@ -56,7 +56,8 @@ trait ItSpec
   with BeforeAndAfterEach
   with GuiceOneServerPerSuite
   with WireMockSupport
-  with Matchers { self =>
+  with Matchers: 
+  self =>
 
   val testServerPort = 19001
 
@@ -70,7 +71,7 @@ trait ItSpec
     timeout  = scaled(Span(60, Seconds)),
     interval = scaled(Span(50, Millis)))
 
-  implicit val emptyHC: HeaderCarrier = HeaderCarrier()
+  given emptyHC: HeaderCarrier = HeaderCarrier()
   lazy val webdriverUrl = s"http://localhost:${port.toString}"
   lazy val testConnector: TestConnector = injector.instanceOf[TestConnector]
 
@@ -124,6 +125,3 @@ trait ItSpec
     AuditConnectorStub.stubImplicitAuditEvents
     ()
   }
-
-}
-

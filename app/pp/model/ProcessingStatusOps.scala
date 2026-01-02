@@ -21,36 +21,30 @@ import play.api.libs.json.Format
 import play.api.mvc.{PathBindable, QueryStringBindable}
 import pp.controllers.ValueClassBinder._
 import pp.jsonext.EnumFormat
-import cats.implicits.catsSyntaxEq
+
 import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
 import scala.collection.immutable
 
-object ProcessingStatusOps {
-  implicit val format: Format[ProcessingStatusOps]                  = EnumFormat(ProcessingStatusOpsValues)
-  implicit val pathBinder: QueryStringBindable[ProcessingStatusOps] = bindableA(_.toString)
-  implicit val statusBinder: PathBindable[ProcessingStatusOps]      = valueClassBinder(_.toString)
-}
+object ProcessingStatusOps:
+  given format: Format[ProcessingStatusOps]                  = EnumFormat(ProcessingStatusOpsValues)
+  given pathBinder: QueryStringBindable[ProcessingStatusOps] = bindableA(_.toString)
+  given statusBinder: PathBindable[ProcessingStatusOps]      = valueClassBinder(_.toString)
 
-sealed abstract class ProcessingStatusOps extends EnumEntry {
+sealed abstract class ProcessingStatusOps extends EnumEntry derives CanEqual:
   val processingStatus: uk.gov.hmrc.mongo.workitem.ProcessingStatus
-}
 
-object ProcessingStatusOpsValues extends Enum[ProcessingStatusOps] {
+object ProcessingStatusOpsValues extends Enum[ProcessingStatusOps]:
 
-  def forCode(code: String): Option[ProcessingStatusOps] = values.find(_.toString === code)
+  def forCode(code: String): Option[ProcessingStatusOps] = values.find(_.toString == code)
 
   def values: immutable.IndexedSeq[ProcessingStatusOps] = findValues
 
-  case object PermanentlyFailed extends ProcessingStatusOps {
+  case object PermanentlyFailed extends ProcessingStatusOps:
     val processingStatus: ProcessingStatus = uk.gov.hmrc.mongo.workitem.ProcessingStatus.PermanentlyFailed
-  }
 
-  case object ToDo extends ProcessingStatusOps {
+  case object ToDo extends ProcessingStatusOps:
     val processingStatus: ProcessingStatus = uk.gov.hmrc.mongo.workitem.ProcessingStatus.ToDo
-  }
 
-  case object Failed extends ProcessingStatusOps {
+  case object Failed extends ProcessingStatusOps:
     val processingStatus: ProcessingStatus = uk.gov.hmrc.mongo.workitem.ProcessingStatus.Failed
-  }
-}

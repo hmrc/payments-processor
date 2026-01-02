@@ -25,8 +25,7 @@ final case class PcipalSessionId(
   value: String
 )
 
-object PcipalSessionId {
-  implicit val format: Format[PcipalSessionId]                  = implicitly[Format[String]].inmap(PcipalSessionId(_), _.value)
-  implicit val binder: PathBindable[PcipalSessionId]            = valueClassBinder(_.value)
-  implicit val pathBinder: QueryStringBindable[PcipalSessionId] = bindableA(_.toString)
-}
+object PcipalSessionId:
+  given format: Format[PcipalSessionId]                  = implicitly[Format[String]].inmap(PcipalSessionId(_), _.value)
+  given binder: PathBindable[PcipalSessionId]            = valueClassBinder(_.value)
+  given pathBinder: QueryStringBindable[PcipalSessionId] = bindableA(_.toString)

@@ -21,24 +21,20 @@ import play.api.libs.json.Format
 import play.api.mvc.{PathBindable, QueryStringBindable}
 import pp.controllers.ValueClassBinder._
 import pp.jsonext.EnumFormat
-import cats.Eq
 
 import java.util.Locale
 import scala.collection.immutable
 
-sealed abstract class TaxType extends EnumEntry {
+sealed abstract class TaxType extends EnumEntry derives CanEqual:
   val sendToDes: Boolean = true
   val tpsValue: String   = entryName.toUpperCase(Locale.UK)
-}
 
-object TaxType {
-  implicit val format: Format[TaxType]                  = EnumFormat(TaxTypes)
-  implicit val pathBinder: QueryStringBindable[TaxType] = bindableA(_.toString)
-  implicit val taxTypeBinder: PathBindable[TaxType]     = valueClassBinder(_.toString)
-  implicit val eq: Eq[TaxType]                          = Eq.fromUniversalEquals
-}
+object TaxType:
+  given format: Format[TaxType]                  = EnumFormat(TaxTypes)
+  given pathBinder: QueryStringBindable[TaxType] = bindableA(_.toString)
+  given taxTypeBinder: PathBindable[TaxType]     = valueClassBinder(_.toString)
 
-object TaxTypes extends Enum[TaxType] {
+object TaxTypes extends Enum[TaxType]:
   // As per DES API ....
   case object NLIJ extends TaxType
 
@@ -52,9 +48,8 @@ object TaxTypes extends Enum[TaxType] {
 
   case object `self-assessment` extends TaxType
 
-  case object vat extends TaxType {
+  case object vat extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
   case object epaye extends TaxType
 
@@ -65,9 +60,8 @@ object TaxTypes extends Enum[TaxType] {
   /** Merchandise in Baggage
     */
 
-  case object mib extends TaxType {
+  case object mib extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
   /** Other tax types
     */
@@ -82,15 +76,13 @@ object TaxTypes extends Enum[TaxType] {
 
   /** Passengers
     */
-  case object pngr extends TaxType {
+  case object pngr extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
   case object `corporation-tax` extends TaxType
 
-  final case object p800 extends TaxType {
+  case object p800 extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
   /** Northern Ireland
     */
@@ -123,37 +115,29 @@ object TaxTypes extends Enum[TaxType] {
 
   case object cds extends TaxType
 
-  case object childbenefitsrepayments extends TaxType {
+  case object childbenefitsrepayments extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
   case object ppt extends TaxType
 
-  case object sa extends TaxType {
+  case object sa extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
   case object sdlt extends TaxType
 
-  case object safe extends TaxType {
+  case object safe extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
-  case object cotax extends TaxType {
+  case object cotax extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
-  case object ntc extends TaxType {
+  case object ntc extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
-  case object paye extends TaxType {
+  case object paye extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
-  case object nps extends TaxType {
+  case object nps extends TaxType:
     override val sendToDes: Boolean = false
-  }
 
   override def values: immutable.IndexedSeq[TaxType] = findValues
-}

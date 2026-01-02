@@ -33,14 +33,14 @@ class ReportingController @Inject() (
   pngrMongoRepo:                  PngrMongoRepo,
   chargeRefNotificationMongoRepo: ChargeRefNotificationMongoRepo,
   mibOpsMongoRepo:                MibOpsMongoRepo
-)(implicit val executionContext: ExecutionContext)
-    extends BackendController(cc) {
+)(using executionContext: ExecutionContext)
+    extends BackendController(cc):
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
   def count(taxType: TaxType, processingState: ProcessingStatusOps): Action[AnyContent] = Action.async { _ =>
     logger.debug("count")
-    taxType match {
+    taxType match
       case TaxTypes.pngr =>
         pngrMongoRepo.count(processingState.processingStatus).map(m => Ok(m.toString))
       case TaxTypes.p800 =>
@@ -51,29 +51,25 @@ class ReportingController @Inject() (
         throw new RuntimeException(
           s"taxType ${taxType.entryName} not supported, processingState ${processingState.toString} not supported"
         )
-    }
   }
 
   def getAll(taxType: TaxType): Action[AnyContent] = Action.async { _ =>
     logger.debug("count")
-    taxType match {
+    taxType match
       case TaxTypes.pngr =>
-        for {
+        for
           m <- pngrMongoRepo.findAll()
           i  = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
-        } yield Ok(Json.toJson(i))
+        yield Ok(Json.toJson(i))
       case TaxTypes.p800 =>
-        for {
+        for
           m <- chargeRefNotificationMongoRepo.findAll()
           i  = m.map(m2 => Item(m2.item.createdOn, m2.item.chargeRefNumber, m2.failureCount, m2.status.toString))
-        } yield Ok(Json.toJson(i))
+        yield Ok(Json.toJson(i))
       case TaxTypes.mib  =>
-        for {
+        for
           m <- mibOpsMongoRepo.findAll()
           i  = m.map(m2 => Item(m2.item.createdOn, m2.item.reference, m2.failureCount, m2.status.toString))
-        } yield Ok(Json.toJson(i))
+        yield Ok(Json.toJson(i))
       case _             => throw new RuntimeException(s"taxType ${taxType.entryName} not supported")
-    }
   }
-
-}

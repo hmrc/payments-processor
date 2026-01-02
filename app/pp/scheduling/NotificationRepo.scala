@@ -34,14 +34,14 @@ abstract class NotificationRepo[A](
   mongoComponent: MongoComponent,
   configuration:  Configuration,
   queueConfig:    QueueConfig
-)(implicit ec: ExecutionContext, format: OFormat[A])
+)(using ec: ExecutionContext, format: OFormat[A])
     extends WorkItemRepository[A](
       collectionName = queueConfig.collectionName,
       mongoComponent = mongoComponent,
       itemFormat = format,
       extraIndexes = NotificationRepo.indexes(queueConfig.ttl),
       workItemFields = WorkItemFields.default.copy(availableAt = "availableAt")
-    ) {
+    ):
 
   lazy val retryIntervalMillis: Long               = configuration.getMillis(queueConfig.retryAfterProperty)
   override lazy val inProgressRetryAfter: Duration = Duration.ofMillis(retryIntervalMillis)
@@ -70,13 +70,10 @@ abstract class NotificationRepo[A](
     .countDocuments()
     .toFuture()
 
-}
-
-object NotificationRepo {
+object NotificationRepo:
   def indexes(ttlInSeconds: FiniteDuration): Seq[IndexModel] = Seq(
     IndexModel(
       keys = Indexes.ascending("receivedAtTime"),
       indexOptions = IndexOptions().name("receivedAtTime").expireAfter(ttlInSeconds.toSeconds, TimeUnit.SECONDS)
     )
   )
-}

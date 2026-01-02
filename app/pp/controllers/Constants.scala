@@ -16,8 +16,6 @@
 
 package pp.controllers
 
-object Constants {
+object Constants:
 
   val acceptHeaderMissing = "The accept header is missing or invalid"
-
-}

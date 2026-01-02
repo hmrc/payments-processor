@@ -28,16 +28,13 @@ final case class ChargeRefNotificationMyWorkItem(
   chargeRefNumber: String,
   amountPaid:      BigDecimal,
   origin:          Origin
-) extends MyWorkItemFields {
+) extends MyWorkItemFields:
 
   override def toString: String =
     s"ChargeRefNotificationWorkItem for chargeReference $chargeRefNumber ... " +
       s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: $taxType, " +
       s"origin: ${origin.toString}, chargeRefNumber: $chargeRefNumber}"
 
-}
-
-object ChargeRefNotificationMyWorkItem {
+object ChargeRefNotificationMyWorkItem:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationMyWorkItem] = Json.format[ChargeRefNotificationMyWorkItem]
-}
+  given format: OFormat[ChargeRefNotificationMyWorkItem] = Json.format[ChargeRefNotificationMyWorkItem]

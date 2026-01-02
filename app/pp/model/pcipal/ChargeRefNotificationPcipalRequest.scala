@@ -36,11 +36,11 @@ final case class ChargeRefNotificationPcipalRequest(
   ChargeReference:      String = "",
   ReferenceNumber:      String,
   CardLast4:            String
-)
+) derives CanEqual
 
-object ChargeRefNotificationPcipalRequest {
+object ChargeRefNotificationPcipalRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationPcipalRequest] = Json.format[ChargeRefNotificationPcipalRequest]
+  given format: OFormat[ChargeRefNotificationPcipalRequest] = Json.format[ChargeRefNotificationPcipalRequest]
 
   def toChargeRefNotificationRequest(
     chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest,
@@ -58,7 +58,6 @@ object ChargeRefNotificationPcipalRequest {
   ): PngrStatusUpdateRequest =
     PngrStatusUpdateRequest(
       chargeRefNotificationPciPalRequest.ChargeReference,
-      if (chargeRefNotificationPciPalRequest.Status == validated) PngrStatusTypes.Successful else PngrStatusTypes.Failed
+      if chargeRefNotificationPciPalRequest.Status == validated then PngrStatusTypes.Successful
+      else PngrStatusTypes.Failed
     )
-
-}

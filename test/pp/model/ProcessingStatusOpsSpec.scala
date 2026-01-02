@@ -18,8 +18,9 @@ package pp.model
 
 import play.api.libs.json.{JsString, Json}
 import support.{RichMatchers, UnitSpec}
+import support.Givens.canEqualJsValue
 
-class ProcessingStatusOpsSpec extends UnitSpec with RichMatchers {
+class ProcessingStatusOpsSpec extends UnitSpec with RichMatchers:
 
   "de/serialize ProcessingStatusOps" in {
 
@@ -37,5 +38,3 @@ class ProcessingStatusOpsSpec extends UnitSpec with RichMatchers {
       jsValue.as[ProcessingStatusOps] shouldBe tt._2 withClue s"deserialize ${tt.toString}"
     }
   }
-
-}

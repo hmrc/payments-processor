@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 
-object Des {
+object Des:
   val endpoint = "/cross-regime/payments/card/notification"
   val errorMessage = "des failed"
   val successMessage = "ok"
@@ -46,5 +46,3 @@ object Des {
           .withFixedDelay(delayMillis))
         .willSetStateTo(WireMockStub.nextState(sequence)))
   }
-
-}

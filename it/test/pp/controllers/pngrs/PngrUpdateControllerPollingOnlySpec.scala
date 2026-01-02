@@ -21,7 +21,7 @@ import pp.services.PngrService
 import support.PaymentsProcessData.pngrStatusUpdateRequest
 import support.Pngr
 
-class PngrUpdateControllerPollingOnlySpec extends PngrUpdateControllerSpec {
+class PngrUpdateControllerPollingOnlySpec extends PngrUpdateControllerSpec:
   private lazy val pngrService = injector.instanceOf[PngrService]
 
   override def configMap: Map[String, Any] = super.configMap.updated("pngr.poller.enabled", "true")
@@ -49,4 +49,3 @@ class PngrUpdateControllerPollingOnlySpec extends PngrUpdateControllerSpec {
       }
     }
   }
-}

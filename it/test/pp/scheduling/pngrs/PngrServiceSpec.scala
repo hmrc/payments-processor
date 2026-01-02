@@ -30,7 +30,7 @@ import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
 import java.time.{Clock, LocalDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class PngrServiceSpec extends ItSpec {
+class PngrServiceSpec extends ItSpec:
   private lazy val repo = injector.instanceOf[PngrMongoRepo]
   private lazy val pngrConnector = injector.instanceOf[PngrConnector]
   private lazy val queueConfig = injector.instanceOf[PngrsQueueConfig]
@@ -96,5 +96,3 @@ class PngrServiceSpec extends ItSpec {
       }
     }
   }
-}
-

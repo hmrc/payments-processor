@@ -21,18 +21,17 @@ import pp.config.QueueConfig
 import pp.model.MyWorkItemFields
 import pp.scheduling.NotificationRepo
 import uk.gov.hmrc.mongo.workitem.{ProcessingStatus, WorkItem}
-import cats.syntax.eq.catsSyntaxEq
 
 import java.time.{Clock, LocalDateTime}
 import scala.concurrent.{ExecutionContext, Future}
 
-trait WorkItemService[P <: MyWorkItemFields] {
+trait WorkItemService[P <: MyWorkItemFields]:
 
   val clock: Clock
 
   val repo: NotificationRepo[P]
 
-  implicit val executionContext: ExecutionContext
+  given executionContext: ExecutionContext
 
   val logger: Logger
 
@@ -40,21 +39,19 @@ trait WorkItemService[P <: MyWorkItemFields] {
 
   def sendWorkItem(workItem: WorkItem[P]): Future[Unit]
 
-  def isAvailable(workItem: MyWorkItemFields): Boolean = {
+  def isAvailable(workItem: MyWorkItemFields): Boolean =
     val time = LocalDateTime.now(clock)
     time.isBefore(workItem.availableUntil)
-  }
 
   def availableUntil(time: LocalDateTime): LocalDateTime = time.plus(queueConfig.queueAvailableFor)
 
-  def markAsPermFailed(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]] = {
+  def markAsPermFailed(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]] =
     logger.warn(s"payments-processor: Failed to process workitem ${workItem.item.toString}")
     repo
       .markAs(workItem.id, ProcessingStatus.PermanentlyFailed)
       .map(_ => acc :+ workItem)
-  }
 
-  def processThenMarkAsComplete(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]] = {
+  def processThenMarkAsComplete(acc: Seq[WorkItem[P]], workItem: WorkItem[P]): Future[Seq[WorkItem[P]]] =
     logger.debug("inside processThenMarkAsComplete")
 
     sendWorkItem(workItem)
@@ -63,21 +60,20 @@ trait WorkItemService[P <: MyWorkItemFields] {
       .recoverWith { case _ =>
         repo.markAs(workItem.id, ProcessingStatus.Failed).map(_ => acc)
       }
-  }
 
-  def retrieveWorkItems: Future[Seq[WorkItem[P]]] = {
+  def retrieveWorkItems: Future[Seq[WorkItem[P]]] =
 
     @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
-    def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[P]]): Future[Seq[WorkItem[P]]] = {
+    def sendNotificationIfFound(count: Int, sentWorkItems: Seq[WorkItem[P]]): Future[Seq[WorkItem[P]]] =
 
       def retrieveWorkItem(count: Int): Future[Option[WorkItem[P]]] =
-        if (count === queueConfig.pollLimit) Future successful None
+        if count == queueConfig.pollLimit then Future successful None
         else repo.pullOutstanding
 
       retrieveWorkItem(count).flatMap {
         case None           => Future successful sentWorkItems
         case Some(workItem) =>
-          if (isAvailable(workItem.item)) {
+          if isAvailable(workItem.item) then {
             processThenMarkAsComplete(sentWorkItems, workItem).flatMap { workItems =>
               sendNotificationIfFound(count + 1, workItems)
             }
@@ -87,8 +83,5 @@ trait WorkItemService[P <: MyWorkItemFields] {
             }
           }
       }
-    }
 
     sendNotificationIfFound(0, Seq.empty)
-  }
-}

@@ -30,9 +30,7 @@ class ChargeRefNotificationPollingService @Inject() (
   actorSystem:     ActorSystem,
   queueConfig:     ChargeRefQueueConfig,
   workItemService: ChargeRefService
-)(implicit ec: ExecutionContext)
-    extends PollingService[ChargeRefNotificationMyWorkItem](actorSystem, queueConfig, workItemService) {
+)(using ec: ExecutionContext)
+    extends PollingService[ChargeRefNotificationMyWorkItem](actorSystem, queueConfig, workItemService):
 
   override def name: String = "ChargeRefNotificationPollingService"
-
-}

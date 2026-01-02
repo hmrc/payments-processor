@@ -20,16 +20,15 @@ object AppDependencies {
 
   val bootstrapVersion = "10.5.0"
   val hmrcMongoVersion = "2.11.0"
-  val enumeratumVersion = "1.9.1"
+  val enumeratumVersion = "1.9.2"
 
   val compile: Seq[ModuleID] = Seq(
     // format: OFF
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-work-item-repo-play-30"  % hmrcMongoVersion,
     "uk.gov.hmrc"       %% "bootstrap-backend-play-30"          % bootstrapVersion,
     "com.beachape"      %% "enumeratum-play"                    % enumeratumVersion,
-    "com.beachape"      %% "enumeratum-play-json"               % enumeratumVersion,
-    "org.typelevel"     %% "cats-core"                          % "2.13.0"
-  // format: ON
+    "com.beachape"      %% "enumeratum-play-json"               % enumeratumVersion
+    // format: ON
   )
 
   val test: Seq[ModuleID] = Seq(

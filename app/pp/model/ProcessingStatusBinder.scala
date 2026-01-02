@@ -21,7 +21,6 @@ import play.api.mvc.PathBindable
 import pp.controllers.ValueClassBinder.valueClassBinder
 import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
-object ProcessingStatusBinder {
-  implicit val format: Format[ProcessingStatus]       = ProcessingStatus.Implicits.format
-  implicit val binder: PathBindable[ProcessingStatus] = valueClassBinder(_.toString)
-}
+object ProcessingStatusBinder:
+  given format: Format[ProcessingStatus]       = ProcessingStatus.Implicits.format
+  given binder: PathBindable[ProcessingStatus] = valueClassBinder(_.toString)

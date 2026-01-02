@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package pp.model.pngrs
+package pp.controllers.retries
 
-import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.mongo.workitem.ProcessingStatus
 
-final case class PngrStatusUpdateRequest(reference: String, status: PngrStatusType) derives CanEqual
-
-object PngrStatusUpdateRequest:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  given format: OFormat[PngrStatusUpdateRequest] = Json.format[PngrStatusUpdateRequest]
+trait CanEqualInstance:
+  given CanEqual[ProcessingStatus, ProcessingStatus] = CanEqual.derived

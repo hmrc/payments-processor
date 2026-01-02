@@ -21,7 +21,7 @@ import play.api.http.Status
 import support.Mib
 import support.PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef
 
-class MibControllerQueuingOnlySpec extends MibControllerSpec {
+class MibControllerQueuingOnlySpec extends MibControllerSpec:
   override def configMap: Map[String, Any] = super.configMap.updated("mibops.queue.enabled", "true")
 
   "the MibController" when {
@@ -45,4 +45,3 @@ class MibControllerQueuingOnlySpec extends MibControllerSpec {
       }
     }
   }
-}

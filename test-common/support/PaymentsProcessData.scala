@@ -32,7 +32,7 @@ import java.time.Clock
 import java.time.Clock.systemUTC
 import java.time.LocalDateTime.now
 
-object PaymentsProcessData {
+object PaymentsProcessData:
 
   private val clock: Clock = systemUTC()
 
@@ -194,5 +194,3 @@ object PaymentsProcessData {
                                     ]
                                   }
                                 }""".stripMargin)
-
-}

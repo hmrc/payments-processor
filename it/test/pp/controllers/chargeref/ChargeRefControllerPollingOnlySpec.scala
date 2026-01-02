@@ -21,7 +21,7 @@ import pp.services.ChargeRefService
 import support.Des
 import support.PaymentsProcessData.p800ChargeRefNotificationRequest
 
-class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
+class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec:
   private lazy val chargeRefService = injector.instanceOf[ChargeRefService]
 
   override def configMap: Map[String, Any] = super.configMap
@@ -55,5 +55,3 @@ class ChargeRefControllerPollingOnlySpec extends ChargeRefControllerSpec {
       }
     }
   }
-
-}

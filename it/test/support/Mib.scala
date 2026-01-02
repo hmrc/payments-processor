@@ -20,7 +20,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.Status
 
-object Mib {
+object Mib:
 
   val endpoint = "/declare-commercial-goods/payment-callback"
   val errorMessage = "mib failed"
@@ -43,5 +43,3 @@ object Mib {
           .withFixedDelay(delayMillis))
         .willSetStateTo(WireMockStub.nextState(sequence)))
   }
-
-}

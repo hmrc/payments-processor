@@ -22,6 +22,7 @@ import pp.model.chargeref.ChargeRefNotificationDesRequest
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpReads, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,7 +32,7 @@ class DesConnector @Inject() (
   servicesConfig: ServicesConfig,
   httpClient:     HttpClientV2,
   configuration:  Configuration
-)(implicit ec: ExecutionContext) {
+)(using ec: ExecutionContext):
 
   private val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -41,7 +42,7 @@ class DesConnector @Inject() (
   private val serviceEnvironment: String = configuration.underlying.getString("microservice.services.des.environment")
   private val chargerefUrl: String       = configuration.underlying.getString("microservice.services.des.chargeref-url")
 
-  implicit val readUnit: HttpReads[Unit] = UnitReadsThrowingException.readUnit
+  given readUnit: HttpReads[Unit] = UnitReadsThrowingException.readUnit
 
   private val desHeaderCarrier: HeaderCarrier =
     HeaderCarrier(authorization = Some(Authorization(s"Bearer $authorizationToken")))
@@ -57,8 +58,8 @@ class DesConnector @Inject() (
   // todo remove this once we know what's going on
   private val regex = """[0-9a-zA-Z{À-˿'}\\ &`'^]{1,16}"""
 
-  def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[Unit] = {
-    implicit val hc: HeaderCarrier = desHeaderCarrier
+  def sendCardPaymentsNotification(chargeRefNotificationDesRequest: ChargeRefNotificationDesRequest): Future[Unit] =
+    given hc: HeaderCarrier = desHeaderCarrier
 
     val sendChargeRefUrl: String = s"$serviceURL$chargerefUrl"
     logger.debug(
@@ -81,6 +82,3 @@ class DesConnector @Inject() (
       .setHeader(desHeaders: _*)
       .withBody(Json.toJson(chargeRefNotificationDesRequest))
       .execute[Unit]
-  }
-
-}

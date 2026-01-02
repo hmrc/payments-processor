@@ -27,7 +27,7 @@ import support.PaymentsProcessData._
 import support._
 import uk.gov.hmrc.http.HttpResponse
 
-class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
+class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec:
 
   override def configMap: Map[String, Any] =
     super
@@ -66,7 +66,7 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
           TpsPaymentsBackend.getTaxTypeOk(paymentItemId, taxType)
           TpsPaymentsBackend.tpsUpdateOk
           AuditConnectorStub.stubAudit
-          if (taxType === TaxTypes.mib) TpsPaymentsBackend.getAmendmentRefOk(paymentItemId, modsPaymentCallBackRequestWithAmendmentRef)
+          if (taxType == TaxTypes.mib) TpsPaymentsBackend.getAmendmentRefOk(paymentItemId, modsPaymentCallBackRequestWithAmendmentRef)
           taxType match {
             case TaxTypes.pngr => Pngr.statusUpdateSucceeds()
             case TaxTypes.mib  => Mib.statusUpdateSucceeds()
@@ -93,5 +93,3 @@ class ChargeRefControllerTaxTypeCheckSpec extends ChargeRefControllerSpec {
         }
       }
     }
-
-}

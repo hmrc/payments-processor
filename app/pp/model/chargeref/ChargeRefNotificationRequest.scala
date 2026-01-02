@@ -24,9 +24,8 @@ final case class ChargeRefNotificationRequest(
   chargeRefNumber: String,
   amountPaid:      BigDecimal,
   origin:          Origin
-)
+) derives CanEqual
 
-object ChargeRefNotificationRequest {
+object ChargeRefNotificationRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]
-}
+  given format: OFormat[ChargeRefNotificationRequest] = Json.format[ChargeRefNotificationRequest]

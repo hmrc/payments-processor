@@ -21,7 +21,7 @@ import play.api.http.Status
 import support.Mib
 import support.PaymentsProcessData.modsPaymentCallBackRequestWithAmendmentRef
 
-class MibControllerQueuingAndPollingEnabledSpec extends MibControllerSpec {
+class MibControllerQueuingAndPollingEnabledSpec extends MibControllerSpec:
 
   override def configMap: Map[String, Any] = super.configMap
     .updated("mibops.poller.enabled", "true")
@@ -55,5 +55,3 @@ class MibControllerQueuingAndPollingEnabledSpec extends MibControllerSpec {
       }
     }
   }
-
-}

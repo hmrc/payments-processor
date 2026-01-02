@@ -21,9 +21,8 @@ import play.api.libs.json._
 final case class ModsPaymentCallBackRequest(
   chargeReference:    String,
   amendmentReference: Option[Int]
-)
+) derives CanEqual
 
-object ModsPaymentCallBackRequest {
+object ModsPaymentCallBackRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ModsPaymentCallBackRequest] = Json.format[ModsPaymentCallBackRequest]
-}
+  given format: OFormat[ModsPaymentCallBackRequest] = Json.format[ModsPaymentCallBackRequest]

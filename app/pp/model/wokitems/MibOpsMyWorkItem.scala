@@ -29,15 +29,13 @@ final case class MibOpsMyWorkItem(
   origin:                     Origin,
   reference:                  String,
   modsPaymentCallBackRequest: ModsPaymentCallBackRequest
-) extends MyWorkItemFields {
+) extends MyWorkItemFields:
 
   override def toString: String =
     s"MibWorkItem for chargeReference ${modsPaymentCallBackRequest.chargeReference} ... " +
       s"{createdOn: ${createdOn.toString}, availableUntil: ${availableUntil.toString}, taxType: $taxType, " +
       s"origin: ${origin.toString}, reference: $reference, amendmentReference: ${modsPaymentCallBackRequest.amendmentReference.toString}}"
-}
 
-object MibOpsMyWorkItem {
+object MibOpsMyWorkItem:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[MibOpsMyWorkItem] = Json.format[MibOpsMyWorkItem]
-}
+  given format: OFormat[MibOpsMyWorkItem] = Json.format[MibOpsMyWorkItem]

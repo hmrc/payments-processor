@@ -17,10 +17,11 @@
 package pp.model.chargeref
 
 import play.api.libs.json.Json
+import support.Givens.canEqualJsValue
 import support.PaymentsProcessData.{chargeRefNotificationDesRequest, chargeRefNotificationDesRequestJson}
 import support.UnitSpec
 
-class ChargeRefNotificationDesRequestSpec extends UnitSpec {
+class ChargeRefNotificationDesRequestSpec extends UnitSpec:
 
   "to json" in {
     Json.toJson(chargeRefNotificationDesRequest) shouldBe chargeRefNotificationDesRequestJson
@@ -29,4 +30,3 @@ class ChargeRefNotificationDesRequestSpec extends UnitSpec {
   "from json" in {
     chargeRefNotificationDesRequestJson.as[ChargeRefNotificationDesRequest] shouldBe chargeRefNotificationDesRequest
   }
-}

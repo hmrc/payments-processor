@@ -16,16 +16,16 @@
 
 package pp.controllers
 
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import support.ItSpec
-import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
+import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class HeaderValidatorSpec extends ItSpec with HeaderValidator {
+class HeaderValidatorSpec extends ItSpec with HeaderValidator:
 
   private lazy val parse = injector.instanceOf[PlayBodyParsers]
 
@@ -53,7 +53,7 @@ class HeaderValidatorSpec extends ItSpec with HeaderValidator {
     acceptHeaderValidationRules(Some("application/vnd.hmrc.notvalid+json")) shouldBe false
   }
 
-  val standardResponse: Request[AnyContentAsEmpty.type] => Future[Status] = { _: Request[AnyContentAsEmpty.type] => Future.successful(Ok) }
+  val standardResponse: Request[AnyContentAsEmpty.type] => Future[Status] = { (_: Request[AnyContentAsEmpty.type]) => Future.successful(Ok) }
 
   "validateAccept return an OK result when the accept header is present" in {
 
@@ -75,5 +75,3 @@ class HeaderValidatorSpec extends ItSpec with HeaderValidator {
     errorResponse.message shouldBe Constants.acceptHeaderMissing
 
   }
-
-}

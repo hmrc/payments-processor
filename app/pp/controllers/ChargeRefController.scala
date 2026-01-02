@@ -40,12 +40,12 @@ class ChargeRefController @Inject() (
   val mibOpsService:        MibOpsService,
   val mibOpsQueueConfig:    MibOpsQueueConfig,
   val mibConnector:         MibConnector
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends BackendController(cc)
     with HeaderValidator
     with ChargeRefDesRetries
     with PngrRetries
-    with MibRetries {
+    with MibRetries:
 
   val logger: Logger = Logger(this.getClass.getSimpleName)
 
@@ -54,4 +54,3 @@ class ChargeRefController @Inject() (
       logger.debug("sendCardPaymentsNotification")
       sendCardPaymentsNotification(request.body)
     }
-}

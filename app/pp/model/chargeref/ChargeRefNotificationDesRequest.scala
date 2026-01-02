@@ -19,8 +19,8 @@ package pp.model.chargeref
 import play.api.libs.json._
 
 final case class ChargeRefNotificationDesRequest(taxType: String, chargeRefNumber: String, amountPaid: BigDecimal)
+    derives CanEqual
 
-object ChargeRefNotificationDesRequest {
+object ChargeRefNotificationDesRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChargeRefNotificationDesRequest] = Json.format[ChargeRefNotificationDesRequest]
-}
+  given format: OFormat[ChargeRefNotificationDesRequest] = Json.format[ChargeRefNotificationDesRequest]
