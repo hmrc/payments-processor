@@ -66,7 +66,7 @@ class ChargeRefControllerPciPal @Inject() (
     } match
       case Success(Some(chargeRefNotificationPcipalRequest)) =>
         logger.debug(s"sendCardPaymentsNotificationPciPal for ${chargeRefNotificationPcipalRequest.toString}")
-        logger.info(
+        logger.warn(
           s"Notification received from Pcipal, payment status: [ ${chargeRefNotificationPcipalRequest.Status.toString} ]"
         )
         auditService.auditPcipalNotificationEvent(chargeRefNotificationPcipalRequest)
