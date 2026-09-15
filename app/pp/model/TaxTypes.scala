@@ -140,4 +140,7 @@ object TaxTypes extends Enum[TaxType]:
   case object nps extends TaxType:
     override val sendToDes: Boolean = false
 
+  case object VatIossAndOss extends TaxType:
+    override val sendToDes: Boolean = false
+
   override def values: immutable.IndexedSeq[TaxType] = findValues

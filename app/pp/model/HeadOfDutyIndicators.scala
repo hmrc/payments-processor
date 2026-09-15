@@ -42,6 +42,18 @@ object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator]:
     */
   case object A extends HeadOfDutyIndicator
 
+  /** Hod for TPS IOSS
+    */
+  case object D extends HeadOfDutyIndicator
+
+  /** Hod for TPS OSS
+    */
+  case object E extends HeadOfDutyIndicator
+
+  /** Hod for TPS IOSS/OSS penalty
+    */
+  case object F extends HeadOfDutyIndicator
+
   /** Hod for NTC
     */
   case object N extends HeadOfDutyIndicator

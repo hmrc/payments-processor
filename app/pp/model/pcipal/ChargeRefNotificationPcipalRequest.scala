@@ -39,7 +39,7 @@ final case class ChargeRefNotificationPcipalRequest(
 ) derives CanEqual
 
 object ChargeRefNotificationPcipalRequest:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+
   given format: OFormat[ChargeRefNotificationPcipalRequest] = Json.format[ChargeRefNotificationPcipalRequest]
 
   def toChargeRefNotificationRequest(
