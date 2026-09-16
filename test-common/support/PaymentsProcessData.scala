@@ -185,11 +185,7 @@ object PaymentsProcessData:
                                         "version": "1.0",
                                         "status": "$status",
                                         "endpointsEnabled": ${endpointsEnabled.toString},
-                                        "access": {
-                                          "type": "PRIVATE",
-                                          "whitelistedApplicationIds": ["testId"],
-                                          "isTrial":false
-                                        }
+                                        "access": "INTERNAL"
                                       }
                                     ]
                                   }
