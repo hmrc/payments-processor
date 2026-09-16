@@ -11,7 +11,7 @@
         "version": "1.0",
         "status": "STABLE",
         "endpointsEnabled": true,
-        "access": "CONTROLLED"
+        "access": "INTERNAL"
       }
     ]
   }
